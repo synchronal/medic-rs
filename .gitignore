@@ -1,2 +1,4 @@
+.doctor.out
 /.local
 /target
+Brewfile.lock.json
