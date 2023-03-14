@@ -1,5 +1,5 @@
 [package]
-name = "medic"
+name = "medic-doctor"
 version = "0.1.0"
 edition = "2021"
 
@@ -14,4 +14,3 @@ indoc = "2.0.1"
 # Treat warnings as a build error.
 default = ["strict"]
 strict = []
-

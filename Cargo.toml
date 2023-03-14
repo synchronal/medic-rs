@@ -2,4 +2,6 @@
 
 members = [
     "medic",
+    "medic-doctor",
+    "medic-init",
 ]
