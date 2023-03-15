@@ -4,11 +4,11 @@ use indoc::indoc;
 
 #[derive(Parser)]
 #[clap(author, version, about)]
-#[clap(bin_name = "medic")]
+#[clap(bin_name = "medic doctor")]
 #[clap( after_help = indoc!(
     "
     COMMON TASKS:
-        You can install medic into a new repository using
+        Install medic into a new repository
             medic init
     "
 ))]
