@@ -2,7 +2,7 @@ use clap::Parser;
 use clap_complete::Shell;
 use indoc::indoc;
 
-#[derive(Parser)]
+#[derive(Debug, Parser)]
 #[clap(author, version, about)]
 #[clap(bin_name = "medic doctor")]
 #[clap( after_help = indoc!(
@@ -18,9 +18,9 @@ pub struct CliArgs {
         short,
         long,
         env = "MEDIC_CONFIG",
-        default_value = "$HOME/.medic/config.toml"
+        default_value = "$PWD/.medic/config.toml"
     )]
-    pub config: String,
+    pub config: std::path::PathBuf,
 
     /// Shell to generate completions for
     #[clap(long, value_enum, value_parser)]

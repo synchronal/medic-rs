@@ -1,6 +1,7 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
-mod cli;
+use medic_doctor::cli;
+use medic_doctor::config::Manifest;
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;
@@ -21,6 +22,10 @@ fn main() -> AppResult<()> {
 
         std::process::exit(0);
     }
+
+    let manifest = Manifest::new(cli_args.config)?;
+
+    println!("manifest: {:?}", manifest);
 
     Ok(())
 }
