@@ -3,6 +3,7 @@
 use medic_check_homebrew::cli::CliArgs;
 
 use std::ops::{ControlFlow, FromResidual, Try};
+use std::path::Path;
 use std::process::{Command, Stdio};
 use CheckResult::{CheckError, CheckOk};
 
@@ -10,18 +11,18 @@ use CheckResult::{CheckError, CheckOk};
 enum CheckResult {
     #[default]
     CheckOk,
-    CheckError(String, String),
+    CheckError(String, String, String, String),
 }
 
 impl std::process::Termination for CheckResult {
     fn report(self) -> std::process::ExitCode {
         match self {
             CheckOk => std::process::ExitCode::from(0),
-            CheckError(output, remedy) => {
-                eprintln!("HomeBrew bundle check failed!");
-                eprintln!("{output}\n");
-                eprintln!("Possible remedy:");
-                eprintln!("{remedy}\n");
+            CheckError(msg, stdout, stderr, remedy) => {
+                eprintln!("{msg}\r\n");
+                eprintln!("stdout:\r\n{stdout}");
+                eprintln!("stderr:\r\n{stderr}");
+                eprintln!("Possible remedy:\r\n{remedy}\r\n");
 
                 std::process::ExitCode::from(1)
             }
@@ -29,7 +30,13 @@ impl std::process::Termination for CheckResult {
     }
 }
 
-pub struct ResultCodeResidual(String, String);
+impl CheckResult {
+    pub fn from_std(data: Vec<u8>) -> String {
+        String::from_utf8(data).unwrap()
+    }
+}
+
+pub struct ResultCodeResidual(String, String, String, String);
 
 impl Try for CheckResult {
     type Output = ();
@@ -37,7 +44,9 @@ impl Try for CheckResult {
 
     fn branch(self) -> ControlFlow<Self::Residual> {
         match self {
-            CheckError(output, remedy) => ControlFlow::Break(ResultCodeResidual(output, remedy)),
+            CheckError(msg, stdout, stderr, remedy) => {
+                ControlFlow::Break(ResultCodeResidual(msg, stdout, stderr, remedy))
+            }
             CheckOk => ControlFlow::Continue(()),
         }
     }
@@ -48,13 +57,9 @@ impl Try for CheckResult {
 
 impl FromResidual for CheckResult {
     fn from_residual(r: ResultCodeResidual) -> Self {
-        Self::CheckError(r.0, r.1)
+        Self::CheckError(r.0, r.1, r.2, r.3)
     }
 }
-
-// This should return a CheckResult, which should exit 0 when all checks pass.
-// When checks fail, some output should be printed to stderr and the remedy
-// should be printed to stdout and put into the clipboard.
 
 fn main() -> CheckResult {
     let _cli_args = CliArgs::new();
@@ -65,26 +70,77 @@ fn main() -> CheckResult {
 }
 
 fn brewfile_exists() -> CheckResult {
-    CheckOk
+    let filepath = Path::new("Brewfile");
+    if filepath.exists() {
+        CheckOk
+    } else {
+        CheckError(
+            "Brewfile does not exist".into(),
+            "".into(),
+            "".into(),
+            "touch Brewfile".into(),
+        )
+    }
 }
 
 fn bundled() -> CheckResult {
-    CheckOk
+    let filepath = Path::new("Brewfile");
+    match Command::new("brew")
+        .args([
+            "bundle",
+            "check",
+            "--file",
+            filepath.to_path_buf().to_str().unwrap(),
+        ])
+        .env("HOMEBREW_NO_AUTO_UPDATE", "1")
+        .output()
+    {
+        Ok(status) => match status.status.success() {
+            true => CheckOk,
+            false => {
+                let stdout = CheckResult::from_std(status.stdout);
+                let stderr = CheckResult::from_std(status.stderr);
+                let remedy = format!("brew bundle --file {filepath:?}");
+                CheckError(
+                    "Homebrew bundle is out of date.".into(),
+                    stdout,
+                    stderr,
+                    remedy,
+                )
+            }
+        },
+        Err(err) => {
+            let msg =
+                format!("Unable to determine if Brewfile is up to date.\r\nOutput:\r\n{err:?}");
+            CheckError(msg, "".into(), "".into(), "".into())
+        }
+    }
 }
 
 fn homebrew_installed() -> CheckResult {
-    if let Ok(which) = Command::new("which")
+    match Command::new("which")
         .args(["brew"])
         .stdout(Stdio::null())
-        .status()
+        .output()
     {
-        if which.success() {
-            CheckOk
-        } else {
-            CheckError("Unable to find homebrew".into(),
-            "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"".into())
+        Ok(which) => {
+            if which.status.success() {
+                CheckOk
+            } else {
+                let stdout = CheckResult::from_std(which.stdout);
+                let stderr = CheckResult::from_std(which.stderr);
+                CheckError("Unable to find homebrew".into(),
+                stdout,
+                stderr,
+            "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"".into()
+                            )
+            }
         }
-    } else {
-        CheckError("Unable to search for homebrew".into(), "".into())
+        Err(_err) => CheckError(
+            "Unable to search for homebrew".into(),
+            "".into(),
+            "".into(),
+            "".into(),
+        ),
     }
 }
