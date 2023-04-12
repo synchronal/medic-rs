@@ -208,6 +208,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "medic-check-homebrew"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "indoc",
+]
+
+[[package]]
 name = "medic-doctor"
 version = "0.1.0"
 dependencies = [
