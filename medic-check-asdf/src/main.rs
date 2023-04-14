@@ -1,17 +1,22 @@
-use medic_check::CheckResult::{self, CheckError, CheckOk};
 use medic_check::std_to_string;
-use medic_check_asdf::cli::CliArgs;
+use medic_check::CheckResult::{self, CheckError, CheckOk};
+use medic_check_asdf::cli::{CliArgs, Command};
 
-use std::process::Command;
+use std::process::Command as Cmd;
 
 fn main() -> CheckResult {
-    let _cli_args = CliArgs::new();
+    let cli = CliArgs::new();
     asdf_installed()?;
+
+    match cli.command {
+        Command::PackageInstalled(args) => package_installed(args.plugin, args.version)?,
+        Command::PluginInstalled(args) => plugin_installed(args.plugin)?,
+    }
     CheckOk
 }
 
 fn asdf_installed() -> CheckResult {
-    match Command::new("which").args(["asdf"]).output() {
+    match Cmd::new("which").args(["asdf"]).output() {
         Ok(which) => {
             if which.status.success() {
                 CheckOk
@@ -31,5 +36,55 @@ fn asdf_installed() -> CheckResult {
             "".into(),
             "open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into()
         ),
+    }
+}
+
+fn package_installed(plugin: String, version: String) -> CheckResult {
+    match Cmd::new("asdf").args(["where", &plugin, &version]).output() {
+        Ok(output) => {
+            if output.status.success() {
+                CheckOk
+            } else {
+                let stdout = std_to_string(output.stdout);
+                let stderr = std_to_string(output.stderr);
+                CheckError(
+                    format!("Currently configured ASDF package for {plugin} has not been installed."),
+                    stdout,
+                    stderr,
+                    format!("asdf install {} {}", plugin, version),
+                )
+            }
+        },
+        Err(_err) => CheckError(
+            "Unable to determine which asdf packages are installed.".into(),
+            "".into(),
+            "".into(),
+            "open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into(),
+        )
+    }
+}
+
+fn plugin_installed(plugin: String) -> CheckResult {
+    match Cmd::new("asdf").args(["plugin", "list"]).output() {
+        Ok(list) => {
+            let plugin_list = std_to_string(list.stdout);
+            let plugins: Vec<String> = plugin_list.split('\n').map(str::to_string).collect();
+            if plugins.contains(&plugin) {
+                CheckOk
+            } else {
+                CheckError(
+                    format!("ASDF plugin {plugin} has not been installed."),
+                    plugin_list,
+                    "".into(),
+                    format!("asdf plugin install {}", plugin),
+                )
+            }
+        },
+        Err(_err) => CheckError(
+            "Unable to determine which asdf plugins are installed.".into(),
+            "".into(),
+            "".into(),
+            "open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into(),
+        )
     }
 }
