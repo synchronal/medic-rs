@@ -1,65 +1,10 @@
 #![feature(try_trait_v2)]
 
+use medic_check::CheckResult::{self, CheckError, CheckOk};
 use medic_check_homebrew::cli::CliArgs;
 
-use std::ops::{ControlFlow, FromResidual, Try};
 use std::path::Path;
 use std::process::{Command, Stdio};
-use CheckResult::{CheckError, CheckOk};
-
-#[derive(Debug, Default, Clone, Eq, PartialEq)]
-enum CheckResult {
-    #[default]
-    CheckOk,
-    CheckError(String, String, String, String),
-}
-
-impl std::process::Termination for CheckResult {
-    fn report(self) -> std::process::ExitCode {
-        match self {
-            CheckOk => std::process::ExitCode::from(0),
-            CheckError(msg, stdout, stderr, remedy) => {
-                eprintln!("{msg}\r\n");
-                eprintln!("stdout:\r\n{stdout}");
-                eprintln!("stderr:\r\n{stderr}");
-                eprintln!("Possible remedy:\r\n{remedy}\r\n");
-
-                std::process::ExitCode::from(1)
-            }
-        }
-    }
-}
-
-impl CheckResult {
-    pub fn from_std(data: Vec<u8>) -> String {
-        String::from_utf8(data).unwrap()
-    }
-}
-
-pub struct ResultCodeResidual(String, String, String, String);
-
-impl Try for CheckResult {
-    type Output = ();
-    type Residual = ResultCodeResidual;
-
-    fn branch(self) -> ControlFlow<Self::Residual> {
-        match self {
-            CheckError(msg, stdout, stderr, remedy) => {
-                ControlFlow::Break(ResultCodeResidual(msg, stdout, stderr, remedy))
-            }
-            CheckOk => ControlFlow::Continue(()),
-        }
-    }
-    fn from_output((): ()) -> Self {
-        CheckOk
-    }
-}
-
-impl FromResidual for CheckResult {
-    fn from_residual(r: ResultCodeResidual) -> Self {
-        Self::CheckError(r.0, r.1, r.2, r.3)
-    }
-}
 
 fn main() -> CheckResult {
     let _cli_args = CliArgs::new();
