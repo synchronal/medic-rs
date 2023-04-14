@@ -221,6 +221,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "medic-check-hex"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "indoc",
+ "medic-check",
+]
+
+[[package]]
 name = "medic-check-homebrew"
 version = "0.1.0"
 dependencies = [
