@@ -1,5 +1,3 @@
-#![feature(try_trait_v2)]
-
 use medic_check::CheckResult::{self, CheckError, CheckOk};
 use medic_check_homebrew::cli::CliArgs;
 

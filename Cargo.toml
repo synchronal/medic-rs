@@ -3,6 +3,7 @@
 members = [
     "medic",
     "medic-check",
+    "medic-check-asdf",
     "medic-check-homebrew",
     "medic-doctor",
     "medic-init",
