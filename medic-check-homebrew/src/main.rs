@@ -1,3 +1,4 @@
+use medic_check::std_to_string;
 use medic_check::CheckResult::{self, CheckError, CheckOk};
 use medic_check_homebrew::cli::CliArgs;
 
@@ -41,8 +42,8 @@ fn bundled() -> CheckResult {
         Ok(status) => match status.status.success() {
             true => CheckOk,
             false => {
-                let stdout = CheckResult::from_std(status.stdout);
-                let stderr = CheckResult::from_std(status.stderr);
+                let stdout = std_to_string(status.stdout);
+                let stderr = std_to_string(status.stderr);
                 let remedy = format!("brew bundle --file {filepath:?}");
                 CheckError(
                     "Homebrew bundle is out of date.".into(),
@@ -70,8 +71,8 @@ fn homebrew_installed() -> CheckResult {
             if which.status.success() {
                 CheckOk
             } else {
-                let stdout = CheckResult::from_std(which.stdout);
-                let stderr = CheckResult::from_std(which.stderr);
+                let stdout = std_to_string(which.stdout);
+                let stderr = std_to_string(which.stderr);
                 CheckError("Unable to find homebrew".into(),
                 stdout,
                 stderr,

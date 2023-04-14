@@ -25,12 +25,6 @@ impl std::process::Termination for CheckResult {
     }
 }
 
-impl CheckResult {
-    pub fn from_std(data: Vec<u8>) -> String {
-        String::from_utf8(data).unwrap()
-    }
-}
-
 pub struct ResultCodeResidual(String, String, String, String);
 
 impl Try for CheckResult {
@@ -54,6 +48,10 @@ impl FromResidual for CheckResult {
     fn from_residual(r: ResultCodeResidual) -> Self {
         Self::CheckError(r.0, r.1, r.2, r.3)
     }
+}
+
+pub fn std_to_string(data: Vec<u8>) -> String {
+    String::from_utf8(data).unwrap()
 }
 
 #[cfg(test)]

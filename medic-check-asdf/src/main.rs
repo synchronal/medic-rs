@@ -1,4 +1,5 @@
 use medic_check::CheckResult::{self, CheckError, CheckOk};
+use medic_check::std_to_string;
 use medic_check_asdf::cli::CliArgs;
 
 use std::process::Command;
@@ -15,8 +16,8 @@ fn asdf_installed() -> CheckResult {
             if which.status.success() {
                 CheckOk
             } else {
-                let stdout = CheckResult::from_std(which.stdout);
-                let stderr = CheckResult::from_std(which.stderr);
+                let stdout = std_to_string(which.stdout);
+                let stderr = std_to_string(which.stderr);
                 CheckError("Unable to find asdf.".into(),
                 stdout,
                 stderr,
