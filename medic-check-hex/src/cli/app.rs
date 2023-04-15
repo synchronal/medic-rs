@@ -5,6 +5,8 @@ use clap::Subcommand;
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 #[clap(bin_name = "medic-check-hex")]
+/// Checks for ensuring that Elixir dependencies are
+/// properly installed.
 pub struct CliArgs {
     #[command(subcommand)]
     pub command: Command,

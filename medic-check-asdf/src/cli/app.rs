@@ -5,6 +5,7 @@ use clap::Subcommand;
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 #[clap(bin_name = "medic-check-asdf")]
+/// Checks for whether ASDF dependencies are available.
 pub struct CliArgs {
     #[command(subcommand)]
     pub command: Command,

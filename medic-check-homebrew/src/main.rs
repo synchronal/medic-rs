@@ -44,12 +44,11 @@ fn bundled() -> CheckResult {
             false => {
                 let stdout = std_to_string(status.stdout);
                 let stderr = std_to_string(status.stderr);
-                let remedy = format!("brew bundle --file {filepath:?}");
                 CheckError(
                     "Homebrew bundle is out of date.".into(),
                     stdout,
                     stderr,
-                    remedy,
+                    format!("brew bundle --file {filepath:?}"),
                 )
             }
         },
