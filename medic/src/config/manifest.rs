@@ -1,12 +1,30 @@
 use crate::AppResult;
 
+use serde::Deserialize;
+use std::collections::HashMap;
 use std::path::PathBuf;
 
-#[derive(Debug)]
-pub struct Manifest {}
+#[derive(Debug, Deserialize)]
+pub struct Manifest {
+    pub doctor: Option<DoctorConfig>,
+}
 
 impl Manifest {
-    pub fn new(_path: PathBuf) -> AppResult<Manifest> {
-        Ok(Manifest {})
+    pub fn new(path: PathBuf) -> AppResult<Manifest> {
+        let manifest_contents = std::fs::read_to_string(path)?;
+        let manifest: Manifest = toml::from_str(&manifest_contents)?;
+        Ok(manifest)
     }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DoctorConfig {
+    pub checks: Vec<Check>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Check {
+    pub check: String,
+    pub command: String,
+    pub args: HashMap<String, String>,
 }
