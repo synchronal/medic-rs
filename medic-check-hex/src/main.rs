@@ -12,7 +12,7 @@ fn main() -> CheckResult {
     match cli.command {
         Command::ArchiveInstalled(args) => archive_installed(args.name)?,
         Command::LocalHex => local_mix_installed()?,
-        // Command::LocalRebar => local_rebar_installed()?,
+        Command::LocalRebar => local_rebar_installed()?,
         Command::PackagesCompiled(args) => packages_compiled(args.cd)?,
         Command::PackagesInstalled(args) => packages_installed(args.cd)?,
     }
@@ -90,7 +90,7 @@ fn local_mix_installed() -> CheckResult {
                     CheckOk
                 } else {
                     CheckError(
-                        format!("Mix archive is not installed."),
+                        format!("Mix hex archive is not installed."),
                         stdout,
                         stderr,
                         format!("mix local.hex --force"),
@@ -114,8 +114,20 @@ fn local_mix_installed() -> CheckResult {
     }
 }
 
-// fn local_rebar_installed() -> CheckResult {
-// }
+fn local_rebar_installed() -> CheckResult {
+    match Cmd::new("mix")
+        .args(["local.rebar", "--if-missing"])
+        .output()
+    {
+        Ok(_) => CheckOk,
+        Err(_) => CheckError(
+            "Unable to install local rebar.".into(),
+            "".into(),
+            "".into(),
+            "mix local.rebar".into(),
+        ),
+    }
+}
 
 fn packages_compiled(cd: String) -> CheckResult {
     let path = fs::canonicalize(&cd).unwrap();

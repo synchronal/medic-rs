@@ -16,8 +16,8 @@ pub enum Command {
     ArchiveInstalled(ArchiveArgs),
     /// Checks that hex is installed locally.
     LocalHex,
-    // /// Checks that rebar is installed locally.
-    // LocalRebar,
+    /// Checks that rebar is installed locally.
+    LocalRebar,
     /// Checks that all Mix dependencies are compiled.
     PackagesCompiled(PackageArgs),
     /// Checks that all Mix dependencies are installed.
