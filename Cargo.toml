@@ -6,6 +6,7 @@ members = [
     "medic-check-asdf",
     "medic-check-hex",
     "medic-check-homebrew",
+    "medic-check-npm",
     "medic-doctor",
     "medic-init",
 ]
