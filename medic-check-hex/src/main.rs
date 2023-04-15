@@ -55,7 +55,7 @@ fn archive_installed(archive_name: String) -> CheckResult {
                     CheckOk
                 } else {
                     CheckError(
-                        format!("Mix archive is not installed."),
+                        "Mix archive is not installed.".into(),
                         stdout,
                         stderr,
                         format!("mix archive.install hex {} --force", archive_name),
@@ -85,15 +85,14 @@ fn local_mix_installed() -> CheckResult {
             let stdout = std_to_string(output.stdout);
             let stderr = std_to_string(output.stderr);
             if output.status.success() {
-                let archive_substr = format!("* hex-");
-                if stdout.contains(&archive_substr) {
+                if stdout.contains("* hex-") {
                     CheckOk
                 } else {
                     CheckError(
-                        format!("Mix hex archive is not installed."),
+                        "Mix hex archive is not installed.".into(),
                         stdout,
                         stderr,
-                        format!("mix local.hex --force"),
+                        "mix local.hex --force".into(),
                     )
                 }
             } else {
@@ -138,7 +137,7 @@ fn packages_compiled(cd: String) -> CheckResult {
             if output.status.success() {
                 if stdout.contains("the dependency build is outdated") {
                     CheckError(
-                        format!("Mix deps are not compiled."),
+                        "Mix deps are not compiled.".into(),
                         stdout,
                         stderr,
                         format!("(cd {} && mix deps.compile)", cd),
@@ -175,7 +174,7 @@ fn packages_installed(cd: String) -> CheckResult {
                     || stdout.contains("is out of date")
                 {
                     CheckError(
-                        format!("Mix deps are out of date."),
+                        "Mix deps are out of date.".into(),
                         stdout,
                         stderr,
                         format!("(cd {} && mix deps.get)", cd),

@@ -46,7 +46,7 @@ fn packages_installed(cd: Option<String>, prefix: Option<String>) -> CheckResult
     remedy.arg("install");
 
     if let Some(path) = cd {
-        let expanded = std::fs::canonicalize(&path).unwrap();
+        let expanded = std::fs::canonicalize(path).unwrap();
         check.current_dir(&expanded);
         remedy.current_dir(&expanded);
     }
