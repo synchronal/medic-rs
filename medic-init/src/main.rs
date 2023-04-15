@@ -1,3 +1,6 @@
-fn main() {
+use medic::AppResult;
+
+fn main() -> AppResult<()> {
     println!("Hello, world!");
+    Ok(())
 }

@@ -254,11 +254,15 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
+ "medic",
 ]
 
 [[package]]
 name = "medic-init"
 version = "0.1.0"
+dependencies = [
+ "medic",
+]
 
 [[package]]
 name = "once_cell"

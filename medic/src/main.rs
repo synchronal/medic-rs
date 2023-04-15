@@ -1,8 +1,6 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
-use std::error;
-
-pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
+use medic::AppResult;
 
 fn main() -> AppResult<()> {
     println!("Hello, world!");
