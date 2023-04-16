@@ -20,9 +20,9 @@ fn brewfile_exists() -> CheckResult {
     } else {
         CheckError(
             "Brewfile does not exist".into(),
-            "".into(),
-            "".into(),
-            "touch Brewfile".into(),
+            None,
+            None,
+            Some("touch Brewfile".into()),
         )
     }
 }
@@ -46,16 +46,16 @@ fn bundled() -> CheckResult {
                 let stderr = std_to_string(status.stderr);
                 CheckError(
                     "Homebrew bundle is out of date.".into(),
-                    stdout,
-                    stderr,
-                    format!("brew bundle --file {filepath:?}"),
+                    Some(stdout),
+                    Some(stderr),
+                    Some(format!("brew bundle --file {filepath:?}")),
                 )
             }
         },
         Err(err) => {
             let msg =
                 format!("Unable to determine if Brewfile is up to date.\r\nOutput:\r\n{err:?}");
-            CheckError(msg, "".into(), "".into(), "".into())
+            CheckError(msg, None, None, None)
         }
     }
 }
@@ -72,18 +72,14 @@ fn homebrew_installed() -> CheckResult {
             } else {
                 let stdout = std_to_string(which.stdout);
                 let stderr = std_to_string(which.stderr);
-                CheckError("Unable to find homebrew".into(),
-                stdout,
-                stderr,
-            "/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"".into()
-                            )
+                CheckError(
+                    "Unable to find homebrew".into(),
+                    Some(stdout),
+                    Some(stderr),
+                    Some("/bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\"".into())
+                )
             }
         }
-        Err(_err) => CheckError(
-            "Unable to search for homebrew".into(),
-            "".into(),
-            "".into(),
-            "".into(),
-        ),
+        Err(_err) => CheckError("Unable to search for homebrew".into(), None, None, None),
     }
 }

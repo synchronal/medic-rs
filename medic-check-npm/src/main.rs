@@ -24,17 +24,17 @@ fn npm_exists() -> CheckResult {
                 let stderr = std_to_string(which.stderr);
                 CheckError(
                     "Unable to find npm.".into(),
-                    stdout,
-                    stderr,
-                    "asdf install nodejs".into(),
+                    Some(stdout),
+                    Some(stderr),
+                    Some("asdf install nodejs".into()),
                 )
             }
         }
         Err(_err) => CheckError(
             "Unable to search for npm. Is `which` in your PATH?".into(),
-            "".into(),
-            "".into(),
-            "".into(),
+            None,
+            None,
+            None,
         ),
     }
 }
@@ -64,17 +64,17 @@ fn packages_installed(cd: Option<String>, prefix: Option<String>) -> CheckResult
             } else {
                 CheckError(
                     "NPM dependencies out of date.".into(),
-                    stdout,
-                    stderr,
-                    format!("({remedy:?})"),
+                    Some(stdout),
+                    Some(stderr),
+                    Some(format!("({remedy:?})")),
                 )
             }
         }
         Err(_err) => CheckError(
             "Unable to determine which NPM packages are installed.".into(),
-            "".into(),
-            "".into(),
-            "asdf install nodejs".into(),
+            None,
+            None,
+            Some("asdf install nodejs".into()),
         ),
     }
 }

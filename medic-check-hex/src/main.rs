@@ -29,17 +29,17 @@ fn mix_installed() -> CheckResult {
                 let stderr = std_to_string(which.stderr);
                 CheckError(
                     "Unable to find mix.".into(),
-                    stdout,
-                    stderr,
-                    "asdf install elixir".into(),
+                    Some(stdout),
+                    Some(stderr),
+                    Some("asdf install elixir".into()),
                 )
             }
         }
         Err(_err) => CheckError(
             "Unable to search for mix. Is `which` in your PATH?".into(),
-            "".into(),
-            "".into(),
-            "".into(),
+            None,
+            None,
+            None,
         ),
     }
 }
@@ -56,25 +56,25 @@ fn archive_installed(archive_name: String) -> CheckResult {
                 } else {
                     CheckError(
                         "Mix archive is not installed.".into(),
-                        stdout,
-                        stderr,
-                        format!("mix archive.install hex {} --force", archive_name),
+                        Some(stdout),
+                        Some(stderr),
+                        Some(format!("mix archive.install hex {archive_name} --force")),
                     )
                 }
             } else {
                 CheckError(
                     "Unable to determine which mix packages are installed.".into(),
-                    stdout,
-                    stderr,
-                    "asdf install elixir".into(),
+                    Some(stdout),
+                    Some(stderr),
+                    Some("asdf install elixir".into()),
                 )
             }
         }
         Err(_err) => CheckError(
             "Unable to determine which mix archives are installed.".into(),
-            "".into(),
-            "".into(),
-            "asdf install elixir".into(),
+            None,
+            None,
+            Some("asdf install elixir".into()),
         ),
     }
 }
@@ -90,25 +90,25 @@ fn local_mix_installed() -> CheckResult {
                 } else {
                     CheckError(
                         "Mix hex archive is not installed.".into(),
-                        stdout,
-                        stderr,
-                        "mix local.hex --force".into(),
+                        Some(stdout),
+                        Some(stderr),
+                        Some("mix local.hex --force".into()),
                     )
                 }
             } else {
                 CheckError(
                     "Unable to determine which mix packages are installed.".into(),
-                    stdout,
-                    stderr,
-                    "asdf install elixir".into(),
+                    Some(stdout),
+                    Some(stderr),
+                    Some("asdf install elixir".into()),
                 )
             }
         }
         Err(_err) => CheckError(
             "Unable to determine which mix archives are installed.".into(),
-            "".into(),
-            "".into(),
-            "asdf install elixir".into(),
+            None,
+            None,
+            Some("asdf install elixir".into()),
         ),
     }
 }
@@ -121,9 +121,9 @@ fn local_rebar_installed() -> CheckResult {
         Ok(_) => CheckOk,
         Err(_) => CheckError(
             "Unable to install local rebar.".into(),
-            "".into(),
-            "".into(),
-            "mix local.rebar".into(),
+            None,
+            None,
+            Some("mix local.rebar".into()),
         ),
     }
 }
@@ -138,9 +138,9 @@ fn packages_compiled(cd: String) -> CheckResult {
                 if stdout.contains("the dependency build is outdated") {
                     CheckError(
                         "Mix deps are not compiled.".into(),
-                        stdout,
-                        stderr,
-                        format!("(cd {} && mix deps.compile)", cd),
+                        Some(stdout),
+                        Some(stderr),
+                        Some(format!("(cd {cd} && mix deps.compile)")),
                     )
                 } else {
                     CheckOk
@@ -148,17 +148,17 @@ fn packages_compiled(cd: String) -> CheckResult {
             } else {
                 CheckError(
                     "Unable to determine which mix packages are installed.".into(),
-                    stdout,
-                    stderr,
-                    "## No suggested remedy".into(),
+                    Some(stdout),
+                    Some(stderr),
+                    None,
                 )
             }
         }
         Err(_err) => CheckError(
             "Unable to determine which mix packages are installed.".into(),
-            "".into(),
-            "".into(),
-            "asdf install elixir".into(),
+            None,
+            None,
+            Some("asdf install elixir".into()),
         ),
     }
 }
@@ -175,9 +175,9 @@ fn packages_installed(cd: String) -> CheckResult {
                 {
                     CheckError(
                         "Mix deps are out of date.".into(),
-                        stdout,
-                        stderr,
-                        format!("(cd {} && mix deps.get)", cd),
+                        Some(stdout),
+                        Some(stderr),
+                        Some(format!("(cd {cd} && mix deps.get)")),
                     )
                 } else {
                     CheckOk
@@ -185,17 +185,17 @@ fn packages_installed(cd: String) -> CheckResult {
             } else {
                 CheckError(
                     "Unable to determine which mix packages are installed.".into(),
-                    stdout,
-                    stderr,
-                    "## No suggested remedy".into(),
+                    Some(stdout),
+                    Some(stderr),
+                    None,
                 )
             }
         }
         Err(_err) => CheckError(
             "Unable to determine which mix packages are installed.".into(),
-            "".into(),
-            "".into(),
-            "asdf install elixir".into(),
+            None,
+            None,
+            Some("asdf install elixir".into()),
         ),
     }
 }

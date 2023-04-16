@@ -24,17 +24,17 @@ fn asdf_installed() -> CheckResult {
                 let stdout = std_to_string(which.stdout);
                 let stderr = std_to_string(which.stderr);
                 CheckError("Unable to find asdf.".into(),
-                stdout,
-                stderr,
-            "open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into()
-                            )
+                    Some(stdout),
+                    Some(stderr),
+                    Some("open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into())
+                )
             }
         }
         Err(_err) => CheckError(
             "Unable to search for asdf. Is `which` in your PATH?".into(),
-            "".into(),
-            "".into(),
-            "open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into()
+            None,
+            None,
+            Some("open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into())
         ),
     }
 }
@@ -49,17 +49,17 @@ fn package_installed(plugin: String, version: String) -> CheckResult {
                 let stderr = std_to_string(output.stderr);
                 CheckError(
                     format!("Currently configured ASDF package for {plugin} has not been installed."),
-                    stdout,
-                    stderr,
-                    format!("asdf install {} {}", plugin, version),
+                    Some(stdout),
+                    Some(stderr),
+                    Some(format!("asdf install {plugin} {version}")),
                 )
             }
         },
         Err(_err) => CheckError(
             "Unable to determine which asdf packages are installed.".into(),
-            "".into(),
-            "".into(),
-            "open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into(),
+            None,
+            None,
+            Some("open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into()),
         )
     }
 }
@@ -74,17 +74,17 @@ fn plugin_installed(plugin: String) -> CheckResult {
             } else {
                 CheckError(
                     format!("ASDF plugin {plugin} has not been installed."),
-                    plugin_list,
-                    "".into(),
-                    format!("asdf plugin install {}", plugin),
+                    Some(plugin_list),
+                    None,
+                    Some(format!("asdf plugin install {plugin}")),
                 )
             }
         },
         Err(_err) => CheckError(
             "Unable to determine which asdf plugins are installed.".into(),
-            "".into(),
-            "".into(),
-            "open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into(),
+            None,
+            None,
+            Some("open https://asdf-vm.com/guide/getting-started.html#community-supported-download-methods".into()),
         )
     }
 }
