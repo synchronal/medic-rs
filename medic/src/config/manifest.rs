@@ -11,9 +11,17 @@ pub struct Manifest {
 
 impl Manifest {
     pub fn new(path: PathBuf) -> AppResult<Manifest> {
-        let manifest_contents = std::fs::read_to_string(path)?;
-        let manifest: Manifest = toml::from_str(&manifest_contents)?;
-        Ok(manifest)
+        if path.exists() {
+            let manifest_contents = std::fs::read_to_string(path)?;
+            let manifest: Manifest = toml::from_str(&manifest_contents)?;
+            Ok(manifest)
+        } else {
+            Err(format!(
+                "Medic config file '{}' does not exist.",
+                path.to_string_lossy()
+            )
+            .into())
+        }
     }
 }
 
