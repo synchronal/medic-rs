@@ -1,2 +1,2 @@
 pub mod manifest;
-pub use manifest::Manifest;
+pub use manifest::{Check, Manifest};

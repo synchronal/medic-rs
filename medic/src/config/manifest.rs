@@ -3,6 +3,7 @@ use crate::AppResult;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::path::PathBuf;
+use std::process::Command;
 
 #[derive(Debug, Deserialize)]
 pub struct Manifest {
@@ -33,6 +34,27 @@ pub struct DoctorConfig {
 #[derive(Debug, Deserialize)]
 pub struct Check {
     pub check: String,
-    pub command: String,
-    pub args: HashMap<String, String>,
+    pub command: Option<String>,
+    pub args: Option<HashMap<String, String>>,
+}
+
+impl Check {
+    pub fn to_command(self) -> Command {
+        let mut check_cmd: String = "medic-check-".to_owned();
+        check_cmd.push_str(&self.check);
+        let mut command = Command::new(check_cmd);
+
+        if let Some(subcmd) = self.command {
+            command.arg(subcmd);
+        }
+        if let Some(args) = self.args {
+            for (flag, value) in args {
+                let mut flag_arg = "--".to_owned();
+                flag_arg.push_str(&flag);
+                command.arg(flag_arg).arg(value);
+            }
+        }
+
+        command
+    }
 }

@@ -1,6 +1,6 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
-use medic::config::Manifest;
+use medic::config::{Check, Manifest};
 use medic::AppResult;
 use medic_doctor::cli::CliArgs;
 
@@ -21,7 +21,28 @@ fn main() -> AppResult<()> {
 
     let manifest = Manifest::new(cli_args.config)?;
 
-    println!("manifest: {:?}", manifest);
+    match manifest.doctor {
+        Some(doctor) => {
+            for check in doctor.checks {
+                run_check(check)?;
+            }
+            Ok(())
+        }
+        None => Err("No doctor checks found in medic config.".into()),
+    }
+}
 
-    Ok(())
+fn run_check(check: Check) -> AppResult<()> {
+    let mut command = check.to_command();
+    match command.output() {
+        Ok(_) => Ok(()),
+        Err(err) => {
+            let mut error: String = "Check failed!\r\n".to_owned();
+            error.push_str("Command:\r\n");
+            error.push_str(&format!("{command:?}\r\n"));
+            error.push_str(&format!("Error:\r\n{err:?}"));
+
+            Err(error.into())
+        }
+    }
 }
