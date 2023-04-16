@@ -17,7 +17,7 @@ impl Manifest {
             Ok(manifest)
         } else {
             Err(format!(
-                "Medic config file '{}' does not exist.",
+                "Medic config file `{}` does not exist.",
                 path.to_string_lossy()
             )
             .into())
