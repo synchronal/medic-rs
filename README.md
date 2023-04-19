@@ -10,3 +10,16 @@ stand-alone binaries and scripts with minimal tool-chain dependencies.
 TBD. This project is currently a work in progress, and is not ready for
 general use.
 
+## Usage
+
+```shell
+bin/dev/doctor
+
+cargo run --bin medic-doctor -- -c fixtures/medic.toml
+```
+
+## Notes
+
+- This project uses the unstable feature `try_trait_v2`, which requires
+  nightly Rust. Until the feature is made stable, things could break at
+  any moment with changes to Rust.
