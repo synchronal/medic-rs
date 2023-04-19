@@ -242,6 +242,7 @@ dependencies = [
  "clap",
  "indoc",
  "medic-check",
+ "medic-lib",
 ]
 
 [[package]]
@@ -251,6 +252,7 @@ dependencies = [
  "clap",
  "indoc",
  "medic-check",
+ "medic-lib",
 ]
 
 [[package]]
@@ -260,6 +262,7 @@ dependencies = [
  "clap",
  "indoc",
  "medic-check",
+ "medic-lib",
 ]
 
 [[package]]
@@ -269,6 +272,7 @@ dependencies = [
  "clap",
  "indoc",
  "medic-check",
+ "medic-lib",
 ]
 
 [[package]]
@@ -279,7 +283,7 @@ dependencies = [
  "clap_complete",
  "indoc",
  "medic",
- "medic-check",
+ "medic-lib",
 ]
 
 [[package]]
@@ -288,6 +292,10 @@ version = "0.1.0"
 dependencies = [
  "medic",
 ]
+
+[[package]]
+name = "medic-lib"
+version = "0.1.0"
 
 [[package]]
 name = "memchr"

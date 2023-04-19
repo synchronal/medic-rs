@@ -10,7 +10,7 @@ clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "
 clap_complete = "4.1.4"
 indoc = "2.0.1"
 medic = { path = "../medic" }
-medic-check = { path = "../medic-check" }
+medic-lib = { path = "../medic-lib" }
 
 [features]
 # Treat warnings as a build error.

@@ -2,8 +2,8 @@
 
 use medic::config::{Check, Manifest};
 use medic::AppResult;
-use medic_check::std_to_string;
 use medic_doctor::cli::CliArgs;
+use medic_lib::std_to_string;
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;

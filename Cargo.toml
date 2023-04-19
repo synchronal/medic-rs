@@ -9,4 +9,5 @@ members = [
     "medic-check-npm",
     "medic-doctor",
     "medic-init",
+    "medic-lib",
 ]

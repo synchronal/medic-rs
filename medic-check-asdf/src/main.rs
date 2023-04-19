@@ -1,6 +1,6 @@
-use medic_check::std_to_string;
 use medic_check::CheckResult::{self, CheckError, CheckOk};
 use medic_check_asdf::cli::{CliArgs, Command};
+use medic_lib::std_to_string;
 
 use std::process::Command as Cmd;
 
