@@ -2,6 +2,7 @@ use crate::AppResult;
 
 use serde::Deserialize;
 use std::collections::HashMap;
+use std::fmt;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -56,5 +57,22 @@ impl Check {
         }
 
         command
+    }
+}
+
+impl fmt::Display for Check {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "\x1b[36m{:}", self.check)?;
+        if let Some(command) = &self.command {
+            write!(f, ": \x1b[0;36m{}?", command)?;
+        }
+        if let Some(args) = &self.args {
+            write!(f, " \x1b[0;33m(")?;
+            for value in args.values() {
+                write!(f, "{value}")?;
+            }
+            write!(f, ")")?;
+        }
+        write!(f, "\x1b[0m")
     }
 }

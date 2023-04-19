@@ -1,3 +1,4 @@
+use std::io::{self, Write};
 use std::ops::{ControlFlow, FromResidual, Try};
 
 #[derive(Debug, Default, Clone, Eq, PartialEq)]
@@ -19,8 +20,9 @@ impl std::process::Termination for CheckResult {
                 if let Some(stderr) = stderr {
                     eprintln!("stderr:\r\n{stderr}");
                 }
+                io::stderr().flush().unwrap();
                 if let Some(remedy) = remedy {
-                    eprintln!("Possible remedy:\r\n{remedy}\r\n");
+                    println!("{remedy}");
                 }
 
                 std::process::ExitCode::from(1)
