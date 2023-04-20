@@ -2,9 +2,9 @@
 
 pub mod cli;
 
-use medic::config::{Check, Manifest};
-use medic::AppResult;
+use medic_lib::config::{Check, Manifest};
 use medic_lib::std_to_string;
+use medic_lib::AppResult;
 
 pub fn run_checks(manifest: Manifest) -> AppResult<()> {
     match manifest.doctor {

@@ -227,8 +227,8 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
- "serde",
- "toml",
+ "medic-doctor",
+ "medic-lib",
 ]
 
 [[package]]
@@ -282,7 +282,6 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
- "medic",
  "medic-lib",
 ]
 
@@ -290,12 +289,16 @@ dependencies = [
 name = "medic-init"
 version = "0.1.0"
 dependencies = [
- "medic",
+ "medic-lib",
 ]
 
 [[package]]
 name = "medic-lib"
 version = "0.1.0"
+dependencies = [
+ "serde",
+ "toml",
+]
 
 [[package]]
 name = "memchr"
