@@ -14,6 +14,7 @@ pub struct CliArgs {
 }
 
 #[derive(Debug, Subcommand)]
+#[clap(infer_subcommands = true)]
 pub enum Command {
     /// Runs a series of checks to ensure that a project is fully set up
     /// for development.
