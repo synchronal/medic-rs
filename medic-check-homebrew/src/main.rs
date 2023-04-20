@@ -3,7 +3,7 @@ use medic_check_homebrew::cli::CliArgs;
 use medic_lib::std_to_string;
 
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::Command;
 
 fn main() -> CheckResult {
     let _cli_args = CliArgs::new();
@@ -39,11 +39,11 @@ fn bundled() -> CheckResult {
         .env("HOMEBREW_NO_AUTO_UPDATE", "1")
         .output()
     {
-        Ok(status) => match status.status.success() {
+        Ok(command) => match command.status.success() {
             true => CheckOk,
             false => {
-                let stdout = std_to_string(status.stdout);
-                let stderr = std_to_string(status.stderr);
+                let stdout = std_to_string(command.stdout);
+                let stderr = std_to_string(command.stderr);
                 CheckError(
                     "Homebrew bundle is out of date.".into(),
                     Some(stdout),
@@ -61,11 +61,7 @@ fn bundled() -> CheckResult {
 }
 
 fn homebrew_installed() -> CheckResult {
-    match Command::new("which")
-        .args(["brew"])
-        .stdout(Stdio::null())
-        .output()
-    {
+    match Command::new("which").args(["brew"]).output() {
         Ok(which) => {
             if which.status.success() {
                 CheckOk
