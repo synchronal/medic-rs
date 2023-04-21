@@ -15,10 +15,14 @@ impl std::process::Termination for CheckResult {
             CheckResult::CheckError(msg, stdout, stderr, remedy) => {
                 eprintln!("Error: {msg}\r\n");
                 if let Some(stdout) = stdout {
-                    eprintln!("stdout:\r\n{stdout}");
+                    if !stdout.is_empty() {
+                        eprintln!("stdout:\r\n{stdout}");
+                    }
                 }
                 if let Some(stderr) = stderr {
-                    eprintln!("stderr:\r\n{stderr}");
+                    if !stderr.is_empty() {
+                        eprintln!("stderr:\r\n{stderr}");
+                    }
                 }
                 io::stderr().flush().unwrap();
                 if let Some(remedy) = remedy {
