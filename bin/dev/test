@@ -8,7 +8,7 @@ source ".medic/_support/step.sh"
 set -o pipefail
 
 step "Check for warnings" \
-  "cargo build --features strict"
+  "cargo build --workspace --features strict"
 
 step_header "Run tests" "cargo test"
 echo
