@@ -13,8 +13,20 @@ pub struct Manifest {
 
 impl Manifest {
     pub fn new(path: PathBuf) -> AppResult<Manifest> {
-        if path.exists() {
-            let manifest_contents = std::fs::read_to_string(path)?;
+        let cwd = std::env::current_dir()
+            .unwrap()
+            .into_os_string()
+            .into_string()
+            .unwrap();
+        let mut context = std::collections::HashMap::new();
+        context.insert("PWD".to_string(), cwd.clone());
+        context.insert("CWD".to_string(), cwd);
+
+        let path_expansion = envsubst::substitute(path.to_string_lossy(), &context).unwrap();
+        let expanded_path = std::path::Path::new(&path_expansion);
+
+        if expanded_path.exists() {
+            let manifest_contents = std::fs::read_to_string(expanded_path)?;
             let manifest: Manifest = toml::from_str(&manifest_contents)?;
             Ok(manifest)
         } else {

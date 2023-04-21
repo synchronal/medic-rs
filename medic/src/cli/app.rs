@@ -25,7 +25,7 @@ pub enum Command {
 pub struct DoctorArgs {
     /// Name of a hex package.
     #[clap(value_parser)]
-    #[arg(short, long, env = "MEDIC_CONFIG", default_value = "$PWD/.medic/config.toml", value_hint = clap::ValueHint::FilePath)]
+    #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.medic/config.toml", value_hint = clap::ValueHint::FilePath)]
     pub config: PathBuf,
 }
 
