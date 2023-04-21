@@ -10,3 +10,18 @@ checks = [
   { check = "rust", command = "target-installed", args = { target = "x86_64-apple-darwin" } },
 ]
 
+[test]
+
+checks = [
+  { shell = { name = "Check for warnings", cmd = "cargo build --workspace --features strict" } },
+  { step = { step = "cargo", command = "test" } },
+]
+
+[audit]
+
+checks = [
+  { shell = { name = "Audit crates", cmd = "cargo audit", allow_failure = true } },
+  { check = { check = "cargo", command = "format-check" } },
+  { step = { step = "cargo", command = "clippy" } },
+]
+
