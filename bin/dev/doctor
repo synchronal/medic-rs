@@ -4,24 +4,11 @@ trap "exit" INT
 
 source ".medic/_support/cecho.sh"
 source ".medic/_support/check.sh"
+source ".medic/_support/step.sh"
 
-check "Brewfile" \
-  "brew bundle check" \
-  "brew bundle"
+check "ASDF: rust" "asdf plugin list | grep rust" "asdf plugin add rust"
 
-check "Cargo audit installed" \
-  "cargo audit --help >/dev/null 2>&1" \
-  "cargo install cargo-audit"
+step "ASDF" "asdf install"
+step "Build all workspace crates" "cargo build --workspace"
 
-check "Cargo outdated installed" \
-  "cargo outdated --help >/dev/null 2>&1" \
-  "cargo install cargo-outdated"
-
-check "Rustup MacOS target installed: aarch64" \
-  "rustup target list | grep 'aarch64-apple-darwin (installed)'" \
-  "rustup target install aarch64-apple-darwin"
-
-check "Rustup MacOS target installed: x86_64" \
-  "rustup target list | grep 'x86_64-apple-darwin (installed)'" \
-  "rustup target install x86_64-apple-darwin"
-
+cargo run --bin medic -- doc
