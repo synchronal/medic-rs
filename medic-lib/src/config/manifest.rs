@@ -1,6 +1,7 @@
 use crate::AppResult;
 
 use medic_check::Check;
+use medic_step::Step;
 
 use serde::Deserialize;
 use std::path::PathBuf;
@@ -8,6 +9,7 @@ use std::path::PathBuf;
 #[derive(Debug, Deserialize)]
 pub struct Manifest {
     pub doctor: Option<DoctorConfig>,
+    pub test: Option<TestConfig>,
 }
 
 impl Manifest {
@@ -41,4 +43,9 @@ impl Manifest {
 #[derive(Debug, Deserialize)]
 pub struct DoctorConfig {
     pub checks: Vec<Check>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct TestConfig {
+    pub checks: Vec<Step>,
 }

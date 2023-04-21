@@ -19,6 +19,8 @@ pub enum Command {
     /// Runs a series of checks to ensure that a project is fully set up
     /// for development.
     Doctor(DoctorArgs),
+    /// Runs all configured tests for an application.
+    Test(DoctorArgs),
 }
 
 #[derive(Args, Debug)]

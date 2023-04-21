@@ -467,6 +467,7 @@ dependencies = [
  "indoc",
  "medic-doctor",
  "medic-lib",
+ "medic-test",
 ]
 
 [[package]]
@@ -552,8 +553,27 @@ version = "0.1.0"
 dependencies = [
  "envsubst",
  "medic-check",
+ "medic-step",
  "serde",
  "toml",
+]
+
+[[package]]
+name = "medic-step"
+version = "0.1.0"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "medic-test"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "clap_complete",
+ "indoc",
+ "medic-lib",
+ "medic-step",
 ]
 
 [[package]]

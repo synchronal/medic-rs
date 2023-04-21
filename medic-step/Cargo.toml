@@ -1,5 +1,5 @@
 [package]
-name = "medic-lib"
+name = "medic-step"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,9 +7,9 @@ edition = "2021"
 
 [dependencies]
 
-envsubst = "0.2"
-medic-check = { path = "../medic-check" }
-medic-step = { path = "../medic-step" }
 serde = { version = "1.0", features = ["derive"] }
-toml = "0.7"
 
+[features]
+# Treat warnings as a build error.
+default = ["strict"]
+strict = []

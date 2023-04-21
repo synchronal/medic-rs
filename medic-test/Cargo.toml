@@ -1,5 +1,5 @@
 [package]
-name = "medic"
+name = "medic-test"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,12 +9,10 @@ edition = "2021"
 clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 clap_complete = "4.1.4"
 indoc = "2.0.1"
-medic-doctor = { path = "../medic-doctor" }
+medic-step = { path = "../medic-step" }
 medic-lib = { path = "../medic-lib" }
-medic-test = { path = "../medic-test" }
 
 [features]
 # Treat warnings as a build error.
 default = ["strict"]
 strict = []
-
