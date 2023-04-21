@@ -32,7 +32,9 @@ fn run_check(check: Check) -> AppResult<()> {
                 Ok(())
             } else {
                 println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-                eprint!("\x1b[0;31m{}\x1b[0m", std_to_string(result.stderr));
+                eprintln!("\x1b[0;31m== Check output ==\x1b[0m\r\n");
+                eprint!("{}", std_to_string(result.stderr));
+
                 if result.stdout.is_empty() {
                     println!("\x1b[0;33mNo remedy suggested.\x1b[0m");
                 } else {

@@ -13,15 +13,15 @@ impl std::process::Termination for CheckResult {
         match self {
             CheckResult::CheckOk => std::process::ExitCode::from(0),
             CheckResult::CheckError(msg, stdout, stderr, remedy) => {
-                eprintln!("Error: {msg}\r\n");
+                eprintln!("\x1b[31;1mError:\x1b[0m {msg}\r\n");
                 if let Some(stdout) = stdout {
                     if !stdout.is_empty() {
-                        eprintln!("stdout:\r\n{stdout}");
+                        eprintln!("\x1b[31;1mstdout:\x1b[0m\r\n{stdout}");
                     }
                 }
                 if let Some(stderr) = stderr {
                     if !stderr.is_empty() {
-                        eprintln!("stderr:\r\n{stderr}");
+                        eprintln!("\x1b[31;1mstderr:\x1b[0m\r\n{stderr}");
                     }
                 }
                 io::stderr().flush().unwrap();
