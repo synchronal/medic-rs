@@ -6,8 +6,7 @@ use medic_lib::config::{Check, Manifest};
 use medic_lib::std_to_string;
 use medic_lib::AppResult;
 
-use clipboard::ClipboardContext;
-use clipboard::ClipboardProvider;
+use arboard::Clipboard;
 
 pub fn run_checks(manifest: Manifest) -> AppResult<()> {
     match manifest.doctor {
@@ -34,14 +33,14 @@ fn run_check(check: Check) -> AppResult<()> {
                 println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
                 eprint!("\x1b[0;31m{}\x1b[0m", std_to_string(result.stderr));
                 if result.stdout.is_empty() {
+                    println!("\x1b[0;33mNo remedy suggested.\x1b[0m");
+                } else {
                     let remedy = std_to_string(result.stdout).trim().to_owned();
                     print!("\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m");
                     print!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
 
-                    let mut ctx: ClipboardContext = ClipboardProvider::new().unwrap();
-                    ctx.set_contents(remedy).unwrap();
-                } else {
-                    println!("\x1b[0;33mNo remedy suggested.\x1b[0m");
+                    let mut clipboard = Clipboard::new().unwrap();
+                    clipboard.set_text(remedy).unwrap();
                 }
                 Err("".into())
             }
