@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 clap_complete = "4.1.4"
+clipboard = "0.5"
 indoc = "2.0.1"
 medic-lib = { path = "../medic-lib" }
 
