@@ -18,6 +18,10 @@ pub fn run_steps(manifest: Manifest) -> AppResult<()> {
 }
 
 fn run_step(step: Step) -> AppResult<()> {
+    let allow_failure = match &step {
+        Step::Shell(config) => config.allow_failure,
+        Step::Step(_) => false,
+    };
     print!("\x1b[32m• \x1b[0");
     print!("{step}  …");
     if let Some(mut command) = step.to_command() {
@@ -30,7 +34,12 @@ fn run_step(step: Step) -> AppResult<()> {
                     println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
                     eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
                     eprint!("{}", std_to_string(result.stderr));
-                    Err("".into())
+                    if allow_failure {
+                        eprintln!("\x1b[32m(continuing)\x1b[0m");
+                        Ok(())
+                    } else {
+                        Err("".into())
+                    }
                 }
             }
             Err(err) => {
