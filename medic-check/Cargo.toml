@@ -8,3 +8,9 @@ edition = "2021"
 [dependencies]
 
 serde = { version = "1.0", features = ["derive"] }
+
+[features]
+# Treat warnings as a build error.
+default = ["strict"]
+strict = []
+

@@ -8,3 +8,9 @@ edition = "2021"
 [dependencies]
 
 medic-lib = { path = "../medic-lib" }
+
+[features]
+# Treat warnings as a build error.
+default = ["strict"]
+strict = []
+
