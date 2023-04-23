@@ -13,32 +13,32 @@ checks = [
 [test]
 
 checks = [
-  { shell = { name = "Check for warnings", cmd = "cargo build --workspace --features strict" } },
-  { step = { step = "cargo", command = "test" } },
+  { name = "Check for warnings", shell = "cargo build --workspace --features strict" },
+  { step = "cargo", command = "test", verbose = true },
 ]
 
 [audit]
 
 checks = [
-  { shell = { name = "Audit crates", cmd = "cargo audit", allow_failure = true } },
-  { check = { check = "cargo", command = "format-check" } },
-  { step = { step = "cargo", command = "clippy" } },
+  { name = "Audit crates", shell = "cargo audit", allow_failure = true },
+  { check = "cargo", command = "format-check" },
+  { step = "cargo", command = "clippy" },
 ]
 
 [update]
 
 steps = [
-  { step = { step = "git", command = "pull" } },
-  { doctor = {} },
+  { step = "git", command = "pull" },
+  "doctor",
 ]
 
 [shipit]
 
 steps = [
-  { audit = {} },
-  { update = {} },
-  { test = {} },
-  { shell = { name = "Release", cmd = "bin/dev/release" } },
-  { step = { step = "git", command = "push" } },
-  { step = { step = "github", command = "link-actions" } },
+  "audit",
+  "update",
+  "test",
+  { name = "Release", cmd = "bin/dev/release" },
+  { step = "git", command = "push" },
+  { step = "github", command = "link-to-actions", verbose = true },
 ]

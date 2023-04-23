@@ -1,8 +1,7 @@
-use medic_lib::std_to_string;
 use medic_step::StepResult::{self, StepError, StepOk};
 use medic_step_cargo::cli::{CliArgs, Command as Cmd};
 
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 fn main() -> StepResult {
     let cli = CliArgs::new();
@@ -14,14 +13,17 @@ fn main() -> StepResult {
 }
 
 fn run_clippy() -> StepResult {
-    match Command::new("cargo").args(["clippy"]).output() {
+    match Command::new("cargo")
+        .args(["clippy"])
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .output()
+    {
         Ok(which) => {
             if which.status.success() {
                 StepOk
             } else {
-                let stdout = std_to_string(which.stdout);
-                let stderr = std_to_string(which.stderr);
-                StepError("Cargo lint error".into(), Some(stdout), Some(stderr))
+                StepError("Cargo lint error".into(), None, None)
             }
         }
         Err(_err) => StepError(
@@ -33,14 +35,17 @@ fn run_clippy() -> StepResult {
 }
 
 fn run_tests() -> StepResult {
-    match Command::new("cargo").args(["test"]).output() {
+    match Command::new("cargo")
+        .args(["test"])
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .output()
+    {
         Ok(which) => {
             if which.status.success() {
                 StepOk
             } else {
-                let stdout = std_to_string(which.stdout);
-                let stderr = std_to_string(which.stderr);
-                StepError("Cargo test failure".into(), Some(stdout), Some(stderr))
+                StepError("Cargo test failure".into(), None, None)
             }
         }
         Err(_err) => StepError(

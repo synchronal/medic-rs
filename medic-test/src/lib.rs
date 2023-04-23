@@ -5,6 +5,9 @@ use medic_lib::std_to_string;
 use medic_lib::AppResult;
 use medic_step::Step;
 
+use std::io::{self, Write};
+use std::process::Stdio;
+
 pub fn run_steps(manifest: Manifest) -> AppResult<()> {
     match manifest.test {
         Some(test) => {
@@ -22,9 +25,20 @@ fn run_step(step: Step) -> AppResult<()> {
         Step::Shell(config) => config.allow_failure,
         Step::Step(_) => false,
     };
+
+    let verbose = match &step {
+        Step::Shell(config) => config.verbose,
+        Step::Step(config) => config.verbose,
+    };
+
     print!("\x1b[32m• \x1b[0");
     print!("{step}  …");
+    io::stdout().flush().unwrap();
     if let Some(mut command) = step.to_command() {
+        if verbose {
+            print!("\r\n");
+            command.stdout(Stdio::inherit()).stderr(Stdio::inherit());
+        }
         match command.output() {
             Ok(result) => {
                 if result.status.success() {

@@ -4,10 +4,9 @@ use std::fmt;
 use std::process::Command;
 
 #[derive(Debug, Deserialize)]
+#[serde(untagged)]
 pub enum Step {
-    #[serde(rename(deserialize = "shell"))]
     Shell(ShellConfig),
-    #[serde(rename(deserialize = "step"))]
     Step(StepConfig),
 }
 
@@ -16,22 +15,26 @@ pub struct ShellConfig {
     #[serde(default)]
     pub allow_failure: bool,
     pub name: String,
-    pub cmd: String,
+    pub shell: String,
+    #[serde(default)]
+    pub verbose: bool,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct StepConfig {
+    pub args: Option<HashMap<String, String>>,
+    pub command: Option<String>,
     pub name: Option<String>,
     pub step: String,
-    pub command: Option<String>,
-    pub args: Option<HashMap<String, String>>,
+    #[serde(default)]
+    pub verbose: bool,
 }
 
 impl Step {
     pub fn to_command(self) -> Option<Command> {
         match self {
             Step::Shell(config) => {
-                let cmd: Vec<&str> = config.cmd.split(' ').collect();
+                let cmd: Vec<&str> = config.shell.split(' ').collect();
                 if let Some((first, args)) = cmd.split_first() {
                     let mut command = Command::new(first);
                     for arg in args {
