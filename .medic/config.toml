@@ -25,3 +25,20 @@ checks = [
   { step = { step = "cargo", command = "clippy" } },
 ]
 
+[update]
+
+steps = [
+  { step = { step = "git", command = "pull" } },
+  { doctor = {} },
+]
+
+[shipit]
+
+steps = [
+  { audit = {} },
+  { update = {} },
+  { test = {} },
+  { shell = { name = "Release", cmd = "bin/dev/release" } },
+  { step = { step = "git", command = "push" } },
+  { step = { step = "github", command = "link-actions" } },
+]
