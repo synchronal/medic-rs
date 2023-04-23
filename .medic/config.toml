@@ -20,7 +20,7 @@ checks = [
 [audit]
 
 checks = [
-  { name = "Audit crates", shell = "cargo audit", allow_failure = true },
+  { name = "Audit crates", shell = "cargo audit", allow_failure = true, verbose = true },
   { check = "cargo", command = "format-check" },
   { step = "cargo", command = "clippy" },
 ]
