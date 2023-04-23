@@ -1,18 +1,16 @@
 use std::io::{self, Write};
 use std::ops::{ControlFlow, FromResidual, Try};
 
-#[derive(Debug, Default, Clone, Eq, PartialEq)]
-pub enum CheckResult {
-    #[default]
-    CheckOk,
-    CheckError(String, Option<String>, Option<String>, Option<String>),
+pub enum StepResult {
+    StepOk,
+    StepError(String, Option<String>, Option<String>),
 }
 
-impl std::process::Termination for CheckResult {
+impl std::process::Termination for StepResult {
     fn report(self) -> std::process::ExitCode {
         match self {
-            CheckResult::CheckOk => std::process::ExitCode::from(0),
-            CheckResult::CheckError(msg, stdout, stderr, remedy) => {
+            StepResult::StepOk => std::process::ExitCode::from(0),
+            StepResult::StepError(msg, stdout, stderr) => {
                 eprintln!("\x1b[31;1mError:\x1b[0m {msg}\r\n");
                 if let Some(stdout) = stdout {
                     if !stdout.is_empty() {
@@ -25,9 +23,6 @@ impl std::process::Termination for CheckResult {
                     }
                 }
                 io::stderr().flush().unwrap();
-                if let Some(remedy) = remedy {
-                    println!("{remedy}");
-                }
 
                 std::process::ExitCode::from(1)
             }
@@ -35,27 +30,27 @@ impl std::process::Termination for CheckResult {
     }
 }
 
-pub struct ResultCodeResidual(String, Option<String>, Option<String>, Option<String>);
+pub struct ResultCodeResidual(String, Option<String>, Option<String>);
 
-impl Try for CheckResult {
+impl Try for StepResult {
     type Output = ();
     type Residual = ResultCodeResidual;
 
     fn branch(self) -> ControlFlow<Self::Residual> {
         match self {
-            CheckResult::CheckError(msg, stdout, stderr, remedy) => {
-                ControlFlow::Break(ResultCodeResidual(msg, stdout, stderr, remedy))
+            StepResult::StepError(msg, stdout, stderr) => {
+                ControlFlow::Break(ResultCodeResidual(msg, stdout, stderr))
             }
-            CheckResult::CheckOk => ControlFlow::Continue(()),
+            StepResult::StepOk => ControlFlow::Continue(()),
         }
     }
     fn from_output((): ()) -> Self {
-        CheckResult::CheckOk
+        StepResult::StepOk
     }
 }
 
-impl FromResidual for CheckResult {
+impl FromResidual for StepResult {
     fn from_residual(r: ResultCodeResidual) -> Self {
-        Self::CheckError(r.0, r.1, r.2, r.3)
+        Self::StepError(r.0, r.1, r.2)
     }
 }

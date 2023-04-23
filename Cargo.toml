@@ -12,5 +12,6 @@ members = [
     "medic-init",
     "medic-lib",
     "medic-step",
+    "medic-step-cargo",
     "medic-test",
 ]
