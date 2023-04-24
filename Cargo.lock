@@ -468,6 +468,7 @@ dependencies = [
  "medic-doctor",
  "medic-lib",
  "medic-test",
+ "medic-update",
 ]
 
 [[package]]
@@ -576,12 +577,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "medic-step-git"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "indoc",
+ "medic-lib",
+ "medic-step",
+]
+
+[[package]]
 name = "medic-test"
 version = "0.1.0"
 dependencies = [
  "clap",
  "clap_complete",
  "indoc",
+ "medic-lib",
+ "medic-step",
+]
+
+[[package]]
+name = "medic-update"
+version = "0.1.0"
+dependencies = [
  "medic-lib",
  "medic-step",
 ]

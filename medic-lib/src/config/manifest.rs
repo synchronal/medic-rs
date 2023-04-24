@@ -10,6 +10,7 @@ use std::path::PathBuf;
 pub struct Manifest {
     pub doctor: Option<DoctorConfig>,
     pub test: Option<TestConfig>,
+    pub update: Option<UpdateConfig>,
 }
 
 impl Manifest {
@@ -48,4 +49,9 @@ pub struct DoctorConfig {
 #[derive(Debug, Deserialize)]
 pub struct TestConfig {
     pub checks: Vec<Step>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateConfig {
+    pub steps: Vec<Step>,
 }
