@@ -21,6 +21,8 @@ pub enum Command {
     Doctor(DoctorArgs),
     /// Runs all configured tests for an application.
     Test(DoctorArgs),
+    /// Steps to update an application
+    Update(DoctorArgs),
 }
 
 #[derive(Args, Debug)]

@@ -24,12 +24,9 @@ fn run_step(step: Step) -> AppResult<()> {
     let allow_failure = match &step {
         Step::Shell(config) => config.allow_failure,
         Step::Step(_) => false,
+        Step::Doctor(_) => false,
     };
-
-    let verbose = match &step {
-        Step::Shell(config) => config.verbose,
-        Step::Step(config) => config.verbose,
-    };
+    let verbose = step.verbose();
 
     print!("\x1b[32m• \x1b[0{step}  …");
     io::stdout().flush().unwrap();

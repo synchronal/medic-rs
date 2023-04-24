@@ -8,7 +8,11 @@ use std::process::Command;
 pub enum Step {
     Shell(ShellConfig),
     Step(StepConfig),
+    Doctor(DoctorConfig),
 }
+
+#[derive(Debug, Deserialize)]
+pub struct DoctorConfig {}
 
 #[derive(Debug, Deserialize)]
 pub struct ShellConfig {
@@ -16,6 +20,16 @@ pub struct ShellConfig {
     pub allow_failure: bool,
     pub name: String,
     pub shell: String,
+    #[serde(default)]
+    pub verbose: bool,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct StepConfig {
+    pub args: Option<HashMap<String, String>>,
+    pub command: Option<String>,
+    pub name: Option<String>,
+    pub step: String,
     #[serde(default)]
     pub verbose: bool,
 }
@@ -38,16 +52,6 @@ impl fmt::Display for ShellConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "\x1b[36m{:}", self.name)
     }
-}
-
-#[derive(Debug, Deserialize)]
-pub struct StepConfig {
-    pub args: Option<HashMap<String, String>>,
-    pub command: Option<String>,
-    pub name: Option<String>,
-    pub step: String,
-    #[serde(default)]
-    pub verbose: bool,
 }
 
 impl StepConfig {
@@ -97,6 +101,15 @@ impl Step {
         match self {
             Step::Shell(config) => config.to_command(),
             Step::Step(config) => config.to_command(),
+            Step::Doctor(_) => doctor_command(),
+        }
+    }
+
+    pub fn verbose(&self) -> bool {
+        match self {
+            Step::Shell(config) => config.verbose,
+            Step::Step(config) => config.verbose,
+            Step::Doctor(_) => true,
         }
     }
 }
@@ -106,6 +119,13 @@ impl fmt::Display for Step {
         match self {
             Step::Shell(config) => config.fmt(f),
             Step::Step(config) => config.fmt(f),
+            Step::Doctor(_) => write!(f, "\x1b[36m== Doctor ===\x1b[0m"),
         }
     }
+}
+
+fn doctor_command() -> Option<Command> {
+    let mut command = Command::new("medic");
+    command.arg("doctor");
+    Some(command)
 }

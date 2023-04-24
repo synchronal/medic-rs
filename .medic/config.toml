@@ -29,16 +29,16 @@ checks = [
 
 steps = [
   { step = "git", command = "pull" },
-  "doctor",
+  { doctor = {} },
 ]
 
 [shipit]
 
 steps = [
-  "audit",
-  "update",
-  "test",
-  { name = "Release", cmd = "bin/dev/release" },
+  { audit = {} },
+  { update = {} },
+  { test = {} },
+  { name = "Release", shell = "bin/dev/release", verbose = true },
   { step = "git", command = "push" },
   { step = "github", command = "link-to-actions", verbose = true },
 ]
