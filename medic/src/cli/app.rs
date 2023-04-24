@@ -7,7 +7,7 @@ use clap::Subcommand;
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 #[clap(bin_name = "medic")]
-/// Run medic workflow managedment commands.
+/// Run medic workflow management commands.
 pub struct CliArgs {
     #[command(subcommand)]
     pub command: Command,
@@ -16,14 +16,14 @@ pub struct CliArgs {
 #[derive(Debug, Subcommand)]
 #[clap(infer_subcommands = true)]
 pub enum Command {
-    /// Runs a series of checks to audit the application. These checks may include linters
-    /// and dependency audits.
+    /// Runs checks to audit the application. Checks might include linters
+    /// and dep audits.
     Audit(ManifestArgs),
-    /// Runs a series of checks to ensure that a project is fully set up for development.
+    /// Runs checks to ensure that a project is fully set up for development.
     Doctor(ManifestArgs),
-    /// Runs all configured tests for an application.
+    /// Runs an application's tests.
     Test(ManifestArgs),
-    /// Steps to update an application
+    /// Update the current application
     Update(ManifestArgs),
 }
 
