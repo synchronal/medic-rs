@@ -31,8 +31,7 @@ fn run_step(step: Step) -> AppResult<()> {
         Step::Step(config) => config.verbose,
     };
 
-    print!("\x1b[32m• \x1b[0");
-    print!("{step}  …");
+    print!("\x1b[32m• \x1b[0{step}  …");
     io::stdout().flush().unwrap();
     if let Some(mut command) = step.to_command() {
         if verbose {

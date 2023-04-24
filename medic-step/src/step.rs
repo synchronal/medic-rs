@@ -20,6 +20,26 @@ pub struct ShellConfig {
     pub verbose: bool,
 }
 
+impl ShellConfig {
+    pub fn to_command(self) -> Option<Command> {
+        let cmd: Vec<&str> = self.shell.split(' ').collect();
+        if let Some((first, args)) = cmd.split_first() {
+            let mut command = Command::new(first);
+            for arg in args {
+                command.arg(arg);
+            }
+            Some(command)
+        } else {
+            None
+        }
+    }
+}
+impl fmt::Display for ShellConfig {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "\x1b[36m{:}", self.name)
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct StepConfig {
     pub args: Option<HashMap<String, String>>,
@@ -30,39 +50,53 @@ pub struct StepConfig {
     pub verbose: bool,
 }
 
+impl StepConfig {
+    pub fn to_command(self) -> Option<Command> {
+        let mut check_cmd: String = "medic-step-".to_owned();
+        check_cmd.push_str(&self.step);
+        let mut command = Command::new(check_cmd);
+
+        if let Some(subcmd) = self.command {
+            command.arg(subcmd);
+        }
+        if let Some(args) = self.args {
+            for (flag, value) in args {
+                let mut flag_arg = "--".to_owned();
+                flag_arg.push_str(&flag);
+                command.arg(flag_arg).arg(value);
+            }
+        }
+
+        Some(command)
+    }
+}
+
+impl fmt::Display for StepConfig {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if let Some(name) = &self.name {
+            write!(f, "\x1b[36m{:}\x1b[0m", name)
+        } else {
+            write!(f, "\x1b[36m{:}", self.step)?;
+            if let Some(command) = &self.command {
+                write!(f, ": \x1b[0;36m{}!", command)?;
+            }
+            if let Some(args) = &self.args {
+                write!(f, " \x1b[0;33m(")?;
+                for value in args.values() {
+                    write!(f, "{value}")?;
+                }
+                write!(f, ")")?;
+            }
+            write!(f, "\x1b[0m")
+        }
+    }
+}
+
 impl Step {
     pub fn to_command(self) -> Option<Command> {
         match self {
-            Step::Shell(config) => {
-                let cmd: Vec<&str> = config.shell.split(' ').collect();
-                if let Some((first, args)) = cmd.split_first() {
-                    let mut command = Command::new(first);
-                    for arg in args {
-                        command.arg(arg);
-                    }
-                    Some(command)
-                } else {
-                    None
-                }
-            }
-            Step::Step(config) => {
-                let mut check_cmd: String = "medic-step-".to_owned();
-                check_cmd.push_str(&config.step);
-                let mut command = Command::new(check_cmd);
-
-                if let Some(subcmd) = config.command {
-                    command.arg(subcmd);
-                }
-                if let Some(args) = config.args {
-                    for (flag, value) in args {
-                        let mut flag_arg = "--".to_owned();
-                        flag_arg.push_str(&flag);
-                        command.arg(flag_arg).arg(value);
-                    }
-                }
-
-                Some(command)
-            }
+            Step::Shell(config) => config.to_command(),
+            Step::Step(config) => config.to_command(),
         }
     }
 }
@@ -70,27 +104,8 @@ impl Step {
 impl fmt::Display for Step {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Step::Shell(config) => {
-                write!(f, "\x1b[36m{:}", config.name)
-            }
-            Step::Step(config) => {
-                if let Some(name) = &config.name {
-                    write!(f, "\x1b[36m{:}\x1b[0m", name)
-                } else {
-                    write!(f, "\x1b[36m{:}", config.step)?;
-                    if let Some(command) = &config.command {
-                        write!(f, ": \x1b[0;36m{}!", command)?;
-                    }
-                    if let Some(args) = &config.args {
-                        write!(f, " \x1b[0;33m(")?;
-                        for value in args.values() {
-                            write!(f, "{value}")?;
-                        }
-                        write!(f, ")")?;
-                    }
-                    write!(f, "\x1b[0m")
-                }
-            }
+            Step::Shell(config) => config.fmt(f),
+            Step::Step(config) => config.fmt(f),
         }
     }
 }
