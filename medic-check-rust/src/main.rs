@@ -10,6 +10,7 @@ fn main() -> CheckResult {
 
     match cli.command {
         Cmd::CrateInstalled(args) => crate_installed(args.name)?,
+        Cmd::FormatCheck(_) => check_formatting()?,
         Cmd::TargetInstalled(args) => target_installed(args.target)?,
     }
     CheckOk
@@ -33,6 +34,27 @@ fn cargo_exists() -> CheckResult {
         }
         Err(_err) => CheckError(
             "Unable to search for cargo. Is `which` in your PATH?".into(),
+            None,
+            None,
+            None,
+        ),
+    }
+}
+
+fn check_formatting() -> CheckResult {
+    cargo_exists()?;
+    match Command::new("cargo").args(["fmt", "--check"]).output() {
+        Ok(command) => match command.status.success() {
+            true => CheckOk,
+            false => CheckError(
+                "Rust project is not correctly formatted".into(),
+                Some(std_to_string(command.stdout)),
+                Some(std_to_string(command.stderr)),
+                Some("cargo fmt".into()),
+            ),
+        },
+        Err(_err) => CheckError(
+            "Unable to check for rust formatting. Is `cargo` in PATH?".into(),
             None,
             None,
             None,

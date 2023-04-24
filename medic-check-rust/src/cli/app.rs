@@ -16,6 +16,8 @@ pub struct CliArgs {
 pub enum Command {
     /// Checks that a crate is installed locally.
     CrateInstalled(CrateArgs),
+    /// Checks that a crate is installed locally.
+    FormatCheck(NoopArgs),
     /// Checks that a release target is installed locally.
     TargetInstalled(RustupArgs),
 }
@@ -35,6 +37,9 @@ pub struct RustupArgs {
     #[arg(short, long, default_value = ".", value_hint = clap::ValueHint::CommandString)]
     pub target: String,
 }
+
+#[derive(Args, Debug)]
+pub struct NoopArgs {}
 
 impl Default for CliArgs {
     fn default() -> Self {
