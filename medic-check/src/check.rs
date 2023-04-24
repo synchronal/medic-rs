@@ -8,6 +8,8 @@ pub struct Check {
     pub check: String,
     pub command: Option<String>,
     pub args: Option<HashMap<String, String>>,
+    #[serde(default)]
+    pub verbose: bool,
 }
 
 impl Check {

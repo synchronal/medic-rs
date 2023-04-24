@@ -465,10 +465,19 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
+ "medic-audit",
  "medic-doctor",
  "medic-lib",
  "medic-test",
  "medic-update",
+]
+
+[[package]]
+name = "medic-audit"
+version = "0.1.0"
+dependencies = [
+ "medic-lib",
+ "medic-step",
 ]
 
 [[package]]

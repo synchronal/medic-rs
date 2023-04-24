@@ -2,6 +2,7 @@
 
 members = [
     "medic",
+    "medic-audit",
     "medic-check",
     "medic-check-asdf",
     "medic-check-hex",

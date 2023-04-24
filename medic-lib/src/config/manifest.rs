@@ -1,4 +1,5 @@
 use crate::AppResult;
+use crate::AuditStep;
 
 use medic_check::Check;
 use medic_step::Step;
@@ -8,6 +9,7 @@ use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
 pub struct Manifest {
+    pub audit: Option<AuditConfig>,
     pub doctor: Option<DoctorConfig>,
     pub test: Option<TestConfig>,
     pub update: Option<UpdateConfig>,
@@ -39,6 +41,11 @@ impl Manifest {
             .into())
         }
     }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct AuditConfig {
+    pub checks: Vec<AuditStep>,
 }
 
 #[derive(Debug, Deserialize)]

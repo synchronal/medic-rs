@@ -16,17 +16,19 @@ pub struct CliArgs {
 #[derive(Debug, Subcommand)]
 #[clap(infer_subcommands = true)]
 pub enum Command {
-    /// Runs a series of checks to ensure that a project is fully set up
-    /// for development.
-    Doctor(DoctorArgs),
+    /// Runs a series of checks to audit the application. These checks may include linters
+    /// and dependency audits.
+    Audit(ManifestArgs),
+    /// Runs a series of checks to ensure that a project is fully set up for development.
+    Doctor(ManifestArgs),
     /// Runs all configured tests for an application.
-    Test(DoctorArgs),
+    Test(ManifestArgs),
     /// Steps to update an application
-    Update(DoctorArgs),
+    Update(ManifestArgs),
 }
 
 #[derive(Args, Debug)]
-pub struct DoctorArgs {
+pub struct ManifestArgs {
     /// Name of a hex package.
     #[clap(value_parser)]
     #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.medic/config.toml", value_hint = clap::ValueHint::FilePath)]
