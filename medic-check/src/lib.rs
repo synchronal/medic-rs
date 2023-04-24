@@ -2,7 +2,7 @@
 #![feature(try_trait_v2)]
 
 pub mod check;
-pub mod result;
+pub mod check_result;
 
 pub use check::Check;
-pub use result::CheckResult;
+pub use check_result::CheckResult;
