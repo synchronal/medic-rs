@@ -2,5 +2,5 @@
 
 set -e
 
-cargo run --bin medic-doctor -- $*
+cargo run --bin medic -- doc $*
 
