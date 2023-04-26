@@ -1,6 +1,7 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
 use medic_lib::config::Manifest;
+use medic_lib::runnable::Runnable;
 use medic_lib::std_to_string;
 use medic_lib::AppResult;
 use medic_lib::AuditStep;

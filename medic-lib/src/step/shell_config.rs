@@ -1,3 +1,5 @@
+use crate::runnable::Runnable;
+
 use serde::Deserialize;
 use std::fmt;
 use std::process::Command;
@@ -12,8 +14,8 @@ pub struct ShellConfig {
     pub verbose: bool,
 }
 
-impl ShellConfig {
-    pub fn to_command(self) -> Option<Command> {
+impl Runnable for ShellConfig {
+    fn to_command(self) -> Option<Command> {
         let cmd: Vec<&str> = self.shell.split(' ').collect();
         if let Some((first, args)) = cmd.split_first() {
             let mut command = Command::new(first);
@@ -24,6 +26,10 @@ impl ShellConfig {
         } else {
             None
         }
+    }
+
+    fn verbose(&self) -> bool {
+        self.verbose
     }
 }
 impl fmt::Display for ShellConfig {

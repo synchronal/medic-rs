@@ -1,3 +1,4 @@
+use crate::runnable::Runnable;
 use crate::step::{ShellConfig, StepConfig};
 use crate::Check;
 use serde::Deserialize;
@@ -13,16 +14,16 @@ pub enum AuditStep {
     Step(StepConfig),
 }
 
-impl AuditStep {
-    pub fn to_command(self) -> Option<Command> {
+impl Runnable for AuditStep {
+    fn to_command(self) -> Option<Command> {
         match self {
-            AuditStep::Check(config) => Some(config.to_command()),
+            AuditStep::Check(config) => config.to_command(),
             AuditStep::Shell(config) => config.to_command(),
             AuditStep::Step(config) => config.to_command(),
         }
     }
 
-    pub fn verbose(&self) -> bool {
+    fn verbose(&self) -> bool {
         match self {
             AuditStep::Check(config) => config.verbose,
             AuditStep::Shell(config) => config.verbose,

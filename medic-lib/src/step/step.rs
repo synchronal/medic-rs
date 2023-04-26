@@ -1,3 +1,4 @@
+use crate::runnable::Runnable;
 use crate::step::shell_config::ShellConfig;
 use crate::step::step_config::StepConfig;
 use serde::Deserialize;
@@ -15,8 +16,8 @@ pub enum Step {
 #[derive(Debug, Deserialize)]
 pub struct DoctorConfig {}
 
-impl Step {
-    pub fn to_command(self) -> Option<Command> {
+impl Runnable for Step {
+    fn to_command(self) -> Option<Command> {
         match self {
             Step::Shell(config) => config.to_command(),
             Step::Step(config) => config.to_command(),
@@ -24,7 +25,7 @@ impl Step {
         }
     }
 
-    pub fn verbose(&self) -> bool {
+    fn verbose(&self) -> bool {
         match self {
             Step::Shell(config) => config.verbose,
             Step::Step(config) => config.verbose,

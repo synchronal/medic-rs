@@ -4,6 +4,7 @@
 pub mod audit_step;
 pub mod check;
 pub mod config;
+pub mod runnable;
 pub mod step;
 
 pub use audit_step::AuditStep;

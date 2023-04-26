@@ -1,3 +1,5 @@
+use crate::runnable::Runnable;
+
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt;
@@ -12,8 +14,8 @@ pub struct Check {
     pub verbose: bool,
 }
 
-impl Check {
-    pub fn to_command(self) -> Command {
+impl Runnable for Check {
+    fn to_command(self) -> Option<Command> {
         let mut check_cmd: String = "medic-check-".to_owned();
         check_cmd.push_str(&self.check);
         let mut command = Command::new(check_cmd);
@@ -29,7 +31,7 @@ impl Check {
             }
         }
 
-        command
+        Some(command)
     }
 }
 

@@ -1,3 +1,5 @@
+use crate::runnable::Runnable;
+
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fmt;
@@ -13,8 +15,8 @@ pub struct StepConfig {
     pub verbose: bool,
 }
 
-impl StepConfig {
-    pub fn to_command(self) -> Option<Command> {
+impl Runnable for StepConfig {
+    fn to_command(self) -> Option<Command> {
         let mut check_cmd: String = "medic-step-".to_owned();
         check_cmd.push_str(&self.step);
         let mut command = Command::new(check_cmd);
@@ -31,6 +33,10 @@ impl StepConfig {
         }
 
         Some(command)
+    }
+
+    fn verbose(&self) -> bool {
+        self.verbose
     }
 }
 
