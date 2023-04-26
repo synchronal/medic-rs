@@ -19,6 +19,8 @@ pub struct Check {
 
 impl Runnable for Check {
     fn run(self) -> AppResult<()> {
+        let verbose = self.verbose();
+
         print!("\x1b[32m• \x1b[0");
         print!("{self}  …");
         if let Some(mut command) = self.to_command() {
@@ -29,8 +31,10 @@ impl Runnable for Check {
                         Ok(())
                     } else {
                         println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-                        eprintln!("\x1b[0;31m== Check output ==\x1b[0m\r\n");
-                        eprint!("{}", std_to_string(result.stderr));
+                        if !verbose {
+                            eprintln!("\x1b[0;31m== Check output ==\x1b[0m\r\n");
+                            eprint!("{}", std_to_string(result.stderr));
+                        }
 
                         if result.stdout.is_empty() {
                             println!("\x1b[0;33mNo remedy suggested.\x1b[0m");
