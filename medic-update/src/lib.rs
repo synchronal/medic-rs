@@ -3,7 +3,7 @@
 use medic_lib::config::Manifest;
 use medic_lib::std_to_string;
 use medic_lib::AppResult;
-use medic_step::Step;
+use medic_lib::Step;
 
 use std::io::{self, Write};
 use std::process::Stdio;

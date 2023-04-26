@@ -1,4 +1,4 @@
-use medic_step::StepResult::{self, StepError, StepOk};
+use medic_lib::StepResult::{self, StepError, StepOk};
 use medic_step_cargo::cli::{CliArgs, Command as Cmd};
 
 use std::process::{Command, Stdio};

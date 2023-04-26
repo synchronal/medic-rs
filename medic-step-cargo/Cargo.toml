@@ -9,7 +9,6 @@ edition = "2021"
 clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 indoc = "2.0.1"
 medic-lib = { path = "../medic-lib" }
-medic-step = { path = "../medic-step" }
 
 [features]
 # Treat warnings as a build error.

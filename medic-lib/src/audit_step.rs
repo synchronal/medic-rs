@@ -1,5 +1,5 @@
+use crate::step::{ShellConfig, StepConfig};
 use medic_check::Check;
-use medic_step::step::{ShellConfig, StepConfig};
 use serde::Deserialize;
 
 use std::fmt;

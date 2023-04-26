@@ -8,7 +8,6 @@ edition = "2021"
 [dependencies]
 
 medic-lib = { path = "../medic-lib" }
-medic-step = { path = "../medic-step" }
 
 [features]
 # Treat warnings as a build error.

@@ -12,7 +12,6 @@ members = [
     "medic-doctor",
     "medic-init",
     "medic-lib",
-    "medic-step",
     "medic-step-cargo",
     "medic-step-git",
     "medic-test",

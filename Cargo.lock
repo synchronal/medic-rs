@@ -477,7 +477,6 @@ name = "medic-audit"
 version = "0.1.0"
 dependencies = [
  "medic-lib",
- "medic-step",
 ]
 
 [[package]]
@@ -563,16 +562,8 @@ version = "0.1.0"
 dependencies = [
  "envsubst",
  "medic-check",
- "medic-step",
  "serde",
  "toml",
-]
-
-[[package]]
-name = "medic-step"
-version = "0.1.0"
-dependencies = [
- "serde",
 ]
 
 [[package]]
@@ -582,7 +573,6 @@ dependencies = [
  "clap",
  "indoc",
  "medic-lib",
- "medic-step",
 ]
 
 [[package]]
@@ -592,7 +582,6 @@ dependencies = [
  "clap",
  "indoc",
  "medic-lib",
- "medic-step",
 ]
 
 [[package]]
@@ -603,7 +592,6 @@ dependencies = [
  "clap_complete",
  "indoc",
  "medic-lib",
- "medic-step",
 ]
 
 [[package]]
@@ -611,7 +599,6 @@ name = "medic-update"
 version = "0.1.0"
 dependencies = [
  "medic-lib",
- "medic-step",
 ]
 
 [[package]]

@@ -1,5 +1,5 @@
 use medic_lib::std_to_string;
-use medic_step::StepResult::{self, StepError, StepOk};
+use medic_lib::StepResult::{self, StepError, StepOk};
 use medic_step_git::cli::{CliArgs, Command as Cmd};
 
 use std::process::Command;
