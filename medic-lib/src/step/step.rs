@@ -62,6 +62,8 @@ impl fmt::Display for Step {
 }
 
 fn run_doctor() -> AppResult<()> {
+    print!("\x1b[32m! \x1b[0");
+    println!("\x1b[36;1m==== Doctor ====\x1b[0m");
     if let Ok(result) = doctor_command()
         .unwrap()
         .stdout(Stdio::inherit())
