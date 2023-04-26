@@ -529,7 +529,6 @@ dependencies = [
 name = "medic-doctor"
 version = "0.1.0"
 dependencies = [
- "arboard",
  "clap",
  "clap_complete",
  "indoc",
@@ -547,6 +546,7 @@ dependencies = [
 name = "medic-lib"
 version = "0.1.0"
 dependencies = [
+ "arboard",
  "envsubst",
  "serde",
  "toml",

@@ -1,6 +1,6 @@
 use crate::runnable::Runnable;
 use crate::step::{ShellConfig, StepConfig};
-use crate::Check;
+use crate::{AppResult, Check};
 use serde::Deserialize;
 
 use std::fmt;
@@ -15,6 +15,22 @@ pub enum AuditStep {
 }
 
 impl Runnable for AuditStep {
+    fn allow_failure(&self) -> bool {
+        match self {
+            AuditStep::Check(config) => config.allow_failure(),
+            AuditStep::Shell(config) => config.allow_failure(),
+            AuditStep::Step(config) => config.allow_failure(),
+        }
+    }
+
+    fn run(self) -> AppResult<()> {
+        match self {
+            AuditStep::Check(config) => config.run(),
+            AuditStep::Shell(config) => config.run(),
+            AuditStep::Step(config) => config.run(),
+        }
+    }
+
     fn to_command(self) -> Option<Command> {
         match self {
             AuditStep::Check(config) => config.to_command(),
@@ -25,9 +41,9 @@ impl Runnable for AuditStep {
 
     fn verbose(&self) -> bool {
         match self {
-            AuditStep::Check(config) => config.verbose,
-            AuditStep::Shell(config) => config.verbose,
-            AuditStep::Step(config) => config.verbose,
+            AuditStep::Check(config) => config.verbose(),
+            AuditStep::Shell(config) => config.verbose(),
+            AuditStep::Step(config) => config.verbose(),
         }
     }
 }
