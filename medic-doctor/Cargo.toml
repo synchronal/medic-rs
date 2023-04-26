@@ -10,7 +10,6 @@ arboard = "3.2"
 clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 clap_complete = "4.1.4"
 indoc = "2.0.1"
-medic-check = { path = "../medic-check" }
 medic-lib = { path = "../medic-lib" }
 
 [features]

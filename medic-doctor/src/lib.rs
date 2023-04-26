@@ -2,10 +2,10 @@
 
 pub mod cli;
 
-use medic_check::Check;
 use medic_lib::config::Manifest;
 use medic_lib::std_to_string;
 use medic_lib::AppResult;
+use medic_lib::Check;
 
 use arboard::Clipboard;
 

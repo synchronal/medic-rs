@@ -480,19 +480,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "medic-check"
-version = "0.1.0"
-dependencies = [
- "serde",
-]
-
-[[package]]
 name = "medic-check-asdf"
 version = "0.1.0"
 dependencies = [
  "clap",
  "indoc",
- "medic-check",
  "medic-lib",
 ]
 
@@ -502,7 +494,6 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "indoc",
- "medic-check",
  "medic-lib",
 ]
 
@@ -512,7 +503,6 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "indoc",
- "medic-check",
  "medic-lib",
 ]
 
@@ -522,7 +512,6 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "indoc",
- "medic-check",
  "medic-lib",
 ]
 
@@ -532,7 +521,6 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "indoc",
- "medic-check",
  "medic-lib",
  "regex",
 ]
@@ -545,7 +533,6 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
- "medic-check",
  "medic-lib",
 ]
 
@@ -561,7 +548,6 @@ name = "medic-lib"
 version = "0.1.0"
 dependencies = [
  "envsubst",
- "medic-check",
  "serde",
  "toml",
 ]

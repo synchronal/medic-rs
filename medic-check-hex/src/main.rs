@@ -1,6 +1,6 @@
-use medic_check::CheckResult::{self, CheckError, CheckOk};
 use medic_check_hex::cli::{CliArgs, Command};
 use medic_lib::std_to_string;
+use medic_lib::CheckResult::{self, CheckError, CheckOk};
 
 use std::fs;
 use std::process::Command as Cmd;

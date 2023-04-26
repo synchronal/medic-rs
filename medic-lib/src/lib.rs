@@ -2,11 +2,15 @@
 #![feature(try_trait_v2)]
 
 pub mod audit_step;
+pub mod check;
+pub mod check_result;
 pub mod config;
 pub mod step;
 pub mod step_result;
 
 pub use audit_step::AuditStep;
+pub use check::Check;
+pub use check_result::CheckResult;
 pub use step::Step;
 pub use step_result::StepResult;
 

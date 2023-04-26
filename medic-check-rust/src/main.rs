@@ -1,6 +1,6 @@
-use medic_check::CheckResult::{self, CheckError, CheckOk};
 use medic_check_rust::cli::{CliArgs, Command as Cmd};
 use medic_lib::std_to_string;
+use medic_lib::CheckResult::{self, CheckError, CheckOk};
 
 use regex::Regex;
 use std::process::Command;

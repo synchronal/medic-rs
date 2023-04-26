@@ -1,6 +1,6 @@
-use medic_check::CheckResult::{self, CheckError, CheckOk};
 use medic_check_homebrew::cli::CliArgs;
 use medic_lib::std_to_string;
+use medic_lib::CheckResult::{self, CheckError, CheckOk};
 
 use std::path::Path;
 use std::process::Command;

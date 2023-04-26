@@ -1,8 +1,7 @@
 use crate::AppResult;
 use crate::AuditStep;
+use crate::Check;
 use crate::Step;
-
-use medic_check::Check;
 
 use serde::Deserialize;
 use std::path::PathBuf;
