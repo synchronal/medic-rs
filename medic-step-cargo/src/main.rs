@@ -1,57 +1,11 @@
-use medic_lib::StepResult::{self, StepError, StepOk};
-use medic_step_cargo::cli::{CliArgs, Command as Cmd};
-
-use std::process::{Command, Stdio};
+use medic_lib::StepResult::{self, StepOk};
+use medic_step_cargo::cli::{CliArgs, Command};
 
 fn main() -> StepResult {
     let cli = CliArgs::new();
     match cli.command {
-        Cmd::Clippy => run_clippy()?,
-        Cmd::Test => run_tests()?,
+        Command::Clippy => medic_step_cargo::run_clippy()?,
+        Command::Test => medic_step_cargo::run_tests()?,
     }
     StepOk
-}
-
-fn run_clippy() -> StepResult {
-    match Command::new("cargo")
-        .args(["clippy"])
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .output()
-    {
-        Ok(which) => {
-            if which.status.success() {
-                StepOk
-            } else {
-                StepError("Cargo lint error".into(), None, None)
-            }
-        }
-        Err(_err) => StepError(
-            "Could not run cargo clippy. Is `cargo` in PATH?".into(),
-            None,
-            None,
-        ),
-    }
-}
-
-fn run_tests() -> StepResult {
-    match Command::new("cargo")
-        .args(["test"])
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .output()
-    {
-        Ok(which) => {
-            if which.status.success() {
-                StepOk
-            } else {
-                StepError("Cargo test failure".into(), None, None)
-            }
-        }
-        Err(_err) => StepError(
-            "Could not run cargo test. Is `cargo` in PATH?".into(),
-            None,
-            None,
-        ),
-    }
 }
