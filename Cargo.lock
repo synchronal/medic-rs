@@ -571,6 +571,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "medic-step-elixir"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "indoc",
+ "medic-lib",
+]
+
+[[package]]
 name = "medic-step-git"
 version = "0.1.0"
 dependencies = [
