@@ -489,6 +489,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "medic-check-elixir"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "indoc",
+ "medic-lib",
+]
+
+[[package]]
 name = "medic-check-hex"
 version = "0.1.0"
 dependencies = [

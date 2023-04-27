@@ -4,6 +4,7 @@ members = [
     "medic",
     "medic-audit",
     "medic-check-asdf",
+    "medic-check-elixir",
     "medic-check-hex",
     "medic-check-homebrew",
     "medic-check-npm",
