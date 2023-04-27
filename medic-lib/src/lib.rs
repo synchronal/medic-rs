@@ -10,7 +10,7 @@ pub mod step;
 pub use audit_step::AuditStep;
 pub use check::Check;
 pub use check::CheckResult;
-pub use step::step::Step;
+pub use step::Step;
 pub use step::StepResult;
 
 pub type AppResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
