@@ -1,5 +1,7 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
+pub mod cli;
+
 use medic_lib::config::Manifest;
 use medic_lib::runnable::Runnable;
 use medic_lib::AppResult;
