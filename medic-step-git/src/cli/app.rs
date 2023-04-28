@@ -12,8 +12,10 @@ pub struct CliArgs {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Pull
+    /// Run git pull with rebase.
     Pull,
+    /// Run git push.
+    Push,
 }
 
 impl Default for CliArgs {

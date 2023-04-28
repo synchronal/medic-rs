@@ -26,3 +26,23 @@ pub fn run_git_pull() -> StepResult {
         ),
     }
 }
+
+pub fn run_git_push() -> StepResult {
+    match Command::new("git").args(["push", "origin", "HEAD"]).output() {
+        Ok(cmd) => {
+            if cmd.status.success() {
+                StepOk
+            } else {
+                let stdout = std_to_string(cmd.stdout);
+                let stderr = std_to_string(cmd.stderr);
+
+                StepError("Git push error".into(), Some(stdout), Some(stderr))
+            }
+        }
+        Err(_err) => StepError(
+            "Could not run git pull. Is `git` in PATH?".into(),
+            None,
+            None,
+        ),
+    }
+}
