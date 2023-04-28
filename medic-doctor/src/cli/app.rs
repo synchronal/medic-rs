@@ -1,17 +1,9 @@
 use clap::Parser;
 use clap_complete::Shell;
-use indoc::indoc;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 #[clap(bin_name = "medic doctor")]
-#[clap( after_help = indoc!(
-    "
-    COMMON TASKS:
-        Install medic into a new repository
-            medic init
-    "
-))]
 pub struct CliArgs {
     /// Path to a file where medic config can be found
     #[clap(
