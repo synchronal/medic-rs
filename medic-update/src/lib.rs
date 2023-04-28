@@ -14,6 +14,6 @@ pub fn run_steps(manifest: Manifest) -> AppResult<()> {
             }
             Ok(())
         }
-        None => Err("No test checks found in medic config.".into()),
+        None => Err("No update steps found in medic config.".into()),
     }
 }
