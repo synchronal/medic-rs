@@ -1,6 +1,7 @@
 use crate::AppResult;
 use crate::AuditStep;
 use crate::Check;
+use crate::ShipitStep;
 use crate::Step;
 
 use serde::Deserialize;
@@ -10,6 +11,7 @@ use std::path::PathBuf;
 pub struct Manifest {
     pub audit: Option<AuditConfig>,
     pub doctor: Option<DoctorConfig>,
+    pub shipit: Option<ShipitConfig>,
     pub test: Option<TestConfig>,
     pub update: Option<UpdateConfig>,
 }
@@ -50,6 +52,11 @@ pub struct AuditConfig {
 #[derive(Debug, Deserialize)]
 pub struct DoctorConfig {
     pub checks: Vec<Check>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ShipitConfig {
+    pub steps: Vec<ShipitStep>,
 }
 
 #[derive(Debug, Deserialize)]

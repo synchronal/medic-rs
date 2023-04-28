@@ -12,6 +12,7 @@ members = [
     "medic-doctor",
     "medic-init",
     "medic-lib",
+    "medic-shipit",
     "medic-step-cargo",
     "medic-step-elixir",
     "medic-step-git",

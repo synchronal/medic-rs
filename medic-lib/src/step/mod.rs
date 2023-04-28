@@ -21,7 +21,12 @@ pub enum Step {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct DoctorConfig {}
+pub struct NoopConfig {}
+
+#[derive(Debug, Deserialize)]
+pub struct DoctorConfig {
+    pub doctor: NoopConfig,
+}
 
 impl Runnable for Step {
     fn allow_failure(&self) -> bool {
