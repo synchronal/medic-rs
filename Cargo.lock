@@ -605,6 +605,9 @@ dependencies = [
 name = "medic-update"
 version = "0.1.0"
 dependencies = [
+ "clap",
+ "clap_complete",
+ "indoc",
  "medic-lib",
 ]
 
