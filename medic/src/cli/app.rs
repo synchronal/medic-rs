@@ -25,6 +25,8 @@ pub enum Command {
     Test(ManifestArgs),
     /// Update the current application
     Update(ManifestArgs),
+    /// Ship changes. Typically configured to audit, update, test, then release.
+    Shipit(ManifestArgs),
 }
 
 #[derive(Args, Debug)]

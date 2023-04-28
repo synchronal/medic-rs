@@ -468,6 +468,7 @@ dependencies = [
  "medic-audit",
  "medic-doctor",
  "medic-lib",
+ "medic-shipit",
  "medic-test",
  "medic-update",
 ]

@@ -12,6 +12,7 @@ indoc = "2.0.1"
 medic-audit = { path = "../medic-audit" }
 medic-doctor = { path = "../medic-doctor" }
 medic-lib = { path = "../medic-lib" }
+medic-shipit = { path = "../medic-shipit" }
 medic-test = { path = "../medic-test" }
 medic-update = { path = "../medic-update" }
 

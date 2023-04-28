@@ -26,5 +26,9 @@ fn main() -> AppResult<()> {
             let manifest = Manifest::new(args.config)?;
             medic_update::run_steps(manifest)
         }
+        Command::Shipit(args) => {
+            let manifest = Manifest::new(args.config)?;
+            medic_shipit::run_steps(manifest)
+        }
     }
 }
