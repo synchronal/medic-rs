@@ -1,22 +1,22 @@
-use medic_check_asdf::cli::{CliArgs, Command};
+use medic_check_asdf::cli::{CliArgs, Command as Cmd};
 use medic_lib::std_to_string;
 use medic_lib::CheckResult::{self, CheckError, CheckOk};
 
-use std::process::Command as Cmd;
+use std::process::Command;
 
 fn main() -> CheckResult {
     let cli = CliArgs::new();
     asdf_installed()?;
 
     match cli.command {
-        Command::PackageInstalled(args) => package_installed(args.plugin, args.version)?,
-        Command::PluginInstalled(args) => plugin_installed(args.plugin)?,
+        Cmd::PackageInstalled(args) => package_installed(args.plugin, args.version)?,
+        Cmd::PluginInstalled(args) => plugin_installed(args.plugin)?,
     }
     CheckOk
 }
 
 fn asdf_installed() -> CheckResult {
-    match Cmd::new("which").args(["asdf"]).output() {
+    match Command::new("which").args(["asdf"]).output() {
         Ok(which) => {
             if which.status.success() {
                 CheckOk
@@ -39,8 +39,19 @@ fn asdf_installed() -> CheckResult {
     }
 }
 
-fn package_installed(plugin: String, version: String) -> CheckResult {
-    match Cmd::new("asdf").args(["where", &plugin, &version]).output() {
+fn package_installed(plugin: String, version: Option<String>) -> CheckResult {
+    let mut command = Command::new("asdf");
+    let mut remedy = Command::new("asdf");
+
+    command.arg("where").arg(&plugin);
+    remedy.arg("install").arg(&plugin);
+
+    if let Some(package_version) = version {
+        command.arg(&package_version);
+        remedy.arg(&package_version);
+    }
+
+    match command.output() {
         Ok(output) => {
             if output.status.success() {
                 CheckOk
@@ -51,7 +62,7 @@ fn package_installed(plugin: String, version: String) -> CheckResult {
                     format!("Currently configured ASDF package for {plugin} has not been installed."),
                     Some(stdout),
                     Some(stderr),
-                    Some(format!("asdf install {plugin} {version}")),
+                    Some(format!("({remedy:?})").replace("\"", "")),
                 )
             }
         },
@@ -65,7 +76,7 @@ fn package_installed(plugin: String, version: String) -> CheckResult {
 }
 
 fn plugin_installed(plugin: String) -> CheckResult {
-    match Cmd::new("asdf").args(["plugin", "list"]).output() {
+    match Command::new("asdf").args(["plugin", "list"]).output() {
         Ok(list) => {
             let plugin_list = std_to_string(list.stdout);
             let plugins: Vec<String> = plugin_list.split('\n').map(str::to_string).collect();

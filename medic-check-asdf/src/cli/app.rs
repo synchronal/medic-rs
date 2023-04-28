@@ -26,8 +26,9 @@ pub struct AsdfPackageArgs {
     #[arg(short, long, value_hint = clap::ValueHint::CommandString)]
     pub plugin: String,
 
-    #[arg(short, long, default_value = "", value_hint = clap::ValueHint::CommandString)]
-    pub version: String,
+    /// Version of ASDF package to install.
+    #[arg(short, long, value_hint = clap::ValueHint::CommandString)]
+    pub version: Option<String>,
 }
 
 #[derive(Args, Debug)]
