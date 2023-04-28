@@ -28,7 +28,10 @@ pub fn run_git_pull() -> StepResult {
 }
 
 pub fn run_git_push() -> StepResult {
-    match Command::new("git").args(["push", "origin", "HEAD"]).output() {
+    match Command::new("git")
+        .args(["push", "origin", "HEAD"])
+        .output()
+    {
         Ok(cmd) => {
             if cmd.status.success() {
                 StepOk
