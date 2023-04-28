@@ -2,39 +2,54 @@
 
 pub mod cli;
 
-use medic_lib::CheckResult::{self, CheckError, CheckOk};
 use medic_lib::std_to_string;
+use medic_lib::CheckResult::{self, CheckError, CheckOk};
+use std::fs;
 use std::path::Path;
 use std::process::Command;
 
-pub fn brewfile_exists() -> CheckResult {
-    let filepath = Path::new("Brewfile");
+pub fn brewfile_exists(path: &Path) -> CheckResult {
+    let filepath = &path.join("Brewfile");
     if filepath.exists() {
         CheckOk
     } else {
+        let mut remedy = Command::new("touch");
+        remedy.arg("Brewfile").current_dir(path);
         CheckError(
             "Brewfile does not exist".into(),
             None,
             None,
-            Some("touch Brewfile".into()),
+            Some(format!("({remedy:?})").replace('"', "")),
         )
     }
 }
 
-pub fn bundled() -> CheckResult {
+pub fn bundled(cd: Option<String>) -> CheckResult {
     homebrew_installed()?;
-    brewfile_exists()?;
-    let filepath = Path::new("Brewfile");
-    match Command::new("brew")
-        .args([
-            "bundle",
-            "check",
-            "--file",
-            filepath.to_path_buf().to_str().unwrap(),
-        ])
-        .env("HOMEBREW_NO_AUTO_UPDATE", "1")
-        .output()
-    {
+
+    let mut command = Command::new("brew");
+    let mut remedy = Command::new("brew");
+    command.args(["bundle", "check"]);
+    remedy.args(["bundle"]);
+
+    if let Some(path) = cd {
+        if let Ok(expanded) = fs::canonicalize(path) {
+            command.current_dir(&expanded);
+            remedy.current_dir(&expanded);
+            brewfile_exists(&expanded)?;
+        } else {
+            return CheckError(
+                "Given a `cd` param to a directory that does not exist.".into(),
+                None,
+                None,
+                None,
+            );
+        }
+    } else {
+        brewfile_exists(&std::env::current_dir().unwrap())?;
+    }
+
+    match command.env("HOMEBREW_NO_AUTO_UPDATE", "1").output() {
         Ok(command) => match command.status.success() {
             true => CheckOk,
             false => {
@@ -44,7 +59,7 @@ pub fn bundled() -> CheckResult {
                     "Homebrew bundle is out of date.".into(),
                     Some(stdout),
                     Some(stderr),
-                    Some(format!("brew bundle --file {filepath:?}")),
+                    Some(format!("({remedy:?})").replace('"', "")),
                 )
             }
         },
