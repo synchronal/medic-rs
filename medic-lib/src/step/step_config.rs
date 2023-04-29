@@ -53,7 +53,7 @@ impl Runnable for StepConfig {
                     println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
                     let mut error: String = "Check failed!\r\n".to_owned();
                     error.push_str("Command:\r\n");
-                    error.push_str(&format!("{command:?}\r\n"));
+                    error.push_str(&format!("{command:?}\r\n").replace('"', ""));
                     error.push_str(&format!("Error:\r\n{err:?}"));
 
                     Err(error.into())
