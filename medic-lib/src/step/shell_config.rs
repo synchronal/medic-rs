@@ -38,7 +38,7 @@ impl Runnable for ShellConfig {
                 Ok(result) => {
                     if result.status.success() {
                         println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
-                        Ok(())
+                        AppResult::Ok(())
                     } else {
                         println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
                         if !verbose {
@@ -47,24 +47,24 @@ impl Runnable for ShellConfig {
                         }
                         if allow_failure {
                             eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
-                            Ok(())
+                            AppResult::Ok(())
                         } else {
-                            Err("".into())
+                            AppResult::Err(None)
                         }
                     }
                 }
                 Err(err) => {
                     println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-                    let mut error: String = "Check failed!\r\n".to_owned();
-                    error.push_str("Command:\r\n");
-                    error.push_str(&format!("{command:?}\r\n").replace('"', ""));
-                    error.push_str(&format!("Error:\r\n{err:?}"));
+                    // let mut error: String = "Check failed!\r\n".to_owned();
+                    // error.push_str("Command:\r\n");
+                    // error.push_str(&format!("{command:?}\r\n").replace('"', ""));
+                    // error.push_str(&format!("Error:\r\n{err:?}"));
 
-                    Err(error.into())
+                    AppResult::Err(Some(err.into()))
                 }
             }
         } else {
-            Err("Failed to parse command".into())
+            AppResult::Err(Some("Failed to parse command".into()))
         }
     }
     fn to_command(self) -> Option<Command> {

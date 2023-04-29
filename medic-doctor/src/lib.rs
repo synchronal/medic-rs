@@ -12,8 +12,8 @@ pub fn run_checks(manifest: Manifest) -> AppResult<()> {
             for check in doctor.checks {
                 check.run()?;
             }
-            Ok(())
+            AppResult::Ok(())
         }
-        None => Err("No doctor checks found in medic config.".into()),
+        None => AppResult::Err(Some("No doctor checks found in medic config.".into())),
     }
 }

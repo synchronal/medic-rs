@@ -31,15 +31,25 @@ impl Manifest {
         let expanded_path = std::path::Path::new(&path_expansion);
 
         if expanded_path.exists() {
-            let manifest_contents = std::fs::read_to_string(expanded_path)?;
-            let manifest: Manifest = toml::from_str(&manifest_contents)?;
-            Ok(manifest)
+            match std::fs::read_to_string(expanded_path) {
+                Ok(manifest_contents) => match toml::from_str(&manifest_contents) {
+                    Ok(manifest) => AppResult::Ok(manifest),
+                    Err(err) => AppResult::Err(Some(
+                        format!("Unable to parse manifest {expanded_path:?}\r\n{err}")
+                            .replace('"', "")
+                            .into(),
+                    )),
+                },
+                Err(err) => AppResult::Err(Some(err.into())),
+            }
         } else {
-            Err(format!(
-                "Medic config file `{}` does not exist.",
-                path.to_string_lossy()
-            )
-            .into())
+            AppResult::Err(Some(
+                format!(
+                    "Medic config file `{}` does not exist.",
+                    path.to_string_lossy()
+                )
+                .into(),
+            ))
         }
     }
 }

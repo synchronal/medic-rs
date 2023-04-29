@@ -103,14 +103,12 @@ fn run_audit() -> AppResult<()> {
     {
         if result.status.success() {
             println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
-            Ok(())
+            AppResult::Ok(())
         } else {
-            println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-            Err("".into())
+            AppResult::Err(Some("Audit failure".into()))
         }
     } else {
-        println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-        Err("Unable to run audit".into())
+        AppResult::Err(Some("Unable to run medic audit".into()))
     }
 }
 
@@ -125,14 +123,12 @@ fn run_test() -> AppResult<()> {
     {
         if result.status.success() {
             println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
-            Ok(())
+            AppResult::Ok(())
         } else {
-            println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-            Err("".into())
+            AppResult::Err(Some("Test failure".into()))
         }
     } else {
-        println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-        Err("Unable to run audit".into())
+        AppResult::Err(Some("Unable to run medic test".into()))
     }
 }
 
@@ -147,14 +143,12 @@ fn run_update() -> AppResult<()> {
     {
         if result.status.success() {
             println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
-            Ok(())
+            AppResult::Ok(())
         } else {
-            println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-            Err("".into())
+            AppResult::Err(Some("Unable to update project".into()))
         }
     } else {
-        println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-        Err("Unable to run audit".into())
+        AppResult::Err(Some("Unable to run medic update".into()))
     }
 }
 

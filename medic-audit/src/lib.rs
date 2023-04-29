@@ -12,8 +12,8 @@ pub fn run_steps(manifest: Manifest) -> AppResult<()> {
             for step in audit.checks {
                 step.run()?;
             }
-            Ok(())
+            AppResult::Ok(())
         }
-        None => Err("No audit checks found in medic config.".into()),
+        None => AppResult::Err(Some("No audit checks found in medic config.".into())),
     }
 }

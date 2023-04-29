@@ -12,8 +12,8 @@ pub fn run_steps(manifest: Manifest) -> AppResult<()> {
             for check in test.checks {
                 check.run()?;
             }
-            Ok(())
+            AppResult::Ok(())
         }
-        None => Err("No test checks found in medic config.".into()),
+        None => AppResult::Err(Some("No test checks found in medic config.".into())),
     }
 }

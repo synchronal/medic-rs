@@ -12,8 +12,8 @@ pub fn run_steps(manifest: Manifest) -> AppResult<()> {
             for step in test.steps {
                 step.run()?;
             }
-            Ok(())
+            AppResult::Ok(())
         }
-        None => Err("No update steps found in medic config.".into()),
+        None => AppResult::Err(Some("No update steps found in medic config.".into())),
     }
 }

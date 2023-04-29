@@ -83,14 +83,12 @@ fn run_doctor() -> AppResult<()> {
     {
         if result.status.success() {
             println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
-            Ok(())
+            AppResult::Ok(())
         } else {
-            println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-            Err("".into())
+            AppResult::Err(None)
         }
     } else {
-        println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-        Err("Unable to run doctor".into())
+        AppResult::Err(Some("Unable to run doctor".into()))
     }
 }
 
