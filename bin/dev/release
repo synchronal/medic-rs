@@ -8,6 +8,7 @@ source ".medic/_support/step.sh"
 set -e
 
 mkdir -p tmp/release
+mkdir -p target/universal-apple-darwin/release
 
 step_header "Build: Darwin aarch64" "cargo build --target aarch64-apple-darwin --workspace -r"
 echo
@@ -16,4 +17,31 @@ cargo build --target aarch64-apple-darwin --workspace -r
 step_header "Build: Darwin x86_64" "cargo build --target x86_64-apple-darwin --workspace -r"
 echo
 cargo build --target x86_64-apple-darwin --workspace -r
+
+
+cmds=(medic medic-audit medic-doctor medic-shipit medic-test medic-update \
+           medic-check-asdf medic-check-elixir medic-check-hex medic-check-homebrew medic-check-npm medic-check-rust \
+           medic-step-cargo medic-step-elixir medic-step-git medic-step-github)
+
+for cmd in ${cmds[@]}; do
+  step "${cmd}: darwin universal" \
+    "(cd target/universal-apple-darwin/release \
+      && lipo ../../aarch64-apple-darwin/release/${cmd} ../../x86_64-apple-darwin/release/${cmd} -create -output ${cmd})"
+done
+
+# step "Create tar file" \
+#   "(cd target/universal-apple-darwin/release \
+#     && tar -czf ../../../tmp/release/dyd-darwin-universal.tar.gz ${cmds[@]})"
+
+# step "shasum: Darwin aarch64" \
+#   "(cd tmp/release && sha256sum dyd-darwin-arm64.tar.gz > dyd-darwin-arm64.sha256sum)"
+
+# step "shasum: Darwin x84_64" \
+#   "(cd tmp/release && sha256sum dyd-darwin-x86_64.tar.gz > dyd-darwin-x86_64.sha256sum)"
+
+# step "shasum: Darwin universal" \
+#   "(cd tmp/release && sha256sum dyd-darwin-universal.tar.gz > dyd-darwin-universal.sha256sum)"
+
+# cecho --bright-green "\nChecksums:"
+# cat tmp/release/*.sha256sum
 

@@ -8,7 +8,3 @@ trap "exit" INT
 source ".medic/_support/doctor.sh"
 
 cargo run --bin medic -- shipit
-
-# cecho --bright-green "\nChecksums:"
-# cat tmp/release/*.sha256sum
-
