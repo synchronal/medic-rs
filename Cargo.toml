@@ -16,6 +16,7 @@ members = [
     "medic-step-cargo",
     "medic-step-elixir",
     "medic-step-git",
+    "medic-step-github",
     "medic-test",
     "medic-update",
 ]

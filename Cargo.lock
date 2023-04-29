@@ -603,6 +603,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "medic-step-github"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "indoc",
+ "medic-lib",
+ "regex",
+]
+
+[[package]]
 name = "medic-test"
 version = "0.1.0"
 dependencies = [
