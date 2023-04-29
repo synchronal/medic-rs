@@ -4,7 +4,7 @@ use clap::Subcommand;
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
 #[clap(bin_name = "medic-step-git")]
-/// Steps for validating a Rust cargo project.
+/// Steps for interacting with git.
 pub struct CliArgs {
     #[command(subcommand)]
     pub command: Command,
