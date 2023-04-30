@@ -19,9 +19,16 @@ echo
 cargo build --target x86_64-apple-darwin --workspace -r
 
 
-cmds=(medic medic-audit medic-doctor medic-shipit medic-test medic-update \
-           medic-check-asdf medic-check-elixir medic-check-hex medic-check-homebrew medic-check-npm medic-check-rust \
-           medic-step-cargo medic-step-elixir medic-step-git medic-step-github)
+medic=(medic medic-audit medic-doctor medic-shipit medic-test medic-update \
+           medic-check-asdf medic-check-homebrew medic-step-git medic-step-github)
+medic_elixir=(medic-check-elixir medic-check-hex medic-step-elixir)
+medic_node=(medic-check-npm)
+medic_rust=(medic-check-rust medic-step-cargo)
+
+cmds=(${medic[@]})
+cmds+=(${medic_elixir[@]})
+cmds+=(${medic_node[@]})
+cmds+=(${medic_rust[@]})
 
 for cmd in ${cmds[@]}; do
   step "${cmd}: darwin universal" \
@@ -29,19 +36,33 @@ for cmd in ${cmds[@]}; do
       && lipo ../../aarch64-apple-darwin/release/${cmd} ../../x86_64-apple-darwin/release/${cmd} -create -output ${cmd})"
 done
 
-# step "Create tar file" \
-#   "(cd target/universal-apple-darwin/release \
-#     && tar -czf ../../../tmp/release/dyd-darwin-universal.tar.gz ${cmds[@]})"
+step "medic: Create tar file" \
+  "(cd target/universal-apple-darwin/release \
+    && tar -czf ../../../tmp/release/medic-darwin-universal.tar.gz ${medic[*]})"
 
-# step "shasum: Darwin aarch64" \
-#   "(cd tmp/release && sha256sum dyd-darwin-arm64.tar.gz > dyd-darwin-arm64.sha256sum)"
+step "medic-elixir: Create tar file" \
+  "(cd target/universal-apple-darwin/release \
+    && tar -czf ../../../tmp/release/medic-elixir-darwin-universal.tar.gz ${medic_elixir[*]})"
 
-# step "shasum: Darwin x84_64" \
-#   "(cd tmp/release && sha256sum dyd-darwin-x86_64.tar.gz > dyd-darwin-x86_64.sha256sum)"
+step "medic-node: Create tar file" \
+  "(cd target/universal-apple-darwin/release \
+    && tar -czf ../../../tmp/release/medic-node-darwin-universal.tar.gz ${medic_node[*]})"
 
-# step "shasum: Darwin universal" \
-#   "(cd tmp/release && sha256sum dyd-darwin-universal.tar.gz > dyd-darwin-universal.sha256sum)"
+step "medic-rust: Create tar file" \
+  "(cd target/universal-apple-darwin/release \
+    && tar -czf ../../../tmp/release/medic-rust-darwin-universal.tar.gz ${medic_rust[*]})"
 
-# cecho --bright-green "\nChecksums:"
-# cat tmp/release/*.sha256sum
+pushd tmp/release >/dev/null
+
+for file in $(ls *.tar.gz); do
+
+step "shasum: Darwin aarch64" \
+  "(sha256sum ${file} > ${file}.sha256sum)"
+
+done
+
+popd >/dev/null
+
+cecho --bright-green "\nChecksums:"
+(cd tmp/release && cat *.sha256sum)
 
