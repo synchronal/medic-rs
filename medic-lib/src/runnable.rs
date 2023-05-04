@@ -1,6 +1,6 @@
 use crate::AppResult;
 
-pub trait Runnable {
+pub trait Runnable: std::fmt::Display {
     fn allow_failure(&self) -> bool {
         false
     }
