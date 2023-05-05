@@ -61,7 +61,7 @@ checks = [
   # medic-check-asdf package-installed --plugin rust
   { check = "asdf", command = "package-installed", args = { plugin = "rust" } },
   # medic-check-homebrew
-  { check = "homebrew" },
+  { check = "homebrew", verbose = true, output_format = "stdio" },
   # ... etc
   { check = "rust", command = "crate-installed", args = { name = "cargo-audit" } },
   { check = "rust", command = "target-installed", args = { target = "aarch64-apple-darwin" } },
@@ -107,7 +107,9 @@ steps = [
 ### Checks
 
 Custom checks may be run, so long as they are named `medic-check-{name}` and are available
-in the PATH. Checks must follow:
+in the PATH. Checks must follow one of the following output formats:
+
+#### stdio
 
 - Informational output may only be written to STDERR.
 - The suggested remedy (if available) must be written to STDOUT.

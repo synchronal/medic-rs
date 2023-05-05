@@ -6,16 +6,33 @@ use crate::std_to_string;
 use crate::AppResult;
 
 use arboard::Clipboard;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
-use std::process::Command;
+use std::process::{Command, Stdio};
+
+#[derive(Debug, Default, Deserialize, Serialize)]
+pub enum OutputFormat {
+    #[default]
+    #[serde(rename(deserialize = "stdio"))]
+    Stdio,
+}
+
+impl fmt::Display for OutputFormat {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            OutputFormat::Stdio => write!(f, "stdio"),
+        }
+    }
+}
 
 #[derive(Debug, Deserialize)]
 pub struct Check {
+    pub args: Option<HashMap<String, String>>,
     pub check: String,
     pub command: Option<String>,
-    pub args: Option<HashMap<String, String>>,
+    #[serde(default)]
+    pub output_format: OutputFormat,
     #[serde(default)]
     pub verbose: bool,
 }
@@ -27,6 +44,10 @@ impl Runnable for Check {
         print!("\x1b[32m• \x1b[0");
         print!("{self}  …");
         if let Some(mut command) = self.to_command() {
+            if verbose {
+                print!("\r\n");
+                command.stderr(Stdio::inherit());
+            }
             match command.output() {
                 Ok(result) => {
                     if result.status.success() {
@@ -65,6 +86,7 @@ impl Runnable for Check {
         let mut check_cmd: String = "medic-check-".to_owned();
         check_cmd.push_str(&self.check);
         let mut command = Command::new(check_cmd);
+        command.env("MEDIC_OUTPUT_FORMAT", self.output_format.to_string());
 
         if let Some(subcmd) = self.command {
             command.arg(subcmd);
@@ -78,6 +100,10 @@ impl Runnable for Check {
         }
 
         Some(command)
+    }
+
+    fn verbose(&self) -> bool {
+        self.verbose
     }
 }
 
