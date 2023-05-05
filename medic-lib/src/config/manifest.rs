@@ -24,8 +24,10 @@ impl Manifest {
             .into_string()
             .unwrap();
         let mut context = std::collections::HashMap::new();
-        context.insert("PWD".to_string(), cwd.clone());
         context.insert("CWD".to_string(), cwd);
+        for (key, value) in std::env::vars() {
+            context.insert(key, value);
+        }
 
         let path_expansion = envsubst::substitute(path.to_string_lossy(), &context).unwrap();
         let expanded_path = std::path::Path::new(&path_expansion);
