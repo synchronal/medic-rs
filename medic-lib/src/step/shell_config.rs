@@ -62,7 +62,7 @@ impl Runnable for ShellConfig {
             AppResult::Err(Some("Failed to parse command".into()))
         }
     }
-    fn to_command(self) -> Option<Command> {
+    fn to_command(&self) -> Option<Command> {
         let cmd: Vec<&str> = self.shell.split(' ').collect();
         if let Some((first, args)) = cmd.split_first() {
             let mut command = Command::new(first);

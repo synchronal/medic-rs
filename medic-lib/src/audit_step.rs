@@ -31,7 +31,7 @@ impl Runnable for AuditStep {
         }
     }
 
-    fn to_command(self) -> Option<Command> {
+    fn to_command(&self) -> Option<Command> {
         match self {
             AuditStep::Check(config) => config.to_command(),
             AuditStep::Shell(config) => config.to_command(),

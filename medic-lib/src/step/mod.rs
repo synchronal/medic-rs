@@ -45,7 +45,7 @@ impl Runnable for Step {
         }
     }
 
-    fn to_command(self) -> Option<Command> {
+    fn to_command(&self) -> Option<Command> {
         match self {
             Step::Shell(config) => config.to_command(),
             Step::Step(config) => config.to_command(),

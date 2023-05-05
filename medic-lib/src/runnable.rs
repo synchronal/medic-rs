@@ -6,7 +6,7 @@ pub trait Runnable {
     }
 
     fn run(self) -> AppResult<()>;
-    fn to_command(self) -> Option<std::process::Command>;
+    fn to_command(&self) -> Option<std::process::Command>;
     fn verbose(&self) -> bool {
         false
     }

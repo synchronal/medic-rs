@@ -58,18 +58,18 @@ impl Runnable for StepConfig {
             AppResult::Err(Some("Failed to parse command".into()))
         }
     }
-    fn to_command(self) -> Option<Command> {
+    fn to_command(&self) -> Option<Command> {
         let mut check_cmd: String = "medic-step-".to_owned();
         check_cmd.push_str(&self.step);
         let mut command = Command::new(check_cmd);
 
-        if let Some(subcmd) = self.command {
+        if let Some(subcmd) = &self.command {
             command.arg(subcmd);
         }
-        if let Some(args) = self.args {
+        if let Some(args) = &self.args {
             for (flag, value) in args {
                 let mut flag_arg = "--".to_owned();
-                flag_arg.push_str(&flag);
+                flag_arg.push_str(flag);
                 command.arg(flag_arg).arg(value);
             }
         }

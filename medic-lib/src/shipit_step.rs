@@ -56,7 +56,7 @@ impl Runnable for ShipitStep {
         }
     }
 
-    fn to_command(self) -> Option<Command> {
+    fn to_command(&self) -> Option<Command> {
         match self {
             ShipitStep::Check(config) => config.to_command(),
             ShipitStep::Shell(config) => config.to_command(),
