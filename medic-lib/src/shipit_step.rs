@@ -102,7 +102,6 @@ fn run_audit() -> AppResult<()> {
         .output()
     {
         if result.status.success() {
-            println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
             AppResult::Ok(())
         } else {
             AppResult::Err(Some("Audit failure".into()))
@@ -122,7 +121,6 @@ fn run_test() -> AppResult<()> {
         .output()
     {
         if result.status.success() {
-            println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
             AppResult::Ok(())
         } else {
             AppResult::Err(Some("Test failure".into()))
@@ -142,7 +140,6 @@ fn run_update() -> AppResult<()> {
         .output()
     {
         if result.status.success() {
-            println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
             AppResult::Ok(())
         } else {
             AppResult::Err(Some("Unable to update project".into()))

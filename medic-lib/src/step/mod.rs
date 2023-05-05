@@ -82,7 +82,6 @@ fn run_doctor() -> AppResult<()> {
         .output()
     {
         if result.status.success() {
-            println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
             AppResult::Ok(())
         } else {
             AppResult::Err(None)
