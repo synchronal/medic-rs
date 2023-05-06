@@ -109,6 +109,23 @@ steps = [
 Custom checks may be run, so long as they are named `medic-check-{name}` and are available
 in the PATH. Checks must follow one of the following output formats:
 
+#### json
+
+- Informational output may be written to STDERR in any format. If the check is configured
+  with `verbose = true`, this output will be written directly to the STDERR of medic as
+  it happens.
+- JSON should be written to STDOUT with the following optional keys:
+  ```json
+  {
+    "output": "Output to display to the user, for example STDOUT captured from internal commands",
+    "error": "Error to display to the user",
+    "remedy": "suggested remedy to resolve the problem"
+  }
+  ```
+- If the check fails, the process must exit with a non-zero exit status.
+
+Note that upon failure, the `error` key in the output JSON takes priority over STDERR.
+
 #### stdio
 
 - Informational output may only be written to STDERR.

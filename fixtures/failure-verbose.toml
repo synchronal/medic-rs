@@ -1,0 +1,5 @@
+[doctor]
+
+checks = [
+  { check = "asdf", verbose = true, command = "plugin-installed", args = { plugin = "no-plugin" } },
+]

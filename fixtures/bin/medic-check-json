@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+cat << EOF >&2
+Output to show to users when running with verbose = true:
+
+This will be captured when verbose is false. Because the
+failure output is taken from the JSON printed to STDOUT,
+on failure this will never be seen when verbose is false.
+EOF
+
+cat << EOF
+{
+  "output": "This is some output that is treated as if it was captured from STDOUT",
+  "remedy": "true"
+}
+EOF
+
+if [[ "$1" == "fail" ]]; then
+  exit 1
+fi

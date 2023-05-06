@@ -13,8 +13,8 @@ use std::process::{Command, Stdio};
 
 #[derive(Debug, Default, Deserialize, Serialize)]
 pub enum OutputFormat {
-    // #[serde(rename(deserialize = "json"))]
-    // Json,
+    #[serde(rename(deserialize = "json"))]
+    Json,
     #[default]
     #[serde(rename(deserialize = "stdio"))]
     Stdio,
@@ -23,11 +23,28 @@ pub enum OutputFormat {
 impl OutputFormat {
     fn parse(self, result: std::process::Output) -> CheckOutput {
         match self {
+            OutputFormat::Json => {
+                let stdout = std_to_string(result.stdout);
+                let stderr = std_to_string(result.stderr);
+                let o: Result<CheckOutput, serde_json::Error> = serde_json::from_str(&stdout);
+                match o {
+                    Ok(mut check_output) => {
+                        if check_output.stderr.is_none() && !stderr.is_empty() {
+                            check_output.stderr = Some(stderr.trim().to_owned());
+                        }
+                        check_output
+                    }
+                    Err(_err) => CheckOutput {
+                        stdout: Some("Check did not return valid JSON".into()),
+                        ..Default::default()
+                    },
+                }
+            }
             OutputFormat::Stdio => {
                 let stderr = if result.stderr.is_empty() {
                     None
                 } else {
-                    Some(std_to_string(result.stderr))
+                    Some(std_to_string(result.stderr).trim().to_owned())
                 };
                 let remedy = if result.stdout.is_empty() {
                     None
@@ -38,7 +55,7 @@ impl OutputFormat {
                 CheckOutput {
                     stderr,
                     remedy,
-                    _stdout: None,
+                    ..Default::default()
                 }
             }
         }
@@ -48,16 +65,54 @@ impl OutputFormat {
 impl fmt::Display for OutputFormat {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            // OutputFormat::Json => write!(f, "json"),
+            OutputFormat::Json => write!(f, "json"),
             OutputFormat::Stdio => write!(f, "stdio"),
         }
     }
 }
 
+#[derive(Debug, Default, Deserialize, Serialize)]
 pub struct CheckOutput {
-    _stdout: Option<String>,
+    #[serde(rename(deserialize = "output"))]
+    stdout: Option<String>,
+    #[serde(rename(deserialize = "error"))]
     stderr: Option<String>,
     remedy: Option<String>,
+    #[serde(default, skip_serializing)]
+    verbose: bool,
+}
+
+impl CheckOutput {
+    fn verbose(&mut self, verbose: bool) {
+        self.verbose = verbose;
+    }
+}
+
+impl fmt::Display for CheckOutput {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let stdout = self.stdout.clone();
+        let stderr = self.stderr.clone();
+        let remedy = self.remedy.clone();
+
+        if let Some(stderr) = stderr {
+            writeln!(f, "\x1b[0;31m== Check error ==\x1b[0m\r\n")?;
+            write!(f, "{stderr}\r\n\r\n")?;
+        }
+
+        if let Some(stdout) = stdout {
+            writeln!(f, "\x1b[0;31m== Check output ==\x1b[0m\r\n")?;
+            write!(f, "{stdout}\r\n\r\n")?;
+        }
+
+        if let Some(remedy) = remedy {
+            write!(f, "\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m")?;
+            write!(f, "  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n")?;
+        } else {
+            writeln!(f, "\x1b[0;33mNo remedy suggested.\x1b[0m")?;
+        }
+
+        write!(f, "")
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -88,22 +143,14 @@ impl Runnable for Check {
                         println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
                         AppResult::Ok(())
                     } else {
-                        let output = self.output_format.parse(result);
                         println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-                        if !verbose && output.stderr.is_some() {
-                            eprintln!("\x1b[0;31m== Check output ==\x1b[0m\r\n");
-                            eprint!("{}", output.stderr.unwrap());
-                        }
+                        let mut output = self.output_format.parse(result);
+                        output.verbose(verbose);
+                        eprint!("{output}");
 
-                        if output.remedy.is_none() {
-                            println!("\x1b[0;33mNo remedy suggested.\x1b[0m");
-                        } else {
-                            let remedy = output.remedy.unwrap();
-                            print!("\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m");
-                            print!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
-
+                        if output.remedy.is_some() {
                             let mut clipboard = Clipboard::new().unwrap();
-                            clipboard.set_text(remedy).unwrap();
+                            clipboard.set_text(output.remedy.unwrap()).unwrap();
                         }
                         AppResult::Err(None)
                     }

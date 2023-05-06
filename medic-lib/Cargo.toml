@@ -9,6 +9,7 @@ edition = "2021"
 arboard = "3.2"
 envsubst = "0.2"
 serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 toml = "0.7"
 
 [features]
