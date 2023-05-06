@@ -116,7 +116,8 @@ in the PATH.
 - `output` - the output format used by the check.
 - `verbose` - when `true`, STDERR of the check is redirected to STDERR of the current medic process.
 
-Checks must follow one of the following output formats:
+Checks must follow one or more output format, which is provided to the check in the environment:
+variable `MEDIC_OUTPUT_FORMAT`:
 
 #### json
 
