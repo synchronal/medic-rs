@@ -1,4 +1,4 @@
 [doctor]
 checks = [
-  { check = "json", command = "fail", verbose = false, output_format = "json" },
+  { check = "json", command = "fail", verbose = false, output = "json" },
 ]

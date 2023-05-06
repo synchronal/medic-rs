@@ -121,7 +121,7 @@ pub struct Check {
     pub check: String,
     pub command: Option<String>,
     #[serde(default)]
-    pub output_format: OutputFormat,
+    pub output: OutputFormat,
     #[serde(default)]
     pub verbose: bool,
 }
@@ -144,7 +144,7 @@ impl Runnable for Check {
                         AppResult::Ok(())
                     } else {
                         println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-                        let mut output = self.output_format.parse(result);
+                        let mut output = self.output.parse(result);
                         output.verbose(verbose);
                         eprint!("{output}");
 
@@ -168,7 +168,7 @@ impl Runnable for Check {
         let mut check_cmd: String = "medic-check-".to_owned();
         check_cmd.push_str(&self.check);
         let mut command = Command::new(check_cmd);
-        command.env("MEDIC_OUTPUT_FORMAT", self.output_format.to_string());
+        command.env("MEDIC_OUTPUT_FORMAT", self.output.to_string());
 
         if let Some(subcmd) = &self.command {
             command.arg(subcmd);

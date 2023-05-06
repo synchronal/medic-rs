@@ -61,7 +61,7 @@ checks = [
   # medic-check-asdf package-installed --plugin rust
   { check = "asdf", command = "package-installed", args = { plugin = "rust" } },
   # medic-check-homebrew
-  { check = "homebrew", verbose = true, output_format = "stdio" },
+  { check = "homebrew", verbose = true, output= "stdio" },
   # ... etc
   { check = "rust", command = "crate-installed", args = { name = "cargo-audit" } },
   { check = "rust", command = "target-installed", args = { target = "aarch64-apple-darwin" } },
@@ -107,7 +107,16 @@ steps = [
 ### Checks
 
 Custom checks may be run, so long as they are named `medic-check-{name}` and are available
-in the PATH. Checks must follow one of the following output formats:
+in the PATH.
+
+- `check` - REQUIRED - name of the check. Shells out to `medic-check-{name}`, which is expected to be
+  available in the PATH.
+- `command` - an optional subcommand to pass as the first argument to the check.
+- `args` - a map of keys and values to pass to the check in the format `--key value`.
+- `output` - the output format used by the check.
+- `verbose` - when `true`, STDERR of the check is redirected to STDERR of the current medic process.
+
+Checks must follow one of the following output formats:
 
 #### json
 
@@ -126,7 +135,7 @@ in the PATH. Checks must follow one of the following output formats:
 
 Note that upon failure, the `error` key in the output JSON takes priority over STDERR.
 
-#### stdio
+#### stdio (default)
 
 - Informational output may only be written to STDERR.
 - The suggested remedy (if available) must be written to STDOUT.
