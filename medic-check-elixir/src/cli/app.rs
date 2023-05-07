@@ -13,13 +13,39 @@ pub struct CliArgs {
 
 #[derive(Debug, Subcommand)]
 pub enum Command {
+    /// Checks that an archive is installed locally.
+    ArchiveInstalled(ArchiveArgs),
+    /// Checks that hex is installed locally.
+    LocalHex,
+    /// Checks that rebar is installed locally.
+    LocalRebar,
+    /// Checks that all Mix dependencies are compiled.
+    PackagesCompiled(PackageArgs),
+    /// Checks that all Mix dependencies are installed.
+    PackagesInstalled(PackageArgs),
     /// Checks that no dependencies exist in mix.lock that are not explicitly
     /// or implicitly required in mix.exs.
     UnusedDeps(MixArgs),
 }
 
 #[derive(Args, Debug)]
+pub struct ArchiveArgs {
+    /// Name of a hex package.
+    #[clap(value_parser)]
+    #[arg(short, long, value_hint = clap::ValueHint::CommandString)]
+    pub name: String,
+}
+
+#[derive(Args, Debug)]
 pub struct MixArgs {
+    /// Path to a mix project
+    #[clap(value_parser)]
+    #[arg(short, long, default_value = ".", value_hint = clap::ValueHint::DirPath)]
+    pub cd: String,
+}
+
+#[derive(Args, Debug)]
+pub struct PackageArgs {
     /// Path to a mix project
     #[clap(value_parser)]
     #[arg(short, long, default_value = ".", value_hint = clap::ValueHint::DirPath)]

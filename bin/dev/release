@@ -21,7 +21,7 @@ cargo build --target x86_64-apple-darwin --workspace -r
 
 medic=(medic medic-audit medic-doctor medic-shipit medic-test medic-update \
            medic-check-asdf medic-check-homebrew medic-step-git medic-step-github)
-medic_elixir=(medic-check-elixir medic-check-hex medic-step-elixir)
+medic_elixir=(medic-check-elixir medic-step-elixir)
 medic_node=(medic-check-npm)
 medic_rust=(medic-check-rust medic-step-rust)
 
