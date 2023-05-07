@@ -152,6 +152,16 @@ in the PATH. Steps must follow:
 - If the step fails, the process must exit with a non-zero exit status.
 
 
+### Colorization
+
+Output from steps and checks can be colorized using unicode or hexadecimal ANSI escape sequences.
+
+```shell
+echo "\u001b[1;31mHere is some red text\u001b[0m" >&2
+echo "\x1b[1;33mHere is some yellow text\x1b[0m" >&2
+```
+
+
 ## Development
 
 ```shell
