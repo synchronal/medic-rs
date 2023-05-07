@@ -119,7 +119,7 @@ in the PATH.
 Checks must follow one or more output format, which is provided to the check in the environment:
 variable `MEDIC_OUTPUT_FORMAT`:
 
-#### json
+#### json (default)
 
 - Informational output may be written to STDERR in any format. If the check is configured
   with `verbose = true`, this output will be written directly to the STDERR of medic as
@@ -136,7 +136,7 @@ variable `MEDIC_OUTPUT_FORMAT`:
 
 Note that upon failure, the `error` key in the output JSON takes priority over STDERR.
 
-#### stdio (default)
+#### stdio
 
 - Informational output may only be written to STDERR.
 - The suggested remedy (if available) must be written to STDOUT.

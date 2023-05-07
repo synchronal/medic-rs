@@ -13,9 +13,9 @@ use std::process::{Command, Stdio};
 
 #[derive(Debug, Default, Deserialize, Serialize)]
 pub enum OutputFormat {
+    #[default]
     #[serde(rename(deserialize = "json"))]
     Json,
-    #[default]
     #[serde(rename(deserialize = "stdio"))]
     Stdio,
 }

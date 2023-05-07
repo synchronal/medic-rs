@@ -3,7 +3,10 @@
 checks = [
   { check = "asdf", command = "plugin-installed", args = { plugin = "rust" } },
   { check = "asdf", command = "package-installed", args = { plugin = "rust" } },
-  { check = "printenv", verbose = true, output = "stdio" },
+  { check = "printenv", command = "stdio", verbose = true, output = "stdio" },
+  { check = "printenv", command = "json", verbose = true, output = "json" },
   { check = "json", command = "verbose", verbose = true, output = "json" },
   { check = "json", command = "succeed", output = "json" },
+  { check = "stdio", command = "verbose", verbose = true, output = "stdio" },
+  { check = "stdio", command = "succeed", output = "stdio" },
 ]

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+cat << EOF >&2
+This will be captured when verbose is false. On failure,
+this will be printed.
+
+When verbose is true, this will be redirected to the STDERR
+of parent process.
+EOF
+
+if [[ "$1" == "fail" ]]; then
+  echo "true"
+  exit 1
+fi

@@ -1,0 +1,4 @@
+[doctor]
+checks = [
+  { check = "stdio", command = "fail", verbose = false, output = "stdio" },
+]
