@@ -72,8 +72,8 @@ checks = [
 
 checks = [
   { name = "Check for warnings", shell = "cargo build --workspace --features strict" },
-  # medic-step-cargo test
-  { step = "cargo", command = "test", verbose = true },
+  # medic-step-rust test
+  { step = "rust", command = "test", verbose = true },
 ]
 
 [audit]
@@ -81,7 +81,7 @@ checks = [
 checks = [
   { name = "Audit crates", shell = "cargo audit", allow_failure = true, verbose = true },
   { check = "rust", command = "format-check" },
-  { step = "cargo", command = "clippy" },
+  { step = "rust", command = "clippy" },
 ]
 
 [update]
