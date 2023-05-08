@@ -39,6 +39,74 @@ medic update  # -- update the project with upstream changes.
 medic shipit  # -- run all checks and ship your changes.
 ```
 
+#### doctor
+
+`medic doctor` runs checks to ensure the project is ready for development.
+
+Examples:
+- Are all dependencies installed?
+- Are all required databases installed and accessible?
+- Are development services and fakes running?
+- Are test services available?
+
+Valid actions:
+- checks
+
+#### test
+
+`medic test` runs all tests. Useful not just for documenting _the_ test suite used
+for your project, but for when multiple test suites are used (`ExUnut + bats`, etc)
+
+Valid actions:
+- steps
+- shell actions
+- doctor
+
+#### audit
+
+`medic audit` is intended for anything that 
+
+Examples:
+- is the code properly formatted (`mix format --check-formatting`, `prettier --check`, etc)?
+- linters (`cargo clippy`, etc)
+- dependency audits (`mix_audit`, `cargo-audit`, `npm audit`, etc)
+
+Valid actions:
+- checks
+- steps
+- shell actions
+
+#### update
+
+`medic update` updates the project with upstream changes.
+
+Examples:
+- git pull
+- update dependencies (without checking)
+- compile dependencies
+- run database migrations
+- run `medic doctor`
+
+Valid actions:
+- steps
+- shell actions
+- doctor
+
+#### shipit
+
+`medic shipit` runs all necessary actions to ship new code in a safe manner.
+
+Valid actions:
+- checks
+- steps
+- shell actions
+- audit
+- test
+- update
+
+
+## Configuration
+
 Each command runs a set of checks and/or steps, with some commands optionally
 accepting configuration indicating that medic should run another of its commands.
 
@@ -150,6 +218,21 @@ in the PATH. Steps must follow:
 
 - Informational output may be written to STDERR or STDOUT.
 - If the step fails, the process must exit with a non-zero exit status.
+
+
+### Shell actions
+
+Arbitrary shell actions can be run. If the shell command returns a non-zero exit status, then the
+action is deemed a failure.
+
+Note that pipes and redirections are not handled, so complex shell commands may be better suited to
+be written into shell scripts.
+
+- `name` - the description to be shown to the user when run.
+- `shell` - the command to run
+- `verbose`- when `true`, STDOUT and STDERR of the action are redirected to the relevant file descriptors
+  of the current medic process.
+- `allow_failure` - allow medic to continue even when the process fails.
 
 
 ### Colorization
