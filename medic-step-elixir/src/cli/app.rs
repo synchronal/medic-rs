@@ -20,6 +20,8 @@ pub enum Command {
     Credo(MixArgs),
     /// Run dialyzer static analysis. Requires that `dialyxir` be added to a project.
     Dialyzer(MixArgs),
+    /// Get new dependencies.
+    GetDeps(MixArgs),
 }
 
 #[derive(Args, Debug)]

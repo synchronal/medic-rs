@@ -6,7 +6,7 @@ use cli::app::MixArgs;
 use medic_lib::std_to_string;
 use medic_lib::StepResult::{self, StepError, StepOk};
 use std::fs;
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 pub fn mix_installed() -> StepResult {
     match Command::new("which").args(["mix"]).output() {
@@ -49,6 +49,34 @@ pub fn mix_project_exists(path: &String) -> StepResult {
     }
 }
 
+pub fn get_deps(args: MixArgs) -> StepResult {
+    mix_installed()?;
+    mix_project_exists(&args.cd)?;
+    let path = fs::canonicalize(&args.cd).unwrap();
+    match Command::new("mix")
+        .args(["deps.get"])
+        .current_dir(&path)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
+        .output()
+    {
+        Ok(output) => {
+            let stdout = std_to_string(output.stdout);
+            let stderr = std_to_string(output.stderr);
+            if output.status.success() {
+                StepOk
+            } else {
+                StepError(
+                    "Mix was unable get deps.".into(),
+                    Some(stdout),
+                    Some(stderr),
+                )
+            }
+        }
+        Err(_err) => StepError("Unable to get deps.".into(), None, None),
+    }
+}
+
 pub fn run_credo(args: MixArgs) -> StepResult {
     mix_installed()?;
     mix_project_exists(&args.cd)?;
@@ -56,6 +84,8 @@ pub fn run_credo(args: MixArgs) -> StepResult {
     match Command::new("mix")
         .args(["credo", "--strict"])
         .current_dir(&path)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .output()
     {
         Ok(output) => {
@@ -82,6 +112,8 @@ pub fn run_dialyzer(args: MixArgs) -> StepResult {
     match Command::new("mix")
         .args(["dialyzer"])
         .current_dir(&path)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .output()
     {
         Ok(output) => {
@@ -108,6 +140,8 @@ pub fn run_mix_audit(args: MixArgs) -> StepResult {
     match Command::new("mix")
         .args(["deps.audit"])
         .current_dir(&path)
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .output()
     {
         Ok(output) => {
