@@ -19,3 +19,9 @@ members = [
     "medic-test",
     "medic-update",
 ]
+
+[workspace.dependencies]
+clap = { version = "4.1.8" }
+clap_complete = "4.1.4"
+indoc = "2.0.1"
+regex = "1.7"

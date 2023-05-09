@@ -6,9 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
-clap_complete = "4.1.4"
-indoc = "2.0.1"
+clap = { workspace = true, features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
+clap_complete = { workspace = true }
+indoc = { workspace = true }
 medic-audit = { path = "../medic-audit" }
 medic-doctor = { path = "../medic-doctor" }
 medic-lib = { path = "../medic-lib" }
