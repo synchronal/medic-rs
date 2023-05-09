@@ -5,8 +5,7 @@ use crate::AppResult;
 use serde::Deserialize;
 use std::fmt;
 use std::io::{self, Write};
-use std::process::Command;
-use std::process::Stdio;
+use std::process::{Command, Stdio};
 
 #[derive(Debug, Deserialize)]
 pub struct ShellConfig {
@@ -66,15 +65,12 @@ impl Runnable for ShellConfig {
         }
     }
     fn to_command(&self) -> Option<Command> {
-        let cmd: Vec<&str> = self.shell.split(' ').collect();
-        if let Some((first, args)) = cmd.split_first() {
-            let mut command = Command::new(first);
-            for arg in args {
-                command.arg(arg);
-            }
-            Some(command)
-        } else {
+        if self.shell.is_empty() {
             None
+        } else {
+            let mut command = Command::new("sh");
+            command.arg("-c").arg(&self.shell);
+            Some(command)
         }
     }
 

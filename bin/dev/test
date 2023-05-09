@@ -2,4 +2,5 @@
 
 trap "exit" INT
 
-cargo run --bin medic -- test
+cargo run --bin medic -- test $*
+

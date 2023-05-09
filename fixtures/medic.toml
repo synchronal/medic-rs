@@ -10,3 +10,9 @@ checks = [
   { check = "stdio", command = "verbose", verbose = true, output = "stdio" },
   { check = "stdio", command = "succeed", output = "stdio" },
 ]
+
+[test]
+
+checks = [
+  { name = "shell expansion", shell = "ls *", verbose = true },
+]
