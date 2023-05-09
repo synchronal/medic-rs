@@ -1,6 +1,7 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
 pub mod cli;
+pub mod deps;
 
 use cli::app::MixArgs;
 use medic_lib::std_to_string;
@@ -46,6 +47,73 @@ pub fn mix_project_exists(path: &String) -> StepResult {
             None,
             Some(format!("Expected path: `{path}/mix.exs`")),
         )
+    }
+}
+
+pub fn compile_deps(args: MixArgs) -> StepResult {
+    mix_installed()?;
+    mix_project_exists(&args.cd)?;
+    match parse_deps(&args) {
+        Ok(deps) => {
+            let outdated: Vec<&deps::Dep> = deps
+                .iter()
+                .filter(|d| d.status == deps::DepStatus::Outdated)
+                .collect();
+
+            if outdated.is_empty() {
+                StepOk
+            } else {
+                let path = fs::canonicalize(&args.cd).unwrap();
+                let mut command = Command::new("mix");
+                command
+                    .arg("deps.compile")
+                    .current_dir(path)
+                    .stdout(Stdio::inherit())
+                    .stderr(Stdio::inherit());
+
+                if let Some(mix_env) = &args.mix_env {
+                    command.env("MIX_ENV", mix_env);
+                };
+
+                for dep in outdated {
+                    command.arg(dep.name.clone());
+                }
+
+                match command.status() {
+                    Ok(status) => {
+                        if status.success() {
+                            StepOk
+                        } else {
+                            StepError("Unable to compile deps.".into(), None, None)
+                        }
+                    }
+                    Err(_) => StepError("Unable to compile deps.".into(), None, None),
+                }
+            }
+        }
+        Err(err) => StepError(
+            "Unable to check for uncompiled deps.".into(),
+            None,
+            Some(format!("{}", err)),
+        ),
+    }
+}
+
+fn parse_deps(args: &MixArgs) -> Result<Vec<deps::Dep>, Box<dyn std::error::Error>> {
+    let path = fs::canonicalize(&args.cd).unwrap();
+
+    let mut command = Command::new("mix");
+    command.arg("deps").current_dir(path);
+    if let Some(mix_env) = &args.mix_env {
+        command.env("MIX_ENV", mix_env);
+    };
+
+    let output = command.output()?;
+    if output.status.success() {
+        let stdout = std_to_string(output.stdout);
+        deps::Dep::from_deps_output(stdout)
+    } else {
+        Err(std_to_string(output.stderr).into())
     }
 }
 
