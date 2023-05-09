@@ -4,8 +4,8 @@ use clap::Subcommand;
 
 #[derive(Debug, Parser)]
 #[clap(author, about)]
-#[clap(bin_name = "medic-step-cargo")]
-/// Steps for validating a Rust cargo project.
+#[clap(bin_name = "medic-step-elixir")]
+/// Steps for managing an Elixir project.
 pub struct CliArgs {
     #[command(subcommand)]
     pub command: Command,

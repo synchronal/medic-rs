@@ -3,8 +3,8 @@ use clap::Subcommand;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
-#[clap(bin_name = "medic-step-cargo")]
-/// Steps for validating a Rust cargo project.
+#[clap(bin_name = "medic-step-rust")]
+/// Steps for validating and updating a Rust cargo project.
 pub struct CliArgs {
     #[command(subcommand)]
     pub command: Command,
