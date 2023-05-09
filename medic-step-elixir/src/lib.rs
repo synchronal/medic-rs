@@ -68,6 +68,7 @@ pub fn compile_deps(args: MixArgs) -> StepResult {
                 command
                     .arg("deps.compile")
                     .current_dir(path)
+                    .stdin(Stdio::inherit())
                     .stdout(Stdio::inherit())
                     .stderr(Stdio::inherit());
 
@@ -124,6 +125,7 @@ pub fn get_deps(args: MixArgs) -> StepResult {
     match Command::new("mix")
         .args(["deps.get"])
         .current_dir(&path)
+        .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .output()
@@ -152,6 +154,7 @@ pub fn run_credo(args: MixArgs) -> StepResult {
     match Command::new("mix")
         .args(["credo", "--strict"])
         .current_dir(&path)
+        .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .output()
@@ -180,6 +183,7 @@ pub fn run_dialyzer(args: MixArgs) -> StepResult {
     match Command::new("mix")
         .args(["dialyzer"])
         .current_dir(&path)
+        .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .output()
@@ -208,6 +212,7 @@ pub fn run_mix_audit(args: MixArgs) -> StepResult {
     match Command::new("mix")
         .args(["deps.audit"])
         .current_dir(&path)
+        .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .output()

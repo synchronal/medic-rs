@@ -28,7 +28,10 @@ impl Runnable for StepConfig {
         if let Some(mut command) = self.to_command() {
             if verbose {
                 print!("\r\n");
-                command.stdout(Stdio::inherit()).stderr(Stdio::inherit());
+                command
+                    .stdin(Stdio::inherit())
+                    .stdout(Stdio::inherit())
+                    .stderr(Stdio::inherit());
             }
             match command.output() {
                 Ok(result) => {
