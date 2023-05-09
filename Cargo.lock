@@ -466,7 +466,7 @@ dependencies = [
 
 [[package]]
 name = "medic"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -481,7 +481,7 @@ dependencies = [
 
 [[package]]
 name = "medic-audit"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -491,7 +491,7 @@ dependencies = [
 
 [[package]]
 name = "medic-check-asdf"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -500,7 +500,7 @@ dependencies = [
 
 [[package]]
 name = "medic-check-elixir"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -509,7 +509,7 @@ dependencies = [
 
 [[package]]
 name = "medic-check-homebrew"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -518,7 +518,7 @@ dependencies = [
 
 [[package]]
 name = "medic-check-npm"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -527,7 +527,7 @@ dependencies = [
 
 [[package]]
 name = "medic-check-rust"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -537,7 +537,7 @@ dependencies = [
 
 [[package]]
 name = "medic-doctor"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -547,14 +547,14 @@ dependencies = [
 
 [[package]]
 name = "medic-init"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "medic-lib",
 ]
 
 [[package]]
 name = "medic-lib"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "arboard",
  "envsubst",
@@ -565,7 +565,7 @@ dependencies = [
 
 [[package]]
 name = "medic-shipit"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -575,7 +575,7 @@ dependencies = [
 
 [[package]]
 name = "medic-step-elixir"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -584,7 +584,7 @@ dependencies = [
 
 [[package]]
 name = "medic-step-git"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -593,7 +593,7 @@ dependencies = [
 
 [[package]]
 name = "medic-step-github"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -603,7 +603,7 @@ dependencies = [
 
 [[package]]
 name = "medic-step-rust"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "indoc",
@@ -612,7 +612,7 @@ dependencies = [
 
 [[package]]
 name = "medic-test"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -622,7 +622,7 @@ dependencies = [
 
 [[package]]
 name = "medic-update"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "clap",
  "clap_complete",
