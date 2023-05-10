@@ -1,5 +1,7 @@
 # Change log
 
+## 0.2.1
+
 - Run shell actions via `sh -c "command"` to allow for shell expansion.
 
 ## 0.2.0
