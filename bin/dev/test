@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
 
-trap "exit" INT
-
 cargo run --bin medic -- test $*
 

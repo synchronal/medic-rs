@@ -248,6 +248,7 @@ echo "\x1b[1;33mHere is some yellow text\x1b[0m" >&2
 ## Development
 
 ```shell
+brew bundle
 bin/dev/doctor
 
 cargo run --bin medic-doctor -- -c fixtures/medic.toml
