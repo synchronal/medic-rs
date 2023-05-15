@@ -2,6 +2,7 @@
 authors = ["Eric Saxby", "synchronal.dev"]
 description = "Helpers for writing checks and steps for medic"
 edition = "2021"
+homepage = "https://github.com/synchronal/medic-rs"
 license = "MIT"
 name = "medic-lib"
 version = "0.1.0"
