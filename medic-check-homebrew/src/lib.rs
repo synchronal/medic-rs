@@ -29,7 +29,9 @@ pub fn bundled(cd: Option<String>) -> CheckResult {
 
     let mut command = Command::new("brew");
     let mut remedy = Command::new("brew");
-    command.args(["bundle", "check"]);
+    command
+        .args(["bundle", "check"])
+        .env("HOMEBREW_NO_AUTO_UPDATE", "1");
     remedy.args(["bundle"]);
 
     if let Some(path) = cd {
