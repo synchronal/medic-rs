@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-medic-lib = { path = "../medic-lib" }
+medic-src = { path = "../medic-src" }
 
 [features]
 # Treat warnings as a build error.

@@ -473,8 +473,8 @@ dependencies = [
  "indoc",
  "medic-audit",
  "medic-doctor",
- "medic-lib",
  "medic-shipit",
+ "medic-src",
  "medic-test",
  "medic-update",
 ]
@@ -486,7 +486,7 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
- "medic-lib",
+ "medic-src",
 ]
 
 [[package]]
@@ -542,14 +542,14 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
- "medic-lib",
+ "medic-src",
 ]
 
 [[package]]
 name = "medic-init"
 version = "0.2.1"
 dependencies = [
- "medic-lib",
+ "medic-src",
 ]
 
 [[package]]
@@ -557,10 +557,8 @@ name = "medic-lib"
 version = "0.2.1"
 dependencies = [
  "arboard",
- "envsubst",
  "serde",
  "serde_json",
- "toml",
 ]
 
 [[package]]
@@ -570,7 +568,18 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
- "medic-lib",
+ "medic-src",
+]
+
+[[package]]
+name = "medic-src"
+version = "0.1.0"
+dependencies = [
+ "arboard",
+ "envsubst",
+ "serde",
+ "serde_json",
+ "toml",
 ]
 
 [[package]]
@@ -617,7 +626,7 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
- "medic-lib",
+ "medic-src",
 ]
 
 [[package]]
@@ -627,7 +636,7 @@ dependencies = [
  "clap",
  "clap_complete",
  "indoc",
- "medic-lib",
+ "medic-src",
 ]
 
 [[package]]

@@ -1,6 +1,3 @@
-pub mod check_result;
-pub use check_result::CheckResult;
-
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::AppResult;

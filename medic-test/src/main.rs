@@ -1,5 +1,5 @@
-use medic_lib::config::Manifest;
-use medic_lib::AppResult;
+use medic_src::config::Manifest;
+use medic_src::AppResult;
 use medic_test::cli::CliArgs;
 use medic_test::run_steps;
 

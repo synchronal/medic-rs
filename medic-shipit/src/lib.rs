@@ -2,9 +2,9 @@
 
 pub mod cli;
 
-use medic_lib::config::Manifest;
-use medic_lib::runnable::Runnable;
-use medic_lib::AppResult;
+use medic_src::config::Manifest;
+use medic_src::runnable::Runnable;
+use medic_src::AppResult;
 
 pub fn run_steps(manifest: Manifest) -> AppResult<()> {
     match manifest.shipit {

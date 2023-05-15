@@ -9,7 +9,7 @@ edition = "2021"
 clap = { workspace = true, features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 clap_complete = { workspace = true }
 indoc = { workspace = true }
-medic-lib = { path = "../medic-lib" }
+medic-src = { path = "../medic-src" }
 
 [features]
 # Treat warnings as a build error.

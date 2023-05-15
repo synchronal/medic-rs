@@ -1,7 +1,7 @@
-use medic_lib::config::Manifest;
-use medic_lib::AppResult;
 use medic_shipit::cli::CliArgs;
 use medic_shipit::run_steps;
+use medic_src::config::Manifest;
+use medic_src::AppResult;
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;

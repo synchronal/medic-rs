@@ -1,8 +1,8 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
 use medic::cli::app::{CliArgs, Command};
-use medic_lib::config::Manifest;
-use medic_lib::AppResult;
+use medic_src::config::Manifest;
+use medic_src::AppResult;
 
 use clap::Parser;
 

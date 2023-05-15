@@ -1,4 +1,4 @@
-use medic_lib::AppResult;
+use medic_src::AppResult;
 
 fn main() -> AppResult<()> {
     println!("Hello, world!");

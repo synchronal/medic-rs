@@ -1,10 +1,8 @@
 pub mod shell_config;
 pub mod step_config;
-pub mod step_result;
 
 pub use shell_config::ShellConfig;
 pub use step_config::StepConfig;
-pub use step_result::StepResult;
 
 use crate::runnable::Runnable;
 use crate::AppResult;

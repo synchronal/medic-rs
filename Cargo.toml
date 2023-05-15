@@ -12,6 +12,7 @@ members = [
     "medic-init",
     "medic-lib",
     "medic-shipit",
+    "medic-src",
     "medic-step-elixir",
     "medic-step-git",
     "medic-step-github",
@@ -25,3 +26,6 @@ clap = { version = "4.1.8" }
 clap_complete = "4.1.4"
 indoc = "2.0.1"
 regex = "1.7"
+serde = { version = "1.0" }
+serde_json = "1.0"
+toml = "0.7"
