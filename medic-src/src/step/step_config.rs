@@ -96,8 +96,11 @@ impl fmt::Display for StepConfig {
             }
             if let Some(args) = &self.args {
                 write!(f, " \x1b[0;33m(")?;
-                for value in args.values() {
-                    write!(f, "{value}")?;
+                for (i, (key, value)) in args.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{key}: {value}")?;
                 }
                 write!(f, ")")?;
             }
