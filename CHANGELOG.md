@@ -1,5 +1,9 @@
 # Change log
 
+## Unreleased
+
+- Checks print output (include error description) prior to printing errors.
+
 ## 0.2.1
 
 - Run shell actions via `sh -c "command"` to allow for shell expansion.

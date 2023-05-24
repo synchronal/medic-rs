@@ -91,14 +91,14 @@ impl fmt::Display for CheckOutput {
         let stderr = self.stderr.clone();
         let remedy = self.remedy.clone();
 
-        if let Some(stderr) = stderr {
-            writeln!(f, "\x1b[0;31m== Check error ==\x1b[0m\r\n")?;
-            write!(f, "{stderr}\r\n\r\n")?;
-        }
-
         if let Some(stdout) = stdout {
             writeln!(f, "\x1b[0;31m== Check output ==\x1b[0m\r\n")?;
             write!(f, "{stdout}\r\n\r\n")?;
+        }
+
+        if let Some(stderr) = stderr {
+            writeln!(f, "\x1b[0;31m== Check error ==\x1b[0m\r\n")?;
+            write!(f, "{stderr}\r\n\r\n")?;
         }
 
         if let Some(remedy) = remedy {
