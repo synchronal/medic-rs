@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `medic test`, `medic update` can run checks.
 - Checks/steps print `key: value` when running.
 - Checks print output (include error description) prior to printing errors.
 
