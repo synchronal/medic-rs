@@ -14,7 +14,7 @@ checks = [
 
 checks = [
   { name = "Check for warnings", shell = "cargo build --workspace --features strict" },
-  { step = "rust", command = "test", verbose = true },
+  { name = "Runt tests", shell = "cargo test", verbose = true },
 ]
 
 [audit]

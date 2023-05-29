@@ -2,13 +2,30 @@
 
 trap "exit" INT
 
-source "$(brew --prefix)/share/medic-bash/cecho.bash"
-source "$(brew --prefix)/share/medic-bash/check.bash"
-source "$(brew --prefix)/share/medic-bash/step.bash"
+source "$(brew --prefix)/share/medic-bash/doctor.bash"
 
 check "ASDF: rust" "asdf plugin list | grep rust" "asdf plugin add rust"
 
 step "ASDF" "asdf install"
 step "Build all workspace crates" "cargo build --workspace"
 
-cargo run --bin medic -- doc
+check "Brewfile" \
+  "brew bundle check" \
+  "brew bundle"
+
+check "Cargo audit installed" \
+  "cargo audit --help >/dev/null 2>&1" \
+  "cargo install cargo-audit"
+
+check "Cargo outdated installed" \
+  "cargo outdated --help >/dev/null 2>&1" \
+  "cargo install cargo-outdated"
+
+check "Rustup MacOS target installed: aarch64" \
+  "rustup target list | grep 'aarch64-apple-darwin (installed)'" \
+  "rustup target install aarch64-apple-darwin"
+
+check "Rustup MacOS target installed: x86_64" \
+  "rustup target list | grep 'x86_64-apple-darwin (installed)'" \
+  "rustup target install x86_64-apple-darwin"
+
