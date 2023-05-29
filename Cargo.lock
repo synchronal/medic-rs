@@ -517,16 +517,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "medic-check-rust"
-version = "0.2.0"
-dependencies = [
- "clap",
- "indoc",
- "medic-lib",
- "regex",
-]
-
-[[package]]
 name = "medic-doctor"
 version = "0.3.0"
 dependencies = [
@@ -589,15 +579,6 @@ dependencies = [
  "indoc",
  "medic-lib",
  "regex",
-]
-
-[[package]]
-name = "medic-step-rust"
-version = "0.2.0"
-dependencies = [
- "clap",
- "indoc",
- "medic-lib",
 ]
 
 [[package]]

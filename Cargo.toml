@@ -6,7 +6,6 @@ members = [
     "medic-check-asdf",
     "medic-check-homebrew",
     "medic-check-npm",
-    "medic-check-rust",
     "medic-doctor",
     "medic-init",
     "medic-lib",
@@ -14,7 +13,6 @@ members = [
     "medic-src",
     "medic-step-git",
     "medic-step-github",
-    "medic-step-rust",
     "medic-test",
     "medic-update",
 ]

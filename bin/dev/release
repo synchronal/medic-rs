@@ -22,11 +22,9 @@ cargo build --target x86_64-apple-darwin --workspace -r
 medic=(medic medic-audit medic-doctor medic-shipit medic-test medic-update \
            medic-check-asdf medic-check-homebrew medic-step-git medic-step-github)
 medic_node=(medic-check-npm)
-medic_rust=(medic-check-rust medic-step-rust)
 
 cmds=(${medic[@]})
 cmds+=(${medic_node[@]})
-cmds+=(${medic_rust[@]})
 
 for cmd in ${cmds[@]}; do
   step "${cmd}: darwin universal" \
@@ -41,10 +39,6 @@ step "medic: Create tar file" \
 step "medic-node: Create tar file" \
   "(cd target/universal-apple-darwin/release \
     && tar -czf ../../../tmp/release/medic-node-darwin-universal.tar.gz ${medic_node[*]})"
-
-step "medic-rust: Create tar file" \
-  "(cd target/universal-apple-darwin/release \
-    && tar -czf ../../../tmp/release/medic-rust-darwin-universal.tar.gz ${medic_rust[*]})"
 
 pushd tmp/release >/dev/null
 
