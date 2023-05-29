@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 0.3.1
+
+- Split out rust check/step to separate project.
 - `medic doctor` can run steps and shell steps.
 - `medic test`, `medic update` can run checks.
 - Checks/steps print `key: value` when running.
