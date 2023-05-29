@@ -1,6 +1,6 @@
 use crate::AppResult;
 use crate::AuditStep;
-use crate::Check;
+use crate::DoctorStep;
 use crate::ShipitStep;
 use crate::Step;
 
@@ -63,7 +63,7 @@ pub struct AuditConfig {
 
 #[derive(Debug, Deserialize)]
 pub struct DoctorConfig {
-    pub checks: Vec<Check>,
+    pub checks: Vec<DoctorStep>,
 }
 
 #[derive(Debug, Deserialize)]

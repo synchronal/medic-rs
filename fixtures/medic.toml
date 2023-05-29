@@ -9,6 +9,7 @@ checks = [
   { check = "json", command = "succeed", output = "json" },
   { check = "stdio", command = "verbose", verbose = true, output = "stdio" },
   { check = "stdio", command = "succeed", output = "stdio" },
+  { name = "Run a step from doctor", shell = "echo success", verbose = true },
 ]
 
 [test]
