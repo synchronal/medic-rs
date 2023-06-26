@@ -5,7 +5,6 @@ members = [
     "medic-audit",
     "medic-check-asdf",
     "medic-check-homebrew",
-    "medic-check-npm",
     "medic-doctor",
     "medic-init",
     "medic-lib",
