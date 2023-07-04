@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.4.0
+
 - Shell steps may include remedies.
 
 ## 0.3.1
