@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Shell steps may include remedies.
+
 ## 0.3.1
 
 - Split out rust check/step to separate project.

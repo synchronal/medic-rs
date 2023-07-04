@@ -2,6 +2,7 @@ use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::AppResult;
 
+use arboard::Clipboard;
 use serde::Deserialize;
 use std::fmt;
 use std::io::{self, Write};
@@ -12,6 +13,7 @@ pub struct ShellConfig {
     #[serde(default)]
     pub allow_failure: bool,
     pub name: String,
+    pub remedy: Option<String>,
     pub shell: String,
     #[serde(default)]
     pub verbose: bool,
@@ -51,6 +53,12 @@ impl Runnable for ShellConfig {
                             eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
                             AppResult::Ok(())
                         } else {
+                            if let Some(remedy) = self.remedy {
+                                eprint!("\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m");
+                                eprintln!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
+                                let mut clipboard = Clipboard::new().unwrap();
+                                clipboard.set_text(remedy).unwrap();
+                            }
                             AppResult::Err(None)
                         }
                     }

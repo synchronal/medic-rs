@@ -149,6 +149,7 @@ checks = [
 checks = [
   { name = "Audit crates", shell = "cargo audit", allow_failure = true, verbose = true },
   { check = "rust", command = "format-check" },
+  { name = "Shell format check", shell = "cargo fmt --check", remedy = "cargo fmt" },
   { step = "rust", command = "clippy" },
 ]
 
