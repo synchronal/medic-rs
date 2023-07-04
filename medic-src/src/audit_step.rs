@@ -1,5 +1,6 @@
 use crate::runnable::Runnable;
-use crate::step::{ShellConfig, StepConfig};
+use crate::shell::ShellConfig;
+use crate::step::StepConfig;
 use crate::{AppResult, Check};
 use serde::Deserialize;
 

@@ -1,10 +1,9 @@
-pub mod shell_config;
 pub mod step_config;
 
-pub use shell_config::ShellConfig;
 pub use step_config::StepConfig;
 
 use crate::runnable::Runnable;
+use crate::shell::ShellConfig;
 use crate::{AppResult, Check};
 use serde::Deserialize;
 use std::fmt;

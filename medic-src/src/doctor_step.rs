@@ -1,4 +1,4 @@
-pub use crate::step::shell_config::ShellConfig;
+pub use crate::shell::ShellConfig;
 pub use crate::step::step_config::StepConfig;
 
 use crate::runnable::Runnable;

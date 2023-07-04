@@ -7,6 +7,7 @@ pub mod check;
 pub mod config;
 pub mod doctor_step;
 pub mod runnable;
+pub mod shell;
 pub mod shipit_step;
 pub mod step;
 
