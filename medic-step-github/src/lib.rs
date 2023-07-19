@@ -16,11 +16,16 @@ pub fn link_to_actions(args: GithubActionsArgs) -> StepResult {
     {
         Ok(cmd) => {
             if cmd.status.success() {
-                let mut stdout = std_to_string(cmd.stdout);
-                stdout = stdout.trim().replace(':', "/").replace("git@", "https://");
-                let re = Regex::new(r"\.git$").unwrap();
-                let origin = re.replace_all(&stdout, "");
-                println!("\x1b[93mCheck CI at \x1b[0;1m{origin}/actions\x1b[0m");
+                let mut origin = std_to_string(cmd.stdout);
+                origin = origin.trim().to_owned();
+                let origin_re = Regex::new(r"(git@|https://)([^:]+)[:/](.+)(?:\.git)$").unwrap();
+                let caps = origin_re.captures(&origin).unwrap();
+                let url = caps.get(2).unwrap().as_str();
+                let repository = caps.get(3).unwrap().as_str();
+
+                let github_url = format!("https://{}/{}", url, repository);
+
+                println!("\x1b[93mCheck CI at \x1b[0;1m{github_url}/actions\x1b[0m");
 
                 StepOk
             } else {
