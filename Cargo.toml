@@ -3,15 +3,11 @@
 members = [
     "medic",
     "medic-audit",
-    "medic-check-asdf",
-    "medic-check-homebrew",
     "medic-doctor",
     "medic-init",
     "medic-lib",
     "medic-shipit",
     "medic-src",
-    "medic-step-git",
-    "medic-step-github",
     "medic-test",
     "medic-update",
 ]
