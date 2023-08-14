@@ -10,6 +10,7 @@ members = [
     "medic-test",
     "medic-update",
 ]
+resolver = "2"
 
 [workspace.dependencies]
 clap = { version = "4.1.8" }
