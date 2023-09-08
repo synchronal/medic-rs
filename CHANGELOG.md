@@ -4,7 +4,7 @@
 
 ## 0.5.0
 
-- Extract all be core medic to external projects.
+- Extract all but core medic to external projects.
 
 ## 0.4.0
 
