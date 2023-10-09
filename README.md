@@ -29,7 +29,7 @@ brew install synchronal/tap/medic-rust
 ## Usage
 
 Medic provides five commands, each of reads its configuration from a
-TOML-formatted file, which defaults to `.medic/config.toml`.
+TOML-formatted file, which defaults to `.cofnig/medic/medic.toml`.
 
 ```shell
 medic doctor  # -- ensure the project is fully set up for development.

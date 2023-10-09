@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Medic config file defaults to `${PWD}/.config/medic.toml`
+
 ## 0.5.0
 
 - Extract all but core medic to external projects.

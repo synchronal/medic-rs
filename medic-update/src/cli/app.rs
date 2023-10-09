@@ -10,7 +10,7 @@ pub struct CliArgs {
         short,
         long,
         env = "MEDIC_CONFIG",
-        default_value = "${PWD}/.medic/config.toml"
+        default_value = "${PWD}/.config/medic.toml"
     )]
     pub config: std::path::PathBuf,
 

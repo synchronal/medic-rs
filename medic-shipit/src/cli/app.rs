@@ -6,12 +6,7 @@ use clap_complete::Shell;
 #[clap(bin_name = "medic shipit")]
 pub struct CliArgs {
     /// Path to a file where medic config can be found
-    #[clap(
-        short,
-        long,
-        env = "MEDIC_CONFIG",
-        default_value = "${PWD}/.medic/config.toml"
-    )]
+    #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.config/medic.toml", value_hint = clap::ValueHint::FilePath)]
     pub config: std::path::PathBuf,
 
     /// Shell to generate completions for
