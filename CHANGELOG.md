@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+#### Breaking Changes:
+
 - Medic config file defaults to `${PWD}/.config/medic.toml`
 
 ## 0.5.0
