@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.0.0
+
 - Add `medic init` to generate an *almost* empty manifest file.
 - Fix `--config` description in medic help.
 
