@@ -31,7 +31,7 @@ pub enum Command {
 
 #[derive(Args, Debug)]
 pub struct ManifestArgs {
-    /// Name of a hex package.
+    /// Path to a file where medic config can be found
     #[clap(value_parser)]
     #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.config/medic.toml", value_hint = clap::ValueHint::FilePath)]
     pub config: PathBuf,

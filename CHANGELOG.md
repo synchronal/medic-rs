@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix `--config` description in medic help.
+
 #### Breaking Changes:
 
 - Medic config file defaults to `${PWD}/.config/medic.toml`
