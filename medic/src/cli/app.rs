@@ -21,6 +21,8 @@ pub enum Command {
     Audit(ManifestArgs),
     /// Runs checks to ensure that a project is fully set up for development.
     Doctor(ManifestArgs),
+    /// Creates the shell of a medic manifest file.
+    Init(ManifestArgs),
     /// Runs an application's tests.
     Test(ManifestArgs),
     /// Update the current application

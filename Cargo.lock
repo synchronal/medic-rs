@@ -421,6 +421,7 @@ dependencies = [
  "indoc",
  "medic-audit",
  "medic-doctor",
+ "medic-init",
  "medic-shipit",
  "medic-src",
  "medic-test",
@@ -451,6 +452,9 @@ dependencies = [
 name = "medic-init"
 version = "0.5.0"
 dependencies = [
+ "clap",
+ "clap_complete",
+ "envsubst",
  "medic-src",
 ]
 

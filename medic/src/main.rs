@@ -18,6 +18,7 @@ fn main() -> AppResult<()> {
             let manifest = Manifest::new(args.config)?;
             medic_doctor::run_checks(manifest)
         }
+        Command::Init(args) => medic_init::create_config_file(args.config),
         Command::Test(args) => {
             let manifest = Manifest::new(args.config)?;
             medic_test::run_steps(manifest)

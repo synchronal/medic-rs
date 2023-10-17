@@ -41,3 +41,9 @@ impl<T> FromResidual for AppResult<T> {
         Self::Err(r.0)
     }
 }
+
+impl<T> FromResidual<Result<std::convert::Infallible, std::io::Error>> for AppResult<T> {
+    fn from_residual(r: Result<std::convert::Infallible, std::io::Error>) -> Self {
+        Self::Err(Some(Box::new(r.unwrap_err())))
+    }
+}

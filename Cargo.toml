@@ -15,6 +15,7 @@ resolver = "2"
 [workspace.dependencies]
 clap = { version = "4.1.8" }
 clap_complete = "4.1.4"
+envsubst = "0.2"
 indoc = "2.0.1"
 regex = "1.7"
 serde = { version = "1.0" }

@@ -20,7 +20,7 @@ echo
 cargo build --target x86_64-apple-darwin --workspace -r
 
 
-medic=(medic medic-audit medic-doctor medic-shipit medic-test medic-update)
+medic=(medic medic-audit medic-doctor medic-init medic-shipit medic-test medic-update)
 
 cmds=(${medic[@]})
 

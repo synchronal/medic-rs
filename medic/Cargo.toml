@@ -13,6 +13,7 @@ clap_complete = { workspace = true }
 indoc = { workspace = true }
 medic-audit = { path = "../medic-audit" }
 medic-doctor = { path = "../medic-doctor" }
+medic-init = { path = "../medic-init" }
 medic-shipit = { path = "../medic-shipit" }
 medic-src = { path = "../medic-src" }
 medic-test = { path = "../medic-test" }

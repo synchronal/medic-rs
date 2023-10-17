@@ -8,6 +8,9 @@ license.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+clap = { workspace = true, features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
+clap_complete = { workspace = true }
+envsubst = { workspace = true }
 medic-src = { path = "../medic-src" }
 
 [features]

@@ -29,15 +29,20 @@ brew install synchronal/tap/medic-rust
 ## Usage
 
 Medic provides five commands, each of reads its configuration from a
-TOML-formatted file, which defaults to `.cofnig/medic/medic.toml`.
+TOML-formatted file, which defaults to `.config/medic/medic.toml`.
 
 ```shell
-medic doctor  # -- ensure the project is fully set up for development.
+medic init    # -- add a medic config manifest to a project.
+medic doctor  # -- ensure a project is fully set up for development.
 medic test    # -- run all test suites.
 medic audit   # -- run lints, type checks, dependency audits, etc.
 medic update  # -- update the project with upstream changes.
 medic shipit  # -- run all checks and ship your changes.
 ```
+
+#### init
+
+`medic init` creates a medic config manifest in the current directory, at `.config/medic.toml`.
 
 #### doctor
 
