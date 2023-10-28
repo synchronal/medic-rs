@@ -11,7 +11,7 @@ license.workspace = true
 clap = { workspace = true, features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 clap_complete = { workspace = true }
 indoc = { workspace = true }
-medic-src = { path = "../medic-src" }
+medic-src = { workspace = true }
 
 [features]
 # Treat warnings as a build error.

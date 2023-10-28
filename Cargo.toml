@@ -13,12 +13,22 @@ members = [
 resolver = "2"
 
 [workspace.dependencies]
-clap = { version = "4.1.8" }
+medic = { path = "./medic" }
+medic-audit = { path = "./medic-audit" }
+medic-doctor = { path = "./medic-doctor" }
+medic-init = { path = "./medic-init" }
+medic-lib = { path = "./medic-lib" }
+medic-shipit = { path = "./medic-shipit" }
+medic-src = { path = "./medic-src" }
+medic-test = { path = "./medic-test" }
+medic-update = { path = "./medic-update" }
+
+clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 clap_complete = "4.1.4"
 envsubst = "0.2"
 indoc = "2.0.1"
 regex = "1.7"
-serde = { version = "1.0" }
+serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 toml = "0.7"
 
