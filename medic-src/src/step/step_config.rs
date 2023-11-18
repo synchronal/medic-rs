@@ -1,16 +1,17 @@
 use crate::runnable::Runnable;
 use crate::std_to_string;
+use crate::string_or_list::StringOrList;
 use crate::AppResult;
 
 use serde::Deserialize;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fmt;
 use std::io::{self, Write};
 use std::process::{Command, Stdio};
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct StepConfig {
-    pub args: Option<HashMap<String, String>>,
+    pub args: Option<BTreeMap<String, StringOrList>>,
     pub command: Option<String>,
     pub name: Option<String>,
     pub step: String,
@@ -70,10 +71,12 @@ impl Runnable for StepConfig {
             command.arg(subcmd);
         }
         if let Some(args) = &self.args {
-            for (flag, value) in args {
-                let mut flag_arg = "--".to_owned();
-                flag_arg.push_str(flag);
-                command.arg(flag_arg).arg(value);
+            for (flag, values) in args {
+                for value in values {
+                    let mut flag_arg = "--".to_owned();
+                    flag_arg.push_str(flag);
+                    command.arg(flag_arg).arg(value);
+                }
             }
         }
 
@@ -96,11 +99,17 @@ impl fmt::Display for StepConfig {
             }
             if let Some(args) = &self.args {
                 write!(f, " \x1b[0;33m(")?;
-                for (i, (key, value)) in args.iter().enumerate() {
+                for (i, (key, values)) in args.iter().enumerate() {
                     if i > 0 {
                         write!(f, ", ")?;
                     }
-                    write!(f, "{key}: {value}")?;
+                    for (j, value) in values.into_iter().enumerate() {
+                        if j > 0 {
+                            write!(f, ", ")?;
+                        }
+
+                        write!(f, "{key}: {value}")?;
+                    }
                 }
                 write!(f, ")")?;
             }

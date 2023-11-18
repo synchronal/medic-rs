@@ -3,11 +3,11 @@ mod check_test;
 
 use crate::runnable::Runnable;
 use crate::std_to_string;
+use crate::string_or_list::StringOrList;
 use crate::AppResult;
 
 use arboard::Clipboard;
-use serde::de::{self, value, SeqAccess, Visitor};
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::fmt;
 use std::process::{Command, Stdio};
@@ -116,30 +116,9 @@ impl fmt::Display for CheckOutput {
     }
 }
 
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
-pub struct ArgValues(#[serde(deserialize_with = "string_or_vec")] Vec<String>);
-
-impl IntoIterator for ArgValues {
-    type Item = String;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter()
-    }
-}
-
-impl IntoIterator for &ArgValues {
-    type Item = String;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.clone().into_iter()
-    }
-}
-
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Check {
-    pub args: Option<BTreeMap<String, ArgValues>>,
+    pub args: Option<BTreeMap<String, StringOrList>>,
     pub check: String,
     pub command: Option<String>,
     #[serde(default)]
@@ -236,35 +215,4 @@ impl fmt::Display for Check {
         }
         write!(f, "\x1b[0m")
     }
-}
-
-fn string_or_vec<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    struct StringOrVec;
-
-    impl<'de> Visitor<'de> for StringOrVec {
-        type Value = Vec<String>;
-
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-            formatter.write_str("string or list of strings")
-        }
-
-        fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
-        where
-            E: de::Error,
-        {
-            Ok(vec![s.to_owned()])
-        }
-
-        fn visit_seq<S>(self, seq: S) -> Result<Self::Value, S::Error>
-        where
-            S: SeqAccess<'de>,
-        {
-            Deserialize::deserialize(value::SeqAccessDeserializer::new(seq))
-        }
-    }
-
-    deserializer.deserialize_any(StringOrVec)
 }

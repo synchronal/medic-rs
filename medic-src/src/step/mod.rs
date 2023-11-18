@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod step_config_test;
+
 pub mod step_config;
 
 pub use step_config::StepConfig;

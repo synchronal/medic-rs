@@ -118,10 +118,6 @@ accepting configuration indicating that medic should run another of its commands
 - `check`: Run the shell command `medic-check-{name}` with an optional subcommand and
   optional args. If the check provides a remedy (see below), then upon failure the remedy
   will be added to the system clipboard.
-  - `command` - an optional subcommand to use as the first argument to the check.
-  - `args` - a map of flag to value(s). When running the command, the flag name will be
-    translated to `--flag <value>`. When the value is specified as a list, the flag will
-    be output multiple times, once per value.
 - `shell`: Will run the specified shell command as-is.
   - `verbose` - print all stdout/stderr to the terminal as it happens.
   - `allow_failure` - continue medic even if the command fails.
@@ -190,7 +186,9 @@ in the PATH.
 - `check` - REQUIRED - name of the check. Shells out to `medic-check-{name}`, which is expected to be
   available in the PATH.
 - `command` - an optional subcommand to pass as the first argument to the check.
-- `args` - a map of keys and values to pass to the check in the format `--key value`.
+- `args` - a map of flag to value(s). When running the command, the flag name will be
+  translated to `--flag <value>`. When the value is specified as a list, the flag will
+  be output once per value.
 - `output` - the output format used by the check.
 - `verbose` - when `true`, STDERR of the check is redirected to STDERR of the current medic process.
 
@@ -229,6 +227,12 @@ in the PATH. Steps must follow:
 - Informational output may be written to STDERR or STDOUT.
 - If the step fails, the process must exit with a non-zero exit status.
 
+- `command` - an optional subcommand to pass as the first argument to the check.
+- `args` - a map of flag to value(s). When running the command, the flag name will be
+  translated to `--flag <value>`. When the value is specified as a list, the flag will
+  be output once per value.
+- `verbose` - print all stdout/stderr to the terminal as it happens.
+- `allow_failure` - continue medic even if the command fails.
 
 ### Shell actions
 
