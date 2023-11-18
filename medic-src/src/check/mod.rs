@@ -1,14 +1,18 @@
+#[cfg(test)]
+mod check_test;
+
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::AppResult;
 
 use arboard::Clipboard;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use serde::de::{self, value, SeqAccess, Visitor};
+use serde::{Deserialize, Deserializer, Serialize};
+use std::collections::BTreeMap;
 use std::fmt;
 use std::process::{Command, Stdio};
 
-#[derive(Debug, Default, Deserialize, Serialize)]
+#[derive(Debug, Default, Deserialize, PartialEq, Serialize)]
 pub enum OutputFormat {
     #[default]
     #[serde(rename(deserialize = "json"))]
@@ -112,9 +116,30 @@ impl fmt::Display for CheckOutput {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
+pub struct ArgValues(#[serde(deserialize_with = "string_or_vec")] Vec<String>);
+
+impl IntoIterator for ArgValues {
+    type Item = String;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+impl IntoIterator for &ArgValues {
+    type Item = String;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.clone().into_iter()
+    }
+}
+
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct Check {
-    pub args: Option<HashMap<String, String>>,
+    pub args: Option<BTreeMap<String, ArgValues>>,
     pub check: String,
     pub command: Option<String>,
     #[serde(default)]
@@ -171,10 +196,12 @@ impl Runnable for Check {
             command.arg(subcmd);
         }
         if let Some(args) = &self.args {
-            for (flag, value) in args {
-                let mut flag_arg = "--".to_owned();
-                flag_arg.push_str(flag);
-                command.arg(flag_arg).arg(value);
+            for (flag, values) in args {
+                for value in values {
+                    let mut flag_arg = "--".to_owned();
+                    flag_arg.push_str(flag);
+                    command.arg(flag_arg).arg(value);
+                }
             }
         }
 
@@ -194,14 +221,50 @@ impl fmt::Display for Check {
         }
         if let Some(args) = &self.args {
             write!(f, " \x1b[0;33m(")?;
-            for (i, (key, value)) in args.iter().enumerate() {
+            for (i, (key, values)) in args.iter().enumerate() {
                 if i > 0 {
                     write!(f, ", ")?;
                 }
-                write!(f, "{key}: {value}")?;
+                for (j, value) in values.into_iter().enumerate() {
+                    if j > 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{key}: {value}")?;
+                }
             }
             write!(f, ")")?;
         }
         write!(f, "\x1b[0m")
     }
+}
+
+fn string_or_vec<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    struct StringOrVec;
+
+    impl<'de> Visitor<'de> for StringOrVec {
+        type Value = Vec<String>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("string or list of strings")
+        }
+
+        fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            Ok(vec![s.to_owned()])
+        }
+
+        fn visit_seq<S>(self, seq: S) -> Result<Self::Value, S::Error>
+        where
+            S: SeqAccess<'de>,
+        {
+            Deserialize::deserialize(value::SeqAccessDeserializer::new(seq))
+        }
+    }
+
+    deserializer.deserialize_any(StringOrVec)
 }

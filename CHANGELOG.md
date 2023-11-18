@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Checks can specify arguments as a list.
+
 ## 1.0.0
 
 - Add `medic init` to generate an *almost* empty manifest file.

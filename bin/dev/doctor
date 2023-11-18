@@ -1,17 +1,21 @@
 #!/usr/bin/env bash
 
+set -e
 trap "exit" INT
 
 source "$(brew --prefix)/share/medic-bash/doctor.bash"
 
-check "ASDF: rust" "asdf plugin list | grep rust" "asdf plugin add rust"
-
-step "ASDF" "asdf install"
-step "Build all workspace crates" "cargo build --workspace"
-
 check "Brewfile" \
   "brew bundle check" \
   "brew bundle"
+
+step_header "Tool versions"
+cecho -n --yellow "rust"
+MEDIC_OUTPUT_FORMAT=stdio medic-check-tool-versions plugin-installed --plugin rust
+MEDIC_OUTPUT_FORMAT=stdio medic-check-tool-versions package-installed --plugin rust
+cecho --bright-bold-green " OK"
+
+step "Build all workspace crates" "cargo build --workspace"
 
 check "Cargo audit installed" \
   "cargo audit --help >/dev/null 2>&1" \
