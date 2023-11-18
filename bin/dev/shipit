@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -e
+trap "exit" INT
+
 source "$(brew --prefix)/share/medic-bash/doctor.bash"
 
 bin/dev/audit

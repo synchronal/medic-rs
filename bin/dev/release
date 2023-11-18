@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
 trap "exit" INT
 
 source "$(brew --prefix)/share/medic-bash/cecho.bash"
 source "$(brew --prefix)/share/medic-bash/step.bash"
-
-set -e
 
 mkdir -p tmp/release
 mkdir -p target/universal-apple-darwin/release
