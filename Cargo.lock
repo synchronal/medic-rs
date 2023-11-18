@@ -414,7 +414,7 @@ dependencies = [
 
 [[package]]
 name = "medic"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -430,7 +430,7 @@ dependencies = [
 
 [[package]]
 name = "medic-audit"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -440,7 +440,7 @@ dependencies = [
 
 [[package]]
 name = "medic-doctor"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -450,7 +450,7 @@ dependencies = [
 
 [[package]]
 name = "medic-init"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -468,7 +468,7 @@ dependencies = [
 
 [[package]]
 name = "medic-shipit"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -478,7 +478,7 @@ dependencies = [
 
 [[package]]
 name = "medic-src"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "arboard",
  "envsubst",
@@ -489,7 +489,7 @@ dependencies = [
 
 [[package]]
 name = "medic-test"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -499,7 +499,7 @@ dependencies = [
 
 [[package]]
 name = "medic-update"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "clap",
  "clap_complete",

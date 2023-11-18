@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+
+## 1.1.0
+
 - Checks can specify arguments as a list.
 - Steps can specify arguments as a list.
 
