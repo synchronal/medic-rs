@@ -1,7 +1,7 @@
 [doctor]
 
 checks = [
-  { check = "homebrew", output = "json" },
+  { check = "homebrew", output = "stdio" },
   { check = "tool-versions", command = "plugin-installed", args = { plugin = "rust" } },
   { check = "tool-versions", command = "package-installed", args = { plugin = "rust" } },
   { check = "rust", command = "crate-installed", args = { name = ["cargo-audit", "cargo-outdated"] } },
