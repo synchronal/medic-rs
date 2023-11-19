@@ -11,6 +11,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Use rust nightly
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: nightly
+        components: rustfmt, clippy
     - uses: actions/checkout@v3
     - name: Build
       run: cargo build --workspace --features strict --verbose
@@ -20,6 +26,12 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
+    - name: Use rust nightly
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: nightly
+        components: rustfmt, clippy
     - uses: actions/checkout@v3
     - name: Cargo audit
       run: cargo audit
