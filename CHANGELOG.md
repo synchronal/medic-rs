@@ -2,7 +2,6 @@
 
 ## Unreleased
 
-
 ## 1.1.0
 
 - Checks can specify arguments as a list.
@@ -31,11 +30,13 @@
 - `medic doctor` can run steps and shell steps.
 - `medic test`, `medic update` can run checks.
 - Checks/steps print `key: value` when running.
-- Checks print output (include error description) prior to printing errors.
+- Checks print output (include error description) prior to printing
+  errors.
 
 ## 0.3.0
 
-- Split `medic-src` (internal) from `medic-lib` (helpers for writing checks/steps in Rust) and release `medic-lib`.
+- Split `medic-src` (internal) from `medic-lib` (helpers for writing
+  checks/steps in Rust) and release `medic-lib`.
 
 ## 0.2.1
 
@@ -45,4 +46,5 @@
 
 - Steps and shell actions inherit STDIN from the parent shell.
 - Add `output` config to checks. Defaults to `json`.
-- Expand all ENV variables from parent shell when finding manifest files.
+- Expand all ENV variables from parent shell when finding manifest
+  files.

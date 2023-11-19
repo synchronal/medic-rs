@@ -4,5 +4,6 @@ source $(brew --prefix)/share/medic-bash/doctor.bash
 
 step "cargo audit" "cargo audit"
 step "check formatting" "cargo fmt --check"
+step "check markdown formatting" "cargo fmt --check"
 step "lints" "cargo clippy"
 
