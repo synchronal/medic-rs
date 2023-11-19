@@ -1,0 +1,5 @@
+[toolchain]
+channel = "nightly-2023-10-26"
+components = [ "rustfmt", "clippy" ]
+targets = [ "aarch64-apple-darwin", "x86_64-apple-darwin" ]
+profile = "minimal"
