@@ -1,0 +1,34 @@
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --workspace --features strict --verbose
+    - name: Run tests
+      run: cargo test --verbose
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cargo audit
+      run: cargo audit
+    - name: Cargo format check
+      run: cargo fmt --check
+    - name: Markdown format check
+      run: cargo fmt --check
+    - uses: PurpleBooth/gfmfmt-action@v2.0.14
+      name: Check markdown formatting
+    - name: Cargo clippy
+      run: cargo clippy
+
