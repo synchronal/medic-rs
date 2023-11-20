@@ -11,8 +11,8 @@ checks = [
 [test]
 
 checks = [
-  { name = "Check for warnings", shell = "cargo build --workspace --features strict" },
-  { name = "Runt tests", shell = "cargo test", verbose = true },
+  { name = "Check for warnings", shell = "cargo build --workspace --features strict --color always", verbose = true },
+  { name = "Run tests", shell = "cargo test -- --color always", verbose = true },
 ]
 
 [audit]

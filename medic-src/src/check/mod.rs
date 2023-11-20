@@ -1,3 +1,5 @@
+// @related [test](medic-src/src/check/check_test.rs)
+
 #[cfg(test)]
 mod check_test;
 
@@ -7,9 +9,12 @@ use crate::string_or_list::StringOrList;
 use crate::AppResult;
 
 use arboard::Clipboard;
+use console::style;
+use retrogress::Progress;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::fmt;
+use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 
 #[derive(Debug, Default, Deserialize, PartialEq, Serialize)]
@@ -128,23 +133,33 @@ pub struct Check {
 }
 
 impl Runnable for Check {
-    fn run(self) -> AppResult<()> {
+    fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
         let verbose = self.verbose();
+        let pb = progress.append(&self.to_string());
 
-        print!("\x1b[32m• \x1b[0");
-        print!("{self}  …");
         if let Some(mut command) = self.to_command() {
-            if verbose {
-                print!("\r\n");
-                command.stderr(Stdio::inherit());
-            }
-            match command.output() {
+            let output = if verbose {
+                command.stderr(Stdio::piped());
+                let mut child = command.spawn()?;
+                let stderr = child.stderr.take().unwrap();
+                let reader = BufReader::new(stderr);
+
+                reader
+                    .lines()
+                    .map_while(Result::ok)
+                    .for_each(|line| progress.println(pb, &line));
+                child.wait_with_output()
+            } else {
+                command.output()
+            };
+
+            match output {
                 Ok(result) => {
                     if result.status.success() {
-                        println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
+                        progress.succeeded(pb);
                         AppResult::Ok(())
                     } else {
-                        println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
+                        progress.failed(pb);
                         let mut output = self.output.parse(result);
                         output.verbose(verbose);
                         eprint!("{output}");
@@ -157,7 +172,7 @@ impl Runnable for Check {
                     }
                 }
                 Err(err) => {
-                    println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
+                    progress.failed(pb);
                     AppResult::Err(Some(err.into()))
                 }
             }
@@ -194,25 +209,38 @@ impl Runnable for Check {
 
 impl fmt::Display for Check {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "\x1b[36m{:}", self.check)?;
+        let mut cmd_str = "".to_owned();
+        cmd_str.push_str(&self.check);
+
         if let Some(command) = &self.command {
-            write!(f, ": \x1b[0;36m{}?", command)?;
+            cmd_str.push_str(": ");
+            cmd_str.push_str(command);
+            cmd_str.push('?');
         }
+
         if let Some(args) = &self.args {
-            write!(f, " \x1b[0;33m(")?;
+            let mut args_str = "(".to_owned();
+
             for (i, (key, values)) in args.iter().enumerate() {
                 if i > 0 {
-                    write!(f, ", ")?;
+                    args_str.push_str(", ");
                 }
                 for (j, value) in values.into_iter().enumerate() {
                     if j > 0 {
-                        write!(f, ", ")?;
+                        args_str.push_str(", ");
                     }
-                    write!(f, "{key}: {value}")?;
+                    args_str.push_str(&format!("{key}: {value}"));
                 }
             }
-            write!(f, ")")?;
+            args_str.push(')');
+            write!(
+                f,
+                "{} {}",
+                style(cmd_str).force_styling(true).cyan(),
+                style(args_str).force_styling(true).yellow()
+            )
+        } else {
+            write!(f, "{}", style(cmd_str).force_styling(true).cyan())
         }
-        write!(f, "\x1b[0m")
     }
 }

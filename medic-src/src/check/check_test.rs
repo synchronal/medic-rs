@@ -1,3 +1,5 @@
+// @related [subject](medic-src/src/check/mod.rs)
+
 use super::*;
 use std::collections::BTreeMap;
 
@@ -63,7 +65,7 @@ fn test_check_to_string_single_arg() {
 
     assert_eq!(
         format!("{check}"),
-        "\u{1b}[36mcheck-name \u{1b}[0;33m(name: first)\u{1b}[0m"
+        "\u{1b}[36mcheck-name\u{1b}[0m \u{1b}[33m(name: first)\u{1b}[0m"
     )
 }
 
@@ -82,7 +84,7 @@ fn test_check_to_string_subcommand_single_arg() {
 
     assert_eq!(
         format!("{check}"),
-        "\u{1b}[36mcheck-name: \u{1b}[0;36msubcommand? \u{1b}[0;33m(name: first)\u{1b}[0m"
+        "\u{1b}[36mcheck-name: subcommand?\u{1b}[0m \u{1b}[33m(name: first)\u{1b}[0m"
     )
 }
 
@@ -101,7 +103,7 @@ fn test_check_to_string_subcommand_multiple_args() {
 
     assert_eq!(
         format!("{check}"),
-        "\u{1b}[36mcheck-name: \u{1b}[0;36msubcommand? \u{1b}[0;33m(name: first, version: second)\u{1b}[0m"
+        "\u{1b}[36mcheck-name: subcommand?\u{1b}[0m \u{1b}[33m(name: first, version: second)\u{1b}[0m"
     )
 }
 
@@ -120,7 +122,7 @@ fn test_check_to_string_subcommand_multiple_arg_values() {
 
     assert_eq!(
         format!("{check}"),
-        "\u{1b}[36mcheck-name: \u{1b}[0;36msubcommand? \u{1b}[0;33m(name: first, name: second)\u{1b}[0m"
+        "\u{1b}[36mcheck-name: subcommand?\u{1b}[0m \u{1b}[33m(name: first, name: second)\u{1b}[0m"
     )
 }
 
@@ -142,6 +144,6 @@ fn test_check_to_string_subcommand_multiple_arg_values_and_args() {
 
     assert_eq!(
         format!("{check}"),
-        "\u{1b}[36mcheck-name: \u{1b}[0;36msubcommand? \u{1b}[0;33m(name: first, name: second, other: third)\u{1b}[0m"
+        "\u{1b}[36mcheck-name: subcommand?\u{1b}[0m \u{1b}[33m(name: first, name: second, other: third)\u{1b}[0m"
     )
 }

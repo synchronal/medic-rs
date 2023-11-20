@@ -1,3 +1,5 @@
+// @related [subject](medic-src/src/step/step_config.rs)
+
 use super::*;
 use crate::string_or_list::StringOrList;
 use std::collections::BTreeMap;
@@ -64,7 +66,7 @@ fn test_step_to_string_single_arg() {
 
     assert_eq!(
         format!("{step}"),
-        "\u{1b}[36mstep-name \u{1b}[0;33m(name: first)\u{1b}[0m"
+        "\u{1b}[36mstep-name\u{1b}[0m \u{1b}[33m(name: first)\u{1b}[0m"
     )
 }
 
@@ -83,7 +85,7 @@ fn test_step_to_string_subcommand_single_arg() {
 
     assert_eq!(
         format!("{step}"),
-        "\u{1b}[36mstep-name: \u{1b}[0;36msubcommand! \u{1b}[0;33m(name: first)\u{1b}[0m"
+        "\u{1b}[36mstep-name: subcommand!\u{1b}[0m \u{1b}[33m(name: first)\u{1b}[0m"
     )
 }
 
@@ -102,7 +104,7 @@ fn test_step_to_string_subcommand_multiple_args() {
 
     assert_eq!(
         format!("{step}"),
-        "\u{1b}[36mstep-name: \u{1b}[0;36msubcommand! \u{1b}[0;33m(name: first, version: second)\u{1b}[0m"
+        "\u{1b}[36mstep-name: subcommand!\u{1b}[0m \u{1b}[33m(name: first, version: second)\u{1b}[0m"
     )
 }
 
@@ -121,7 +123,7 @@ fn test_step_to_string_subcommand_multiple_arg_values() {
 
     assert_eq!(
         format!("{step}"),
-        "\u{1b}[36mstep-name: \u{1b}[0;36msubcommand! \u{1b}[0;33m(name: first, name: second)\u{1b}[0m"
+        "\u{1b}[36mstep-name: subcommand!\u{1b}[0m \u{1b}[33m(name: first, name: second)\u{1b}[0m"
     )
 }
 
@@ -143,6 +145,6 @@ fn test_step_to_string_subcommand_multiple_arg_values_and_args() {
 
     assert_eq!(
         format!("{step}"),
-        "\u{1b}[36mstep-name: \u{1b}[0;36msubcommand! \u{1b}[0;33m(name: first, name: second, other: third)\u{1b}[0m"
+        "\u{1b}[36mstep-name: subcommand!\u{1b}[0m \u{1b}[33m(name: first, name: second, other: third)\u{1b}[0m"
     )
 }

@@ -24,11 +24,11 @@ impl Runnable for AuditStep {
         }
     }
 
-    fn run(self) -> AppResult<()> {
+    fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
         match self {
-            AuditStep::Check(config) => config.run(),
-            AuditStep::Shell(config) => config.run(),
-            AuditStep::Step(config) => config.run(),
+            AuditStep::Check(config) => config.run(progress),
+            AuditStep::Shell(config) => config.run(progress),
+            AuditStep::Step(config) => config.run(progress),
         }
     }
 

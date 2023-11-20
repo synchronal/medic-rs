@@ -1,13 +1,18 @@
+// @related [tests](medic-src/src/step/step_config_test.rs)
+
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::string_or_list::StringOrList;
 use crate::AppResult;
 
+use console::style;
+use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;
-use std::io::{self, Write};
+use std::io::{self, BufRead, BufReader, Write};
 use std::process::{Command, Stdio};
+use std::thread;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct StepConfig {
@@ -20,26 +25,55 @@ pub struct StepConfig {
 }
 
 impl Runnable for StepConfig {
-    fn run(self) -> AppResult<()> {
+    fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
         let allow_failure = self.allow_failure();
         let verbose = self.verbose();
+        let pb = progress.append(&self.to_string());
 
-        print!("\x1b[32m• \x1b[0{self}  …");
         io::stdout().flush().unwrap();
         if let Some(mut command) = self.to_command() {
-            if verbose {
-                print!("\r\n");
+            let output = if verbose {
                 command
-                    .stdin(Stdio::inherit())
-                    .stdout(Stdio::inherit())
-                    .stderr(Stdio::inherit());
-            }
-            match command.output() {
+                    .stdin(Stdio::piped())
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped());
+
+                let mut child = command.spawn()?;
+                let stderr = child.stderr.take().unwrap();
+                let stdout = child.stdout.take().unwrap();
+
+                let mut out_progress = progress.clone();
+                let mut err_progress = progress.clone();
+
+                let out_thr = thread::spawn(move || {
+                    let reader = BufReader::new(stdout);
+                    reader
+                        .lines()
+                        .map_while(Result::ok)
+                        .for_each(|line| out_progress.println(pb, &line));
+                });
+                let err_thr = thread::spawn(move || {
+                    let reader = BufReader::new(stderr);
+                    reader
+                        .lines()
+                        .map_while(Result::ok)
+                        .for_each(|line| err_progress.println(pb, &line));
+                });
+
+                let res = child.wait_with_output();
+                out_thr.join().unwrap();
+                err_thr.join().unwrap();
+                res
+            } else {
+                command.output()
+            };
+            match output {
                 Ok(result) => {
                     if result.status.success() {
-                        println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
+                        progress.succeeded(pb);
                         AppResult::Ok(())
                     } else {
+                        progress.failed(pb);
                         println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
                         if !verbose {
                             eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
@@ -54,7 +88,7 @@ impl Runnable for StepConfig {
                     }
                 }
                 Err(err) => {
-                    println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
+                    progress.failed(pb);
                     AppResult::Err(Some(err.into()))
                 }
             }
@@ -91,29 +125,40 @@ impl Runnable for StepConfig {
 impl fmt::Display for StepConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if let Some(name) = &self.name {
-            write!(f, "\x1b[36m{:}\x1b[0m", name)
+            write!(f, "{}", style(name).force_styling(true).cyan())
         } else {
-            write!(f, "\x1b[36m{:}", self.step)?;
+            let mut cmd_str = self.step.clone();
+
             if let Some(command) = &self.command {
-                write!(f, ": \x1b[0;36m{}!", command)?;
+                cmd_str.push_str(": ");
+                cmd_str.push_str(command);
+                cmd_str.push('!');
             }
             if let Some(args) = &self.args {
-                write!(f, " \x1b[0;33m(")?;
+                let mut args_str = "(".to_owned();
+
                 for (i, (key, values)) in args.iter().enumerate() {
                     if i > 0 {
-                        write!(f, ", ")?;
+                        args_str.push_str(", ")
                     }
                     for (j, value) in values.into_iter().enumerate() {
                         if j > 0 {
-                            write!(f, ", ")?;
+                            args_str.push_str(", ")
                         }
 
-                        write!(f, "{key}: {value}")?;
+                        args_str.push_str(&format!("{key}: {value}"));
                     }
                 }
-                write!(f, ")")?;
+                args_str.push(')');
+                write!(
+                    f,
+                    "{} {}",
+                    style(cmd_str).force_styling(true).cyan(),
+                    style(args_str).force_styling(true).yellow()
+                )
+            } else {
+                write!(f, "{}", style(cmd_str).force_styling(true).cyan())
             }
-            write!(f, "\x1b[0m")
         }
     }
 }

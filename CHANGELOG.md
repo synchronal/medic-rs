@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use spinners for progress indicators for checks and steps.
+
 ## 1.1.0
 
 - Checks can specify arguments as a list.

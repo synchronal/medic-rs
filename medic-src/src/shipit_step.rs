@@ -46,14 +46,14 @@ impl Runnable for ShipitStep {
         }
     }
 
-    fn run(self) -> AppResult<()> {
+    fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
         match self {
-            ShipitStep::Check(config) => config.run(),
-            ShipitStep::Shell(config) => config.run(),
-            ShipitStep::Step(config) => config.run(),
-            ShipitStep::Audit(_) => run_audit(),
-            ShipitStep::Test(_) => run_test(),
-            ShipitStep::Update(_) => run_update(),
+            ShipitStep::Check(config) => config.run(progress),
+            ShipitStep::Shell(config) => config.run(progress),
+            ShipitStep::Step(config) => config.run(progress),
+            ShipitStep::Audit(_) => run_audit(progress),
+            ShipitStep::Test(_) => run_test(progress),
+            ShipitStep::Update(_) => run_update(progress),
         }
     }
 
@@ -93,7 +93,7 @@ impl fmt::Display for ShipitStep {
     }
 }
 
-fn run_audit() -> AppResult<()> {
+fn run_audit(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     print!("\x1b[32m! \x1b[0");
     println!("\x1b[36;1m==== Audit ====\x1b[0m");
     if let Ok(result) = audit_cmd()
@@ -112,7 +112,7 @@ fn run_audit() -> AppResult<()> {
     }
 }
 
-fn run_test() -> AppResult<()> {
+fn run_test(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     print!("\x1b[32m! \x1b[0");
     println!("\x1b[36;1m==== Test ====\x1b[0m");
     if let Ok(result) = test_cmd()
@@ -131,7 +131,7 @@ fn run_test() -> AppResult<()> {
     }
 }
 
-fn run_update() -> AppResult<()> {
+fn run_update(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     print!("\x1b[32m! \x1b[0");
     println!("\x1b[36;1m==== Update ====\x1b[0m");
     if let Ok(result) = update_cmd()

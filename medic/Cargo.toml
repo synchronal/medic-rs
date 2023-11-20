@@ -18,6 +18,7 @@ medic-shipit = { workspace = true }
 medic-src = { workspace = true }
 medic-test = { workspace = true }
 medic-update = { workspace = true }
+retrogress = { workspace = true }
 
 [features]
 # Treat warnings as a build error.

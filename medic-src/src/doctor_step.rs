@@ -24,11 +24,11 @@ impl Runnable for DoctorStep {
         }
     }
 
-    fn run(self) -> AppResult<()> {
+    fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
         match self {
-            DoctorStep::Check(config) => config.run(),
-            DoctorStep::Shell(config) => config.run(),
-            DoctorStep::Step(config) => config.run(),
+            DoctorStep::Check(config) => config.run(progress),
+            DoctorStep::Shell(config) => config.run(progress),
+            DoctorStep::Step(config) => config.run(progress),
         }
     }
 

@@ -1,14 +1,23 @@
+// @related [test](medic-src/src/shell/shell_test.rs)
+
+#[cfg(test)]
+mod shell_test;
+
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::AppResult;
 
 use arboard::Clipboard;
+use console::style;
+use retrogress::Progress;
 use serde::Deserialize;
 use std::fmt;
 use std::io::{self, Write};
+use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
+use std::thread;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, PartialEq)]
 pub struct ShellConfig {
     #[serde(default)]
     pub allow_failure: bool,
@@ -24,27 +33,56 @@ impl Runnable for ShellConfig {
         self.allow_failure
     }
 
-    fn run(self) -> AppResult<()> {
+    fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
         let allow_failure = self.allow_failure();
         let verbose = self.verbose();
+        let pb = progress.append(&self.to_string());
 
-        print!("\x1b[32m• \x1b[0{self}  …");
         io::stdout().flush().unwrap();
         if let Some(mut command) = self.to_command() {
-            if verbose {
-                print!("\r\n");
+            let output = if verbose {
                 command
-                    .stdin(Stdio::inherit())
-                    .stdout(Stdio::inherit())
-                    .stderr(Stdio::inherit());
-            }
-            match command.output() {
+                    .stdin(Stdio::piped())
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped());
+
+                let mut child = command.spawn()?;
+                let stderr = child.stderr.take().unwrap();
+                let stdout = child.stdout.take().unwrap();
+
+                let mut out_progress = progress.clone();
+                let mut err_progress = progress.clone();
+
+                let out_thr = thread::spawn(move || {
+                    let reader = BufReader::new(stdout);
+                    reader
+                        .lines()
+                        .map_while(Result::ok)
+                        .for_each(|line| out_progress.println(pb, &line));
+                });
+                let err_thr = thread::spawn(move || {
+                    let reader = BufReader::new(stderr);
+                    reader
+                        .lines()
+                        .map_while(Result::ok)
+                        .for_each(|line| err_progress.println(pb, &line));
+                });
+
+                let res = child.wait_with_output();
+                out_thr.join().unwrap();
+                err_thr.join().unwrap();
+                res
+            } else {
+                command.output()
+            };
+
+            match output {
                 Ok(result) => {
                     if result.status.success() {
-                        println!("{}\x1b[32;1mOK\x1b[0m", (8u8 as char));
+                        progress.succeeded(pb);
                         AppResult::Ok(())
                     } else {
-                        println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
+                        progress.failed(pb);
                         if !verbose {
                             eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
                             eprint!("{}", std_to_string(result.stderr));
@@ -64,7 +102,7 @@ impl Runnable for ShellConfig {
                     }
                 }
                 Err(err) => {
-                    println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
+                    progress.failed(pb);
                     AppResult::Err(Some(err.into()))
                 }
             }
@@ -88,7 +126,13 @@ impl Runnable for ShellConfig {
 }
 impl fmt::Display for ShellConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "\x1b[36m{:}", self.name)?;
-        write!(f, " \x1b[0;33m({})\x1b[0m", self.shell)
+        write!(f, "{}", style(&self.name).force_styling(true).cyan())?;
+        write!(
+            f,
+            " {}",
+            style(format!("({})", self.shell))
+                .force_styling(true)
+                .yellow()
+        )
     }
 }

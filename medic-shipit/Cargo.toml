@@ -12,6 +12,7 @@ clap = { workspace = true }
 clap_complete = { workspace = true }
 indoc = { workspace = true }
 medic-src = { workspace = true }
+retrogress = { workspace = true }
 
 [features]
 # Treat warnings as a build error.

@@ -19,6 +19,7 @@ fn main() -> AppResult<()> {
     }
 
     let manifest = Manifest::new(cli_args.config)?;
+    let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
 
-    run_steps(manifest)
+    run_steps(manifest, &mut progress)
 }

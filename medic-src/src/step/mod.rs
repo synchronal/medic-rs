@@ -39,12 +39,12 @@ impl Runnable for Step {
         }
     }
 
-    fn run(self) -> AppResult<()> {
+    fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
         match self {
-            Step::Check(config) => config.run(),
-            Step::Doctor(_) => run_doctor(),
-            Step::Shell(config) => config.run(),
-            Step::Step(config) => config.run(),
+            Step::Check(config) => config.run(progress),
+            Step::Doctor(_) => run_doctor(progress),
+            Step::Shell(config) => config.run(progress),
+            Step::Step(config) => config.run(progress),
         }
     }
 
@@ -78,7 +78,7 @@ impl fmt::Display for Step {
     }
 }
 
-fn run_doctor() -> AppResult<()> {
+fn run_doctor(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     print!("\x1b[32m! \x1b[0");
     println!("\x1b[36;1m==== Doctor ====\x1b[0m");
     if let Ok(result) = doctor_command()
