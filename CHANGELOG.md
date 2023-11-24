@@ -2,11 +2,18 @@
 
 ## Unreleased
 
+## 2.0.0
+
 - Allow shell commands to run with `inline = true` to disable progress
   bars and inherit stdio directly from the parent medic process.
 - Add `medic run` for executing arbitrary shell commands with consistent
   formatting, progress spinners.
 - Use spinners for progress indicators for checks and steps.
+
+#### Breaking Changes:
+
+- Medic output uses spinners to track progress. Scripts that wrapped
+  medic may not work with the new CLI output.
 
 ## 1.1.0
 
