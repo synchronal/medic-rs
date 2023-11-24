@@ -20,7 +20,7 @@ checks = [
 checks = [
   { name = "Audit crates", shell = "cargo audit", allow_failure = true, verbose = true },
   { check = "rust", command = "format-check" },
-  { name = "Check md format", shell = "bin/dev/format-md --check" },
+  { name = "Check md format", shell = "bin/dev/format-md --check", remedy = "bin/dev/format-md --all" },
   { step = "rust", command = "clippy" },
 ]
 

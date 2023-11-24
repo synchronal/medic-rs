@@ -28,6 +28,18 @@ pub struct ShellConfig {
     pub verbose: bool,
 }
 
+impl ShellConfig {
+    pub fn new(name: String, shell: String, remedy: Option<String>, verbose: bool) -> Self {
+        Self {
+            name,
+            shell,
+            remedy,
+            verbose,
+            allow_failure: false,
+        }
+    }
+}
+
 impl Runnable for ShellConfig {
     fn allow_failure(&self) -> bool {
         self.allow_failure

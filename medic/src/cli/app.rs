@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use clap::Args;
 use clap::Parser;
 use clap::Subcommand;
+use medic_run::cli::CliArgs as RunArgs;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -23,6 +24,8 @@ pub enum Command {
     Doctor(ManifestArgs),
     /// Creates the shell of a medic manifest file.
     Init(ManifestArgs),
+    /// Runs an arbitrary shell command.
+    Run(RunArgs),
     /// Runs an application's tests.
     Test(ManifestArgs),
     /// Update the current application

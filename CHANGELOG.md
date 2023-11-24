@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- add `medic run` for executing arbitrary shell commands with consistent
+  formatting, progress spinners.
 - Use spinners for progress indicators for checks and steps.
 
 ## 1.1.0

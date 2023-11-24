@@ -20,6 +20,13 @@ fn main() -> AppResult<()> {
             medic_doctor::run_checks(manifest, &mut progress)
         }
         Command::Init(args) => medic_init::create_config_file(args.config),
+        Command::Run(args) => medic_run::run_shell(
+            args.name,
+            args.cmd,
+            args.remedy,
+            args.verbose,
+            &mut progress,
+        ),
         Command::Test(args) => {
             let manifest = Manifest::new(args.config)?;
             medic_test::run_steps(manifest, &mut progress)

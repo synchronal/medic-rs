@@ -10,35 +10,32 @@ mkdir -p tmp/release
 mkdir -p target/universal-apple-darwin/release
 rm -f tmp/release/*
 
-step_header "Build: Darwin aarch64" "cargo build --target aarch64-apple-darwin --workspace -r"
-echo
-cargo build --target aarch64-apple-darwin --workspace -r
-
-step_header "Build: Darwin x86_64" "cargo build --target x86_64-apple-darwin --workspace -r"
-echo
-cargo build --target x86_64-apple-darwin --workspace -r
-
+medic-run --name "Build: Darwin aarch64" --cmd "cargo build --target aarch64-apple-darwin --workspace -r --color always" --verbose
+medic-run --name "Build: Darwin x86_64" --cmd "cargo build --target x86_64-apple-darwin --workspace -r --color always" --verbose
 
 medic=(medic medic-audit medic-doctor medic-init medic-shipit medic-test medic-update)
 
 cmds=(${medic[@]})
 
 for cmd in ${cmds[@]}; do
-  step "${cmd}: darwin universal" \
-    "(cd target/universal-apple-darwin/release \
-      && lipo ../../aarch64-apple-darwin/release/${cmd} ../../x86_64-apple-darwin/release/${cmd} -create -output ${cmd})"
+  medic-run \
+    --name "${cmd}: darwin universal" \
+    --cmd "(cd target/universal-apple-darwin/release && lipo ../../aarch64-apple-darwin/release/${cmd} ../../x86_64-apple-darwin/release/${cmd} -create -output ${cmd})" \
+    --verbose
 done
 
-step "medic: Create tar file" \
-  "(cd target/universal-apple-darwin/release \
-    && tar -czf ../../../tmp/release/medic-darwin-universal.tar.gz ${medic[*]})"
+medic-run \
+  --name "medic: Create tar file" \
+  --cmd "(cd target/universal-apple-darwin/release && tar -czf ../../../tmp/release/medic-darwin-universal.tar.gz ${medic[*]})" \
+  --verbose
 
 pushd tmp/release >/dev/null
 
 for file in $(ls *.tar.gz); do
 
-step "shasum: Darwin aarch64" \
-  "(sha256sum ${file} > ${file}.sha256sum)"
+medic-run \
+  --name "shasum: Darwin aarch64" \
+  --cmd "(sha256sum ${file} > ${file}.sha256sum)"
 
 done
 

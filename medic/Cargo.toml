@@ -15,6 +15,7 @@ medic-audit = { workspace = true }
 medic-doctor = { workspace = true }
 medic-init = { workspace = true }
 medic-shipit = { workspace = true }
+medic-run = { workspace = true }
 medic-src = { workspace = true }
 medic-test = { workspace = true }
 medic-update = { workspace = true }
