@@ -13,7 +13,7 @@ rm -f tmp/release/*
 medic-run --name "Build: Darwin aarch64" --cmd "cargo build --target aarch64-apple-darwin --workspace -r --color always" --verbose
 medic-run --name "Build: Darwin x86_64" --cmd "cargo build --target x86_64-apple-darwin --workspace -r --color always" --verbose
 
-medic=(medic medic-audit medic-doctor medic-init medic-shipit medic-test medic-update)
+medic=(medic medic-audit medic-doctor medic-init medic-run medic-shipit medic-test medic-update)
 
 cmds=(${medic[@]})
 
