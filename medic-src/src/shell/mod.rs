@@ -21,6 +21,8 @@ use std::thread;
 pub struct ShellConfig {
     #[serde(default)]
     pub allow_failure: bool,
+    #[serde(default)]
+    pub inline: bool,
     pub name: String,
     pub remedy: Option<String>,
     pub shell: String,
@@ -36,6 +38,7 @@ impl ShellConfig {
             remedy,
             verbose,
             allow_failure: false,
+            inline: false,
         }
     }
 }
@@ -85,8 +88,19 @@ impl Runnable for ShellConfig {
                 err_thr.join().unwrap();
                 res
             } else {
+                if self.inline {
+                    command
+                        .stdin(Stdio::inherit())
+                        .stdout(Stdio::inherit())
+                        .stderr(Stdio::inherit());
+                    progress.hide(pb);
+                }
                 command.output()
             };
+
+            if self.inline {
+                progress.show(pb);
+            }
 
             match output {
                 Ok(result) => {
@@ -133,7 +147,7 @@ impl Runnable for ShellConfig {
     }
 
     fn verbose(&self) -> bool {
-        self.verbose
+        self.verbose && !self.inline
     }
 }
 impl fmt::Display for ShellConfig {

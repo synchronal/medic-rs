@@ -14,6 +14,7 @@ fn test_deserialize() {
         result,
         ShellConfig {
             allow_failure: false,
+            inline: false,
             name: "Run some command".into(),
             remedy: None,
             shell: "some command".into(),
@@ -35,6 +36,7 @@ fn test_deserialize_verbose() {
         result,
         ShellConfig {
             allow_failure: false,
+            inline: false,
             name: "Run some command".into(),
             remedy: None,
             shell: "some command".into(),
@@ -56,6 +58,7 @@ fn test_deserialize_allow_failure() {
         result,
         ShellConfig {
             allow_failure: true,
+            inline: false,
             name: "Run some command".into(),
             remedy: None,
             shell: "some command".into(),
@@ -77,6 +80,7 @@ fn test_deserialize_remedy() {
         result,
         ShellConfig {
             allow_failure: false,
+            inline: false,
             name: "Run some command".into(),
             remedy: Some("do something".into()),
             shell: "some command".into(),
@@ -89,6 +93,7 @@ fn test_deserialize_remedy() {
 fn test_to_string() {
     let shell = ShellConfig {
         allow_failure: false,
+        inline: false,
         name: "Run some command".into(),
         remedy: Some("do something".into()),
         shell: "some command".into(),

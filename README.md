@@ -278,8 +278,12 @@ commands may be better suited to be written into shell scripts.
 
 - `name` - the description to be shown to the user when run.
 - `shell` - the command to run
-- `verbose`- when `true`, STDOUT and STDERR of the action are redirected
-  to the relevant file descriptors of the current medic process.
+- `inline` - when `true`, disables running progress bars and prints all
+  output directly to the terminal. This flag takes priority over
+  `verbose`, and is useful when running scripts that handle their own
+  progress indicators, for example when using `medic run`.
+- `verbose`- when `true`, STDOUT and STDERR of the action are printed as
+  to the console alongside running progress.
 - `allow_failure` - allow medic to continue even when the process fails.
 
 ### Colorization

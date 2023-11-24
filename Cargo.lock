@@ -747,9 +747,9 @@ dependencies = [
 
 [[package]]
 name = "retrogress"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "723109b3b210f277d1bded538512e512806b916c63e5dbfb8e7992d7ffd2c767"
+checksum = "d2c19edd8cf93a203763bfcaeefe1a0c23121630099105eeb46afe5460d062d8"
 dependencies = [
  "console",
  "indicatif",

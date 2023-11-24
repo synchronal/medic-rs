@@ -15,7 +15,7 @@ pub fn run_shell(
     progress: &mut retrogress::ProgressBar,
 ) -> AppResult<()> {
     let shell = ShellConfig::new(name, cmd, remedy, verbose);
+    eprintln!();
     shell.run(progress)?;
-    println!();
     AppResult::Ok(())
 }
