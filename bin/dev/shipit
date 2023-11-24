@@ -10,7 +10,7 @@ bin/dev/update
 bin/dev/test
 bin/dev/release
 
-step "Pushing" "git push origin HEAD"
+medic run --name "Pushing" --cmd "git push --tags origin HEAD"
 
 cecho --bright-green "\nChecksums:"
 cat tmp/release/*.sha256sum
