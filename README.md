@@ -33,10 +33,11 @@ TOML-formatted file, which defaults to `.config/medic/medic.toml`.
 ``` shell
 medic init    # -- add a medic config manifest to a project.
 medic doctor  # -- ensure a project is fully set up for development.
-medic test    # -- run all test suites.
+medic test    # -- run all test commands.
 medic audit   # -- run lints, type checks, dependency audits, etc.
 medic update  # -- update the project with upstream changes.
 medic shipit  # -- run all checks and ship your changes.
+medic run     # -- runs a shell command with medic progress output.
 ```
 
 #### init
@@ -120,6 +121,19 @@ Valid actions:
 - audit
 - test
 - update
+
+#### run
+
+`medic run` executes an arbitrary shell command.
+
+Arguments:
+
+- `--name <name>` - used in progress indicators.
+- `--cmd <cmd>` - the shell command to execute.
+- `--remedy <remedy>` - an optional remedy to output if the command
+  fails.
+- `--verbose` - optionally writes output to the terminal alongside
+  running progress.
 
 ## Configuration
 
