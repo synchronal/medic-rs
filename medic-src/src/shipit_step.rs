@@ -2,6 +2,8 @@ use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::step::StepConfig;
 use crate::{AppResult, Check};
+use console::style;
+use retrogress::Progress;
 use serde::Deserialize;
 
 use std::fmt;
@@ -93,9 +95,17 @@ impl fmt::Display for ShipitStep {
     }
 }
 
-fn run_audit(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
-    print!("\x1b[32m! \x1b[0");
-    println!("\x1b[36;1m==== Audit ====\x1b[0m");
+fn run_audit(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+    let pb = progress.append("doctor");
+    progress.println(
+        pb,
+        &format!(
+            "{} {}",
+            style("!").bright().green(),
+            style("==== Audit ====").cyan()
+        ),
+    );
+    progress.hide(pb);
     if let Ok(result) = audit_cmd()
         .unwrap()
         .stdout(Stdio::inherit())
@@ -112,9 +122,17 @@ fn run_audit(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     }
 }
 
-fn run_test(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
-    print!("\x1b[32m! \x1b[0");
-    println!("\x1b[36;1m==== Test ====\x1b[0m");
+fn run_test(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+    let pb = progress.append("doctor");
+    progress.println(
+        pb,
+        &format!(
+            "{} {}",
+            style("!").bright().green(),
+            style("==== Test ====").cyan()
+        ),
+    );
+    progress.hide(pb);
     if let Ok(result) = test_cmd()
         .unwrap()
         .stdout(Stdio::inherit())
@@ -131,9 +149,17 @@ fn run_test(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     }
 }
 
-fn run_update(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
-    print!("\x1b[32m! \x1b[0");
-    println!("\x1b[36;1m==== Update ====\x1b[0m");
+fn run_update(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+    let pb = progress.append("doctor");
+    progress.println(
+        pb,
+        &format!(
+            "{} {}",
+            style("!").bright().green(),
+            style("==== Update ====").cyan()
+        ),
+    );
+    progress.hide(pb);
     if let Ok(result) = update_cmd()
         .unwrap()
         .stdout(Stdio::inherit())

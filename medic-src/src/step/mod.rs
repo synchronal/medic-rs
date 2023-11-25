@@ -2,12 +2,13 @@
 mod step_config_test;
 
 pub mod step_config;
-
 pub use step_config::StepConfig;
 
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::{AppResult, Check};
+use console::style;
+use retrogress::Progress;
 use serde::Deserialize;
 use std::fmt;
 use std::process::{Command, Stdio};
@@ -78,9 +79,17 @@ impl fmt::Display for Step {
     }
 }
 
-fn run_doctor(_progress: &mut retrogress::ProgressBar) -> AppResult<()> {
-    print!("\x1b[32m! \x1b[0");
-    println!("\x1b[36;1m==== Doctor ====\x1b[0m");
+fn run_doctor(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+    let pb = progress.append("doctor");
+    progress.println(
+        pb,
+        &format!(
+            "{} {}",
+            style("!").bright().green(),
+            style("==== Doctor ====").cyan()
+        ),
+    );
+    progress.hide(pb);
     if let Ok(result) = doctor_command()
         .unwrap()
         .stdout(Stdio::inherit())

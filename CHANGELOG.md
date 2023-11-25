@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Headers for sub-commands are printed to stderr, respecting changes to
+  terminal width.
+
 ## 2.0.0
 
 - Allow shell commands to run with `inline = true` to disable progress
