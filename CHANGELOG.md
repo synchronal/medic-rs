@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.0.1
+
 - Headers for sub-commands are printed to stderr, respecting changes to
   terminal width.
 
