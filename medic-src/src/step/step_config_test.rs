@@ -1,7 +1,7 @@
 // @related [subject](medic-src/src/step/step_config.rs)
 
 use super::*;
-use crate::string_or_list::StringOrList;
+use crate::util::StringOrList;
 use std::collections::BTreeMap;
 
 #[test]

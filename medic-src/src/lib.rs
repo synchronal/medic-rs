@@ -10,7 +10,7 @@ pub mod runnable;
 pub mod shell;
 pub mod shipit_step;
 pub mod step;
-pub mod string_or_list;
+pub mod util;
 
 pub use app_result::AppResult;
 pub use audit_step::AuditStep;

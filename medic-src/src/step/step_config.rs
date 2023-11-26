@@ -2,7 +2,7 @@
 
 use crate::runnable::Runnable;
 use crate::std_to_string;
-use crate::string_or_list::StringOrList;
+use crate::util::StringOrList;
 use crate::AppResult;
 
 use console::style;
