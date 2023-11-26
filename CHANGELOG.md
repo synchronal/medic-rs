@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Attempt to return error rather than panicking when unable to find the
+  current working directory.
+
 ## 2.0.1
 
 - Headers for sub-commands are printed to stderr, respecting changes to

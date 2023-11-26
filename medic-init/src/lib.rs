@@ -6,11 +6,7 @@ use medic_src::AppResult;
 use std::io::Write;
 
 pub fn create_config_file(path: std::path::PathBuf) -> AppResult<()> {
-    let cwd = std::env::current_dir()
-        .unwrap()
-        .into_os_string()
-        .into_string()
-        .unwrap();
+    let cwd = std::env::current_dir()?.into_os_string().into_string()?;
     let mut context = std::collections::HashMap::new();
     context.insert("CWD".to_string(), cwd);
     for (key, value) in std::env::vars() {

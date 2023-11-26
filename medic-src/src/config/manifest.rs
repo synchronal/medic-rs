@@ -18,11 +18,7 @@ pub struct Manifest {
 
 impl Manifest {
     pub fn new(path: PathBuf) -> AppResult<Manifest> {
-        let cwd = std::env::current_dir()
-            .unwrap()
-            .into_os_string()
-            .into_string()
-            .unwrap();
+        let cwd = std::env::current_dir()?.into_os_string().into_string()?;
         let mut context = std::collections::HashMap::new();
         context.insert("CWD".to_string(), cwd);
         for (key, value) in std::env::vars() {
