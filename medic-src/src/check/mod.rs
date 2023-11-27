@@ -37,7 +37,7 @@ impl Runnable for Check {
         let verbose = self.verbose();
         let pb = progress.append(&self.to_string());
 
-        if let Some(mut command) = self.to_command() {
+        if let Ok(mut command) = self.to_command() {
             let output = if verbose {
                 command.stderr(Stdio::piped());
                 let mut child = command.spawn()?;
@@ -80,7 +80,7 @@ impl Runnable for Check {
             AppResult::Err(Some("Unable to parse check".into()))
         }
     }
-    fn to_command(&self) -> Option<Command> {
+    fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         let mut check_cmd: String = "medic-check-".to_owned();
         check_cmd.push_str(&self.check);
         let mut command = Command::new(check_cmd);
@@ -99,7 +99,7 @@ impl Runnable for Check {
             }
         }
 
-        Some(command)
+        Ok(command)
     }
 
     fn verbose(&self) -> bool {

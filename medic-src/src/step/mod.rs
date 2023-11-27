@@ -49,7 +49,7 @@ impl Runnable for Step {
         }
     }
 
-    fn to_command(&self) -> Option<Command> {
+    fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         match self {
             Step::Check(config) => config.to_command(),
             Step::Doctor(_) => doctor_command(),
@@ -106,8 +106,8 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     }
 }
 
-fn doctor_command() -> Option<Command> {
+fn doctor_command() -> Result<Command, Box<dyn std::error::Error>> {
     let mut command = Command::new("medic");
     command.arg("doctor");
-    Some(command)
+    Ok(command)
 }

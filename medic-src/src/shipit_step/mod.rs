@@ -59,7 +59,7 @@ impl Runnable for ShipitStep {
         }
     }
 
-    fn to_command(&self) -> Option<Command> {
+    fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         match self {
             ShipitStep::Check(config) => config.to_command(),
             ShipitStep::Shell(config) => config.to_command(),
@@ -176,20 +176,20 @@ fn run_update(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     }
 }
 
-fn audit_cmd() -> Option<Command> {
+fn audit_cmd() -> Result<Command, Box<dyn std::error::Error>> {
     let mut command = Command::new("medic");
     command.arg("audit");
-    Some(command)
+    Ok(command)
 }
 
-fn test_cmd() -> Option<Command> {
+fn test_cmd() -> Result<Command, Box<dyn std::error::Error>> {
     let mut command = Command::new("medic");
     command.arg("test");
-    Some(command)
+    Ok(command)
 }
 
-fn update_cmd() -> Option<Command> {
+fn update_cmd() -> Result<Command, Box<dyn std::error::Error>> {
     let mut command = Command::new("medic");
     command.arg("update");
-    Some(command)
+    Ok(command)
 }

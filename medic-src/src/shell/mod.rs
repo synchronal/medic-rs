@@ -54,95 +54,96 @@ impl Runnable for ShellConfig {
         let pb = progress.append(&self.to_string());
 
         io::stdout().flush().unwrap();
-        if let Some(mut command) = self.to_command() {
-            let output = if verbose {
-                command
-                    .stdin(Stdio::piped())
-                    .stdout(Stdio::piped())
-                    .stderr(Stdio::piped());
-
-                let mut child = command.spawn()?;
-                let stderr = child.stderr.take().unwrap();
-                let stdout = child.stdout.take().unwrap();
-
-                let mut out_progress = progress.clone();
-                let mut err_progress = progress.clone();
-
-                let out_thr = thread::spawn(move || {
-                    let reader = BufReader::new(stdout);
-                    reader
-                        .lines()
-                        .map_while(Result::ok)
-                        .for_each(|line| out_progress.println(pb, &line));
-                });
-                let err_thr = thread::spawn(move || {
-                    let reader = BufReader::new(stderr);
-                    reader
-                        .lines()
-                        .map_while(Result::ok)
-                        .for_each(|line| err_progress.println(pb, &line));
-                });
-
-                let res = child.wait_with_output();
-                out_thr.join().unwrap();
-                err_thr.join().unwrap();
-                res
-            } else {
-                if self.inline {
+        match self.to_command() {
+            Ok(mut command) => {
+                let output = if verbose {
                     command
-                        .stdin(Stdio::inherit())
-                        .stdout(Stdio::inherit())
-                        .stderr(Stdio::inherit());
-                    progress.hide(pb);
+                        .stdin(Stdio::piped())
+                        .stdout(Stdio::piped())
+                        .stderr(Stdio::piped());
+
+                    let mut child = command.spawn()?;
+                    let stderr = child.stderr.take().unwrap();
+                    let stdout = child.stdout.take().unwrap();
+
+                    let mut out_progress = progress.clone();
+                    let mut err_progress = progress.clone();
+
+                    let out_thr = thread::spawn(move || {
+                        let reader = BufReader::new(stdout);
+                        reader
+                            .lines()
+                            .map_while(Result::ok)
+                            .for_each(|line| out_progress.println(pb, &line));
+                    });
+                    let err_thr = thread::spawn(move || {
+                        let reader = BufReader::new(stderr);
+                        reader
+                            .lines()
+                            .map_while(Result::ok)
+                            .for_each(|line| err_progress.println(pb, &line));
+                    });
+
+                    let res = child.wait_with_output();
+                    out_thr.join().unwrap();
+                    err_thr.join().unwrap();
+                    res
+                } else {
+                    if self.inline {
+                        command
+                            .stdin(Stdio::inherit())
+                            .stdout(Stdio::inherit())
+                            .stderr(Stdio::inherit());
+                        progress.hide(pb);
+                    }
+                    command.output()
+                };
+
+                if self.inline {
+                    progress.show(pb);
                 }
-                command.output()
-            };
 
-            if self.inline {
-                progress.show(pb);
-            }
-
-            match output {
-                Ok(result) => {
-                    if result.status.success() {
-                        progress.succeeded(pb);
-                        AppResult::Ok(())
-                    } else {
-                        progress.failed(pb);
-                        if !verbose {
-                            eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
-                            eprint!("{}", std_to_string(result.stderr));
-                        }
-                        if allow_failure {
-                            eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
+                match output {
+                    Ok(result) => {
+                        if result.status.success() {
+                            progress.succeeded(pb);
                             AppResult::Ok(())
                         } else {
-                            if let Some(remedy) = self.remedy {
-                                eprint!("\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m");
-                                eprintln!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
-                                let mut clipboard = Clipboard::new().unwrap();
-                                clipboard.set_text(remedy).unwrap();
+                            progress.failed(pb);
+                            if !verbose {
+                                eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
+                                eprint!("{}", std_to_string(result.stderr));
                             }
-                            AppResult::Err(None)
+                            if allow_failure {
+                                eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
+                                AppResult::Ok(())
+                            } else {
+                                if let Some(remedy) = self.remedy {
+                                    eprint!("\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m");
+                                    eprintln!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
+                                    let mut clipboard = Clipboard::new().unwrap();
+                                    clipboard.set_text(remedy).unwrap();
+                                }
+                                AppResult::Err(None)
+                            }
                         }
                     }
-                }
-                Err(err) => {
-                    progress.failed(pb);
-                    AppResult::Err(Some(err.into()))
+                    Err(err) => {
+                        progress.failed(pb);
+                        AppResult::Err(Some(err.into()))
+                    }
                 }
             }
-        } else {
-            AppResult::Err(Some("Failed to parse command".into()))
+            Err(err) => AppResult::Err(Some(format!("Failed to parse command: {err}").into())),
         }
     }
-    fn to_command(&self) -> Option<Command> {
+    fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         if self.shell.is_empty() {
-            None
+            Err("No shell command specified".into())
         } else {
             let mut command = Command::new("sh");
             command.arg("-c").arg(&self.shell);
-            Some(command)
+            Ok(command)
         }
     }
 

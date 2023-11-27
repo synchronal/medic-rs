@@ -151,6 +151,23 @@ fn test_to_command_cd() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
+fn test_to_command_cd_bad_directory() {
+    let check = OutdatedCheck {
+        args: None,
+        cd: Some("./does-not-exist".to_string()),
+        check: "thing".to_string(),
+        name: None,
+        remedy: None,
+    };
+
+    let e = check.to_command().err().unwrap();
+    assert_eq!(
+        format!("{e}"),
+        "No such file or directory (os error 2)".to_string()
+    );
+}
+
+#[test]
 fn test_to_string() {
     let check = OutdatedCheck {
         args: None,

@@ -34,80 +34,76 @@ impl Runnable for OutdatedCheck {
         let pb = progress.append(&self.to_string());
 
         io::stdout().flush().unwrap();
-        if let Some(mut command) = self.to_command() {
-            command
-                .stdin(Stdio::piped())
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped());
+        match self.to_command() {
+            Ok(mut command) => {
+                command
+                    .stdin(Stdio::piped())
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped());
 
-            let mut child = command.spawn()?;
-            let stderr = child.stderr.take().unwrap();
-            let stdout = child.stdout.take().unwrap();
+                let mut child = command.spawn()?;
+                let stderr = child.stderr.take().unwrap();
+                let stdout = child.stdout.take().unwrap();
 
-            let mut out_progress = progress.clone();
-            let mut err_progress = progress.clone();
+                let mut out_progress = progress.clone();
+                let mut err_progress = progress.clone();
 
-            let out_thr = thread::spawn(move || {
-                let reader = BufReader::new(stdout);
-                reader
-                    .lines()
-                    .map_while(Result::ok)
-                    .for_each(|line| out_progress.println(pb, &line));
-            });
-            let err_thr = thread::spawn(move || {
-                let reader = BufReader::new(stderr);
-                reader
-                    .lines()
-                    .map_while(Result::ok)
-                    .for_each(|line| err_progress.println(pb, &line));
-            });
+                let out_thr = thread::spawn(move || {
+                    let reader = BufReader::new(stdout);
+                    reader
+                        .lines()
+                        .map_while(Result::ok)
+                        .for_each(|line| out_progress.println(pb, &line));
+                });
+                let err_thr = thread::spawn(move || {
+                    let reader = BufReader::new(stderr);
+                    reader
+                        .lines()
+                        .map_while(Result::ok)
+                        .for_each(|line| err_progress.println(pb, &line));
+                });
 
-            let output = child.wait_with_output();
-            out_thr.join().unwrap();
-            err_thr.join().unwrap();
+                let output = child.wait_with_output();
+                out_thr.join().unwrap();
+                err_thr.join().unwrap();
 
-            match output {
-                Ok(result) => {
-                    if result.status.success() {
-                        progress.succeeded(pb);
-                        AppResult::Ok(())
-                    } else {
-                        progress.failed(pb);
-                        println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-                        if !verbose {
-                            eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
-                            eprint!("{}", std_to_string(result.stderr));
-                        }
-                        if allow_failure {
-                            eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
+                match output {
+                    Ok(result) => {
+                        if result.status.success() {
+                            progress.succeeded(pb);
                             AppResult::Ok(())
                         } else {
-                            AppResult::Err(None)
+                            progress.failed(pb);
+                            println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
+                            if !verbose {
+                                eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
+                                eprint!("{}", std_to_string(result.stderr));
+                            }
+                            if allow_failure {
+                                eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
+                                AppResult::Ok(())
+                            } else {
+                                AppResult::Err(None)
+                            }
                         }
                     }
-                }
-                Err(err) => {
-                    progress.failed(pb);
-                    AppResult::Err(Some(err.into()))
+                    Err(err) => {
+                        progress.failed(pb);
+                        AppResult::Err(Some(err.into()))
+                    }
                 }
             }
-        } else {
-            AppResult::Err(Some("Failed to parse command".into()))
+            Err(err) => AppResult::Err(Some(format!("Failed to parse command: {err}").into())),
         }
     }
-    fn to_command(&self) -> Option<Command> {
+    fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         let mut check_cmd: String = "medic-outdated-".to_owned();
         check_cmd.push_str(&self.check);
         let mut command = Command::new(check_cmd);
 
         if let Some(directory) = &self.cd {
-            match std::fs::canonicalize(directory) {
-                Ok(expanded) => command.current_dir(&expanded),
-                Err(err) => {
-                    eprintln!("error: {err}");
-                    return None;
-                }
-            };
+            let expanded = std::fs::canonicalize(directory)?;
+            command.current_dir(&expanded);
         }
 
         if let Some(args) = &self.args {
@@ -120,7 +116,7 @@ impl Runnable for OutdatedCheck {
             }
         }
 
-        Some(command)
+        Ok(command)
     }
 
     fn verbose(&self) -> bool {

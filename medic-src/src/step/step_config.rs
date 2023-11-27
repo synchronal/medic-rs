@@ -32,7 +32,7 @@ impl Runnable for StepConfig {
         let pb = progress.append(&self.to_string());
 
         io::stdout().flush().unwrap();
-        if let Some(mut command) = self.to_command() {
+        if let Ok(mut command) = self.to_command() {
             let output = if verbose {
                 command
                     .stdin(Stdio::piped())
@@ -97,7 +97,7 @@ impl Runnable for StepConfig {
             AppResult::Err(Some("Failed to parse command".into()))
         }
     }
-    fn to_command(&self) -> Option<Command> {
+    fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         let mut check_cmd: String = "medic-step-".to_owned();
         check_cmd.push_str(&self.step);
         let mut command = Command::new(check_cmd);
@@ -115,7 +115,7 @@ impl Runnable for StepConfig {
             }
         }
 
-        Some(command)
+        Ok(command)
     }
 
     fn verbose(&self) -> bool {

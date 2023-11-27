@@ -32,7 +32,7 @@ impl Runnable for DoctorStep {
         }
     }
 
-    fn to_command(&self) -> Option<Command> {
+    fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         match self {
             DoctorStep::Check(config) => config.to_command(),
             DoctorStep::Shell(config) => config.to_command(),
