@@ -100,6 +100,16 @@ impl Runnable for OutdatedCheck {
         check_cmd.push_str(&self.check);
         let mut command = Command::new(check_cmd);
 
+        if let Some(directory) = &self.cd {
+            match std::fs::canonicalize(directory) {
+                Ok(expanded) => command.current_dir(&expanded),
+                Err(err) => {
+                    eprintln!("error: {err}");
+                    return None;
+                }
+            };
+        }
+
         if let Some(args) = &self.args {
             for (flag, values) in args {
                 for value in values {

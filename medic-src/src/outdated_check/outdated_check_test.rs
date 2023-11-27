@@ -108,6 +108,49 @@ fn test_deserialize_name_string() {
 }
 
 #[test]
+fn test_to_command() {
+    let check = OutdatedCheck {
+        args: None,
+        cd: None,
+        check: "thing".to_string(),
+        name: None,
+        remedy: None,
+    };
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(cmd_str, "\"medic-outdated-thing\"");
+}
+
+#[test]
+fn test_to_command_cd() -> Result<(), Box<dyn std::error::Error>> {
+    let check = OutdatedCheck {
+        args: None,
+        cd: Some(".".to_string()),
+        check: "thing".to_string(),
+        name: None,
+        remedy: None,
+    };
+
+    let cwd = std::env::current_dir()?
+        .into_os_string()
+        .into_string()
+        .unwrap();
+    let mut context = std::collections::HashMap::new();
+    context.insert("CWD".to_string(), cwd);
+    for (key, value) in std::env::vars() {
+        context.insert(key, value);
+    }
+    let path_expansion = envsubst::substitute("${CWD}", &context).unwrap();
+    let expected_cmd_str = format!("cd \"{path_expansion}\" && \"medic-outdated-thing\"");
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(cmd_str, expected_cmd_str);
+    Ok(())
+}
+
+#[test]
 fn test_to_string() {
     let check = OutdatedCheck {
         args: None,
