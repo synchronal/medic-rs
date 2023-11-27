@@ -1,6 +1,7 @@
 use crate::AppResult;
 use crate::AuditStep;
 use crate::DoctorStep;
+use crate::OutdatedCheck;
 use crate::ShipitStep;
 use crate::Step;
 
@@ -11,6 +12,7 @@ use std::path::PathBuf;
 pub struct Manifest {
     pub audit: Option<AuditConfig>,
     pub doctor: Option<DoctorConfig>,
+    pub outdated: Option<OutdatedConfig>,
     pub shipit: Option<ShipitConfig>,
     pub test: Option<TestConfig>,
     pub update: Option<UpdateConfig>,
@@ -60,6 +62,11 @@ pub struct AuditConfig {
 #[derive(Debug, Deserialize)]
 pub struct DoctorConfig {
     pub checks: Vec<DoctorStep>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct OutdatedConfig {
+    pub checks: Vec<OutdatedCheck>,
 }
 
 #[derive(Debug, Deserialize)]

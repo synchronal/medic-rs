@@ -24,6 +24,8 @@ pub enum Command {
     Doctor(ManifestArgs),
     /// Creates the shell of a medic manifest file.
     Init(ManifestArgs),
+    /// Runs checks for outdated dependencies
+    Outdated(ManifestArgs),
     /// Runs an arbitrary shell command.
     Run(RunArgs),
     /// Runs an application's tests.

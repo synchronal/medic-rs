@@ -5,6 +5,7 @@ members = [
     "medic-doctor",
     "medic-init",
     "medic-lib",
+    "medic-outdated",
     "medic-run",
     "medic-shipit",
     "medic-src",
@@ -20,6 +21,7 @@ medic-audit = { path = "./medic-audit" }
 medic-doctor = { path = "./medic-doctor" }
 medic-init = { path = "./medic-init" }
 medic-lib = { path = "./medic-lib" }
+medic-outdated = { path = "./medic-outdated" }
 medic-run = { path = "./medic-run" }
 medic-shipit = { path = "./medic-shipit" }
 medic-src = { path = "./medic-src" }

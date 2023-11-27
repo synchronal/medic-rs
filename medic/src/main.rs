@@ -20,6 +20,10 @@ fn main() -> AppResult<()> {
             medic_doctor::run_checks(manifest, &mut progress)
         }
         Command::Init(args) => medic_init::create_config_file(args.config),
+        Command::Outdated(args) => {
+            let manifest = Manifest::new(args.config)?;
+            medic_outdated::run_checks(manifest, &mut progress)
+        }
         Command::Run(args) => medic_run::run_shell(
             args.name,
             args.cmd,
