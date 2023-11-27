@@ -1,11 +1,12 @@
 // @related [tests](medic-src/src/step/step_config_test.rs)
 
+use crate::optional_styled::OptionalStyled;
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::util::StringOrList;
 use crate::AppResult;
 
-use console::style;
+use console::{style, Style};
 use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -134,8 +135,11 @@ impl fmt::Display for StepConfig {
                 cmd_str.push_str(command);
                 cmd_str.push('!');
             }
+
+            let mut args_str =
+                OptionalStyled::with_style(Style::new().force_styling(true).yellow()).prefixed(" ");
             if let Some(args) = &self.args {
-                let mut args_str = "(".to_owned();
+                args_str.push('(');
 
                 for (i, (key, values)) in args.iter().enumerate() {
                     if i > 0 {
@@ -150,15 +154,14 @@ impl fmt::Display for StepConfig {
                     }
                 }
                 args_str.push(')');
-                write!(
-                    f,
-                    "{} {}",
-                    style(cmd_str).force_styling(true).cyan(),
-                    style(args_str).force_styling(true).yellow()
-                )
-            } else {
-                write!(f, "{}", style(cmd_str).force_styling(true).cyan())
             }
+
+            write!(
+                f,
+                "{}{}",
+                style(cmd_str).force_styling(true).cyan(),
+                args_str
+            )
         }
     }
 }

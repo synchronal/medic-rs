@@ -12,6 +12,8 @@ pub mod shipit_step;
 pub mod step;
 pub mod util;
 
+mod optional_styled;
+
 pub use app_result::AppResult;
 pub use audit_step::AuditStep;
 pub use check::Check;
