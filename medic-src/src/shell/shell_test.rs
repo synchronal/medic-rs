@@ -15,9 +15,9 @@ fn test_deserialize() {
         ShellConfig {
             allow_failure: false,
             inline: false,
-            name: "Run some command".into(),
+            name: "Run some command".to_string(),
             remedy: None,
-            shell: "some command".into(),
+            shell: "some command".to_string(),
             verbose: false,
         }
     );
@@ -37,9 +37,9 @@ fn test_deserialize_verbose() {
         ShellConfig {
             allow_failure: false,
             inline: false,
-            name: "Run some command".into(),
+            name: "Run some command".to_string(),
             remedy: None,
-            shell: "some command".into(),
+            shell: "some command".to_string(),
             verbose: true,
         }
     );
@@ -59,9 +59,9 @@ fn test_deserialize_allow_failure() {
         ShellConfig {
             allow_failure: true,
             inline: false,
-            name: "Run some command".into(),
+            name: "Run some command".to_string(),
             remedy: None,
-            shell: "some command".into(),
+            shell: "some command".to_string(),
             verbose: false,
         }
     );
@@ -81,9 +81,9 @@ fn test_deserialize_remedy() {
         ShellConfig {
             allow_failure: false,
             inline: false,
-            name: "Run some command".into(),
-            remedy: Some("do something".into()),
-            shell: "some command".into(),
+            name: "Run some command".to_string(),
+            remedy: Some("do something".to_string()),
+            shell: "some command".to_string(),
             verbose: false,
         }
     );
@@ -94,9 +94,9 @@ fn test_to_string() {
     let shell = ShellConfig {
         allow_failure: false,
         inline: false,
-        name: "Run some command".into(),
-        remedy: Some("do something".into()),
-        shell: "some command".into(),
+        name: "Run some command".to_string(),
+        remedy: Some("do something".to_string()),
+        shell: "some command".to_string(),
         verbose: false,
     };
 

@@ -1,10 +1,9 @@
 // @related [subject](medic-src/src/check/mod.rs)
 
 use super::*;
-use std::collections::BTreeMap;
 
 #[test]
-fn test_check_deserialize_arg_string() {
+fn test_deserialize_arg_string() {
     let toml = r#"
         check = "check-name"
         command = "subcommand"
@@ -16,18 +15,18 @@ fn test_check_deserialize_arg_string() {
         result,
         Check {
             args: Some(BTreeMap::from([(
-                "name".to_owned(),
-                StringOrList(vec!["first".to_owned()])
+                "name".to_string(),
+                StringOrList(vec!["first".to_string()])
             )])),
-            check: "check-name".to_owned(),
-            command: Some("subcommand".to_owned()),
+            check: "check-name".to_string(),
+            command: Some("subcommand".to_string()),
             output: OutputFormat::Json,
             verbose: false
         }
     )
 }
 #[test]
-fn test_check_deserialize_arg_list() {
+fn test_deserialize_arg_list() {
     let toml = r#"
         check = "check-name"
         command = "subcommand"
@@ -39,11 +38,11 @@ fn test_check_deserialize_arg_list() {
         result,
         Check {
             args: Some(BTreeMap::from([(
-                "name".to_owned(),
-                StringOrList(vec!["first".to_owned(), "second".to_owned()])
+                "name".to_string(),
+                StringOrList(vec!["first".to_string(), "second".to_string()])
             )])),
-            check: "check-name".to_owned(),
-            command: Some("subcommand".to_owned()),
+            check: "check-name".to_string(),
+            command: Some("subcommand".to_string()),
             output: OutputFormat::Json,
             verbose: false
         }
@@ -51,13 +50,13 @@ fn test_check_deserialize_arg_list() {
 }
 
 #[test]
-fn test_check_to_string_single_arg() {
+fn test_to_string_single_arg() {
     let check = Check {
         args: Some(BTreeMap::from([(
-            "name".to_owned(),
-            StringOrList(vec!["first".to_owned()]),
+            "name".to_string(),
+            StringOrList(vec!["first".to_string()]),
         )])),
-        check: "check-name".to_owned(),
+        check: "check-name".to_string(),
         command: None,
         output: OutputFormat::Json,
         verbose: false,
@@ -70,14 +69,14 @@ fn test_check_to_string_single_arg() {
 }
 
 #[test]
-fn test_check_to_string_subcommand_single_arg() {
+fn test_to_string_subcommand_single_arg() {
     let check = Check {
         args: Some(BTreeMap::from([(
-            "name".to_owned(),
-            StringOrList(vec!["first".to_owned()]),
+            "name".to_string(),
+            StringOrList(vec!["first".to_string()]),
         )])),
-        check: "check-name".to_owned(),
-        command: Some("subcommand".to_owned()),
+        check: "check-name".to_string(),
+        command: Some("subcommand".to_string()),
         output: OutputFormat::Json,
         verbose: false,
     };
@@ -89,14 +88,17 @@ fn test_check_to_string_subcommand_single_arg() {
 }
 
 #[test]
-fn test_check_to_string_subcommand_multiple_args() {
+fn test_to_string_subcommand_multiple_args() {
     let check = Check {
         args: Some(BTreeMap::from([
-            ("name".into(), StringOrList(vec!["first".into()])),
-            ("version".into(), StringOrList(vec!["second".into()])),
+            ("name".to_string(), StringOrList(vec!["first".to_string()])),
+            (
+                "version".to_string(),
+                StringOrList(vec!["second".to_string()]),
+            ),
         ])),
-        check: "check-name".to_owned(),
-        command: Some("subcommand".to_owned()),
+        check: "check-name".to_string(),
+        command: Some("subcommand".to_string()),
         output: OutputFormat::Json,
         verbose: false,
     };
@@ -108,14 +110,14 @@ fn test_check_to_string_subcommand_multiple_args() {
 }
 
 #[test]
-fn test_check_to_string_subcommand_multiple_arg_values() {
+fn test_to_string_subcommand_multiple_arg_values() {
     let check = Check {
         args: Some(BTreeMap::from([(
-            "name".into(),
-            StringOrList(vec!["first".into(), "second".into()]),
+            "name".to_string(),
+            StringOrList(vec!["first".to_string(), "second".to_string()]),
         )])),
-        check: "check-name".to_owned(),
-        command: Some("subcommand".to_owned()),
+        check: "check-name".to_string(),
+        command: Some("subcommand".to_string()),
         output: OutputFormat::Json,
         verbose: false,
     };
@@ -127,17 +129,17 @@ fn test_check_to_string_subcommand_multiple_arg_values() {
 }
 
 #[test]
-fn test_check_to_string_subcommand_multiple_arg_values_and_args() {
+fn test_to_string_subcommand_multiple_arg_values_and_args() {
     let check = Check {
         args: Some(BTreeMap::from([
             (
-                "name".into(),
-                StringOrList(vec!["first".into(), "second".into()]),
+                "name".to_string(),
+                StringOrList(vec!["first".to_string(), "second".to_string()]),
             ),
-            ("other".into(), StringOrList(vec!["third".into()])),
+            ("other".to_string(), StringOrList(vec!["third".to_string()])),
         ])),
-        check: "check-name".to_owned(),
-        command: Some("subcommand".to_owned()),
+        check: "check-name".to_string(),
+        command: Some("subcommand".to_string()),
         output: OutputFormat::Json,
         verbose: false,
     };

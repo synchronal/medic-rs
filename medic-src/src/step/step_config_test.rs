@@ -5,7 +5,7 @@ use crate::util::StringOrList;
 use std::collections::BTreeMap;
 
 #[test]
-fn test_step_deserialize_arg_string() {
+fn test_deserialize_arg_string() {
     let toml = r#"
         step = "step-name"
         command = "subcommand"
@@ -17,18 +17,18 @@ fn test_step_deserialize_arg_string() {
         result,
         StepConfig {
             args: Some(BTreeMap::from([(
-                "name".to_owned(),
-                StringOrList(vec!["first".to_owned()])
+                "name".to_string(),
+                StringOrList(vec!["first".to_string()])
             )])),
             name: None,
-            step: "step-name".to_owned(),
-            command: Some("subcommand".to_owned()),
+            step: "step-name".to_string(),
+            command: Some("subcommand".to_string()),
             verbose: false
         }
     )
 }
 #[test]
-fn test_step_deserialize_arg_list() {
+fn test_deserialize_arg_list() {
     let toml = r#"
         step = "step-name"
         command = "subcommand"
@@ -40,25 +40,25 @@ fn test_step_deserialize_arg_list() {
         result,
         StepConfig {
             args: Some(BTreeMap::from([(
-                "name".to_owned(),
-                StringOrList(vec!["first".to_owned(), "second".to_owned()])
+                "name".to_string(),
+                StringOrList(vec!["first".to_string(), "second".to_string()])
             )])),
             name: None,
-            step: "step-name".to_owned(),
-            command: Some("subcommand".to_owned()),
+            step: "step-name".to_string(),
+            command: Some("subcommand".to_string()),
             verbose: false
         }
     )
 }
 
 #[test]
-fn test_step_to_string_single_arg() {
+fn test_to_string_single_arg() {
     let step = StepConfig {
         args: Some(BTreeMap::from([(
-            "name".to_owned(),
-            StringOrList(vec!["first".to_owned()]),
+            "name".to_string(),
+            StringOrList(vec!["first".to_string()]),
         )])),
-        step: "step-name".to_owned(),
+        step: "step-name".to_string(),
         name: None,
         command: None,
         verbose: false,
@@ -71,15 +71,15 @@ fn test_step_to_string_single_arg() {
 }
 
 #[test]
-fn test_step_to_string_subcommand_single_arg() {
+fn test_to_string_subcommand_single_arg() {
     let step = StepConfig {
         args: Some(BTreeMap::from([(
-            "name".to_owned(),
-            StringOrList(vec!["first".to_owned()]),
+            "name".to_string(),
+            StringOrList(vec!["first".to_string()]),
         )])),
         name: None,
-        step: "step-name".to_owned(),
-        command: Some("subcommand".to_owned()),
+        step: "step-name".to_string(),
+        command: Some("subcommand".to_string()),
         verbose: false,
     };
 
@@ -90,15 +90,18 @@ fn test_step_to_string_subcommand_single_arg() {
 }
 
 #[test]
-fn test_step_to_string_subcommand_multiple_args() {
+fn test_to_string_subcommand_multiple_args() {
     let step = StepConfig {
         args: Some(BTreeMap::from([
-            ("name".into(), StringOrList(vec!["first".into()])),
-            ("version".into(), StringOrList(vec!["second".into()])),
+            ("name".to_string(), StringOrList(vec!["first".to_string()])),
+            (
+                "version".to_string(),
+                StringOrList(vec!["second".to_string()]),
+            ),
         ])),
         name: None,
-        step: "step-name".to_owned(),
-        command: Some("subcommand".to_owned()),
+        step: "step-name".to_string(),
+        command: Some("subcommand".to_string()),
         verbose: false,
     };
 
@@ -109,15 +112,15 @@ fn test_step_to_string_subcommand_multiple_args() {
 }
 
 #[test]
-fn test_step_to_string_subcommand_multiple_arg_values() {
+fn test_to_string_subcommand_multiple_arg_values() {
     let step = StepConfig {
         args: Some(BTreeMap::from([(
-            "name".into(),
-            StringOrList(vec!["first".into(), "second".into()]),
+            "name".to_string(),
+            StringOrList(vec!["first".to_string(), "second".to_string()]),
         )])),
         name: None,
-        step: "step-name".to_owned(),
-        command: Some("subcommand".to_owned()),
+        step: "step-name".to_string(),
+        command: Some("subcommand".to_string()),
         verbose: false,
     };
 
@@ -128,18 +131,18 @@ fn test_step_to_string_subcommand_multiple_arg_values() {
 }
 
 #[test]
-fn test_step_to_string_subcommand_multiple_arg_values_and_args() {
+fn test_to_string_subcommand_multiple_arg_values_and_args() {
     let step = StepConfig {
         args: Some(BTreeMap::from([
             (
-                "name".into(),
-                StringOrList(vec!["first".into(), "second".into()]),
+                "name".to_string(),
+                StringOrList(vec!["first".to_string(), "second".to_string()]),
             ),
-            ("other".into(), StringOrList(vec!["third".into()])),
+            ("other".to_string(), StringOrList(vec!["third".to_string()])),
         ])),
         name: None,
-        step: "step-name".to_owned(),
-        command: Some("subcommand".to_owned()),
+        step: "step-name".to_string(),
+        command: Some("subcommand".to_string()),
         verbose: false,
     };
 
