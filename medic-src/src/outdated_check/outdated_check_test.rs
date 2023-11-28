@@ -123,26 +123,39 @@ fn test_to_command() {
 }
 
 #[test]
-fn test_to_command_cd() -> Result<(), Box<dyn std::error::Error>> {
+fn test_to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
     let check = OutdatedCheck {
         args: None,
-        cd: Some(".".to_string()),
+        cd: Some("../fixtures/bin".to_string()),
         check: "thing".to_string(),
         name: None,
         remedy: None,
     };
 
-    let cwd = std::env::current_dir()?
-        .into_os_string()
-        .into_string()
-        .unwrap();
     let mut context = std::collections::HashMap::new();
-    context.insert("CWD".to_string(), cwd);
     for (key, value) in std::env::vars() {
         context.insert(key, value);
     }
-    let path_expansion = envsubst::substitute("${CWD}", &context).unwrap();
+    let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
     let expected_cmd_str = format!("cd \"{path_expansion}\" && \"medic-outdated-thing\"");
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(cmd_str, expected_cmd_str);
+    Ok(())
+}
+
+#[test]
+fn test_to_command_cd_absolute() -> Result<(), Box<dyn std::error::Error>> {
+    let check = OutdatedCheck {
+        args: None,
+        cd: Some("/tmp".to_string()),
+        check: "thing".to_string(),
+        name: None,
+        remedy: None,
+    };
+
+    let expected_cmd_str = format!("cd \"/private/tmp\" && \"medic-outdated-thing\"");
 
     let cmd = check.to_command().unwrap();
     let cmd_str = format!("{cmd:?}");
@@ -154,7 +167,7 @@ fn test_to_command_cd() -> Result<(), Box<dyn std::error::Error>> {
 fn test_to_command_cd_bad_directory() {
     let check = OutdatedCheck {
         args: None,
-        cd: Some("./does-not-exist".to_string()),
+        cd: Some("does-not-exist".to_string()),
         check: "thing".to_string(),
         name: None,
         remedy: None,
@@ -163,7 +176,24 @@ fn test_to_command_cd_bad_directory() {
     let e = check.to_command().err().unwrap();
     assert_eq!(
         format!("{e}"),
-        "No such file or directory (os error 2)".to_string()
+        "directory does-not-exist does not exist".to_string()
+    );
+}
+
+#[test]
+fn test_to_command_missing_command() {
+    let check = OutdatedCheck {
+        args: None,
+        cd: None,
+        check: "missing".to_string(),
+        name: None,
+        remedy: None,
+    };
+
+    let e = check.to_command().err().unwrap();
+    assert_eq!(
+        format!("{e}"),
+        "executable medic-outdated-missing not found in PATH".to_string()
     );
 }
 

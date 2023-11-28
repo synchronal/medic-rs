@@ -17,6 +17,7 @@ use std::fmt;
 use std::io::{self, BufRead, BufReader, Write};
 use std::process::{Command, Stdio};
 use std::thread;
+use which::which;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct OutdatedCheck {
@@ -99,11 +100,21 @@ impl Runnable for OutdatedCheck {
     fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         let mut check_cmd: String = "medic-outdated-".to_owned();
         check_cmd.push_str(&self.check);
+        if let Err(_err) = which(&check_cmd) {
+            let msg: Box<dyn std::error::Error> =
+                format!("executable {check_cmd} not found in PATH").into();
+            return Err(msg);
+        };
         let mut command = Command::new(check_cmd);
 
         if let Some(directory) = &self.cd {
-            let expanded = std::fs::canonicalize(directory)?;
-            command.current_dir(&expanded);
+            if let Ok(expanded) = std::fs::canonicalize(directory) {
+                command.current_dir(&expanded);
+            } else {
+                let msg: Box<dyn std::error::Error> =
+                    format!("directory {} does not exist", directory).into();
+                return Err(msg);
+            }
         }
 
         if let Some(args) = &self.args {
