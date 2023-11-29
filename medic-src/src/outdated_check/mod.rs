@@ -5,7 +5,6 @@ mod outdated_check_test;
 
 use crate::optional_styled::OptionalStyled;
 use crate::runnable::Runnable;
-use crate::std_to_string;
 use crate::util::StringOrList;
 use crate::AppResult;
 
@@ -30,7 +29,6 @@ pub struct OutdatedCheck {
 
 impl Runnable for OutdatedCheck {
     fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
-        let verbose = self.verbose();
         let pb = progress.append(&self.to_string());
 
         io::stdout().flush().unwrap();
@@ -74,11 +72,6 @@ impl Runnable for OutdatedCheck {
                             AppResult::Ok(())
                         } else {
                             progress.failed(pb);
-                            println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-                            if !verbose {
-                                eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
-                                eprint!("{}", std_to_string(result.stderr));
-                            }
                             AppResult::Ok(())
                         }
                     }
