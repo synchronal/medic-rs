@@ -30,7 +30,6 @@ pub struct OutdatedCheck {
 
 impl Runnable for OutdatedCheck {
     fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
-        let allow_failure = self.allow_failure();
         let verbose = self.verbose();
         let pb = progress.append(&self.to_string());
 
@@ -80,12 +79,7 @@ impl Runnable for OutdatedCheck {
                                 eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
                                 eprint!("{}", std_to_string(result.stderr));
                             }
-                            if allow_failure {
-                                eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
-                                AppResult::Ok(())
-                            } else {
-                                AppResult::Err(None)
-                            }
+                            AppResult::Ok(())
                         }
                     }
                     Err(err) => {
