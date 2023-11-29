@@ -207,7 +207,10 @@ fn test_to_string() {
         remedy: None,
     };
 
-    assert_eq!(format!("{check}"), "\u{1b}[36mthing\u{1b}[0m")
+    assert_eq!(
+        format!("{check}"),
+        "\u{1b}[36moutdated:\u{1b}[0m \u{1b}[38;5;14m\u{1b}[1mthing\u{1b}[0m"
+    )
 }
 
 #[test]
@@ -235,6 +238,6 @@ fn test_to_string_cd() {
 
     assert_eq!(
         format!("{check}"),
-        "\u{1b}[36mthing\u{1b}[0m \u{1b}[32m(../subdirectory)\u{1b}[0m"
+        "\u{1b}[36moutdated:\u{1b}[0m \u{1b}[38;5;14m\u{1b}[1mthing\u{1b}[0m \u{1b}[32m(../subdirectory)\u{1b}[0m"
     )
 }

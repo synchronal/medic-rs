@@ -174,8 +174,9 @@ impl fmt::Display for OutdatedCheck {
 
             write!(
                 f,
-                "{}{}{}",
-                style(cmd_str).force_styling(true).cyan(),
+                "{} {}{}{}",
+                style("outdated:").force_styling(true).cyan(),
+                style(cmd_str).force_styling(true).cyan().bright().bold(),
                 cd_str,
                 args_str,
             )
