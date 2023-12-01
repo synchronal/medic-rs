@@ -2,6 +2,10 @@
 
 #[cfg(test)]
 mod outdated_check_test;
+#[cfg(test)]
+mod outdated_test;
+
+mod outdated;
 
 use crate::optional_styled::OptionalStyled;
 use crate::runnable::Runnable;
