@@ -1,17 +1,9 @@
-// @related [tests](medic-src/src/outdated_check/outdated_check_test.rs)
-
-#[cfg(test)]
-mod outdated_check_test;
-#[cfg(test)]
-mod outdated_test;
-
-mod outdated;
+// @related [tests](medic-src/src/outdated/check_test.rs)
 
 use crate::optional_styled::OptionalStyled;
 use crate::runnable::Runnable;
 use crate::util::StringOrList;
 use crate::AppResult;
-
 use console::{style, Style};
 use retrogress::Progress;
 use serde::Deserialize;

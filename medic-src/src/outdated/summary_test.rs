@@ -1,9 +1,11 @@
-use super::outdated::*;
+// @related [subject](medic-src/src/outdated/summary.rs)
+
+use super::summary::*;
 
 #[test]
 fn deserialize_empty() {
     let string = r#""#;
-    let outdated: Outdated = Outdated::from_str(string).unwrap();
+    let outdated: OutdatedSummary = OutdatedSummary::from_str(string).unwrap();
     assert_eq!(outdated.remedy, None);
     assert_eq!(outdated.deps, vec![]);
 }
@@ -15,7 +17,7 @@ fn deserialize_with_deps() {
     ::outdated::name=other-dep::version=1.2.3::latest=2.3.4::parent=my-dep
     "#;
 
-    let outdated: Outdated = Outdated::from_str(string).unwrap();
+    let outdated: OutdatedSummary = OutdatedSummary::from_str(string).unwrap();
     assert_eq!(outdated.remedy, None);
 
     let deps = outdated.deps;
@@ -38,7 +40,7 @@ fn deserialize_with_remedy() {
     ::remedy::update deps
     "#;
 
-    let outdated: Outdated = Outdated::from_str(string).unwrap();
+    let outdated: OutdatedSummary = OutdatedSummary::from_str(string).unwrap();
     assert_eq!(outdated.remedy, Some("update deps".to_string()));
 }
 

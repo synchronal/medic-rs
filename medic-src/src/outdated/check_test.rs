@@ -1,9 +1,13 @@
-// @related [subject](medic-src/src/outdated_check/mod.rs)
+// @related [subject](medic-src/src/outdated_check/check.rs)
+
+use crate::util::StringOrList;
 
 use super::*;
+use crate::runnable::Runnable;
+use std::collections::BTreeMap;
 
 #[test]
-fn test_deserialize_string() {
+fn deserialize_string() {
     let toml = r#"
         check = "outdated-name"
         "#;
@@ -22,7 +26,7 @@ fn test_deserialize_string() {
 }
 
 #[test]
-fn test_deserialize_args_string() {
+fn deserialize_args_string() {
     let toml = r#"
         args = { argument = "value" }
         check = "outdated-name"
@@ -45,7 +49,7 @@ fn test_deserialize_args_string() {
 }
 
 #[test]
-fn test_deserialize_args_value_lsit_string() {
+fn deserialize_args_value_lsit_string() {
     let toml = r#"
         args = { argument = ["value 1", "value 2"] }
         check = "outdated-name"
@@ -68,7 +72,7 @@ fn test_deserialize_args_value_lsit_string() {
 }
 
 #[test]
-fn test_deserialize_cd_string() {
+fn deserialize_cd_string() {
     let toml = r#"
         cd = "./subdirectory"
         check = "outdated-name"
@@ -88,7 +92,7 @@ fn test_deserialize_cd_string() {
 }
 
 #[test]
-fn test_deserialize_name_string() {
+fn deserialize_name_string() {
     let toml = r#"
         check = "outdated-name"
         name = "Check for outdated things"
@@ -108,7 +112,7 @@ fn test_deserialize_name_string() {
 }
 
 #[test]
-fn test_to_command() {
+fn to_command() {
     let check = OutdatedCheck {
         args: None,
         cd: None,
@@ -123,7 +127,7 @@ fn test_to_command() {
 }
 
 #[test]
-fn test_to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
+fn to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
     let check = OutdatedCheck {
         args: None,
         cd: Some("../fixtures/bin".to_string()),
@@ -146,7 +150,7 @@ fn test_to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn test_to_command_cd_absolute() -> Result<(), Box<dyn std::error::Error>> {
+fn to_command_cd_absolute() -> Result<(), Box<dyn std::error::Error>> {
     let check = OutdatedCheck {
         args: None,
         cd: Some("/tmp".to_string()),
@@ -164,7 +168,7 @@ fn test_to_command_cd_absolute() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn test_to_command_cd_bad_directory() {
+fn to_command_cd_bad_directory() {
     let check = OutdatedCheck {
         args: None,
         cd: Some("does-not-exist".to_string()),
@@ -181,7 +185,7 @@ fn test_to_command_cd_bad_directory() {
 }
 
 #[test]
-fn test_to_command_missing_command() {
+fn to_command_missing_command() {
     let check = OutdatedCheck {
         args: None,
         cd: None,
@@ -198,7 +202,7 @@ fn test_to_command_missing_command() {
 }
 
 #[test]
-fn test_to_string() {
+fn to_string() {
     let check = OutdatedCheck {
         args: None,
         cd: None,
@@ -214,7 +218,7 @@ fn test_to_string() {
 }
 
 #[test]
-fn test_to_string_name() {
+fn to_string_name() {
     let check = OutdatedCheck {
         args: None,
         cd: None,
@@ -227,7 +231,7 @@ fn test_to_string_name() {
 }
 
 #[test]
-fn test_to_string_cd() {
+fn to_string_cd() {
     let check = OutdatedCheck {
         args: None,
         cd: Some("../subdirectory".to_string()),

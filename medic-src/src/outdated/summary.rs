@@ -1,9 +1,9 @@
-// @related [tests](medic-src/src/outdated_check/outdated_test.rs)
+// @related [tests](medic-src/src/outdated/summary_test.rs)
 
 use std::collections::HashMap;
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct Outdated {
+pub struct OutdatedSummary {
     pub deps: Vec<OutdatedDep>,
     pub remedy: Option<String>,
 }
@@ -19,7 +19,7 @@ pub struct OutdatedDep {
 #[derive(Debug)]
 pub struct ParseError;
 
-impl Outdated {
+impl OutdatedSummary {
     pub fn from_str(s: &str) -> Result<Self, ParseError> {
         let mut deps: Vec<OutdatedDep> = vec![];
         let mut remedy: Option<String> = None;
@@ -79,7 +79,7 @@ impl OutdatedDep {
     }
 }
 
-impl std::str::FromStr for Outdated {
+impl std::str::FromStr for OutdatedSummary {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
