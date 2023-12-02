@@ -59,7 +59,7 @@ jobs:
     - name: Run tests
       run: |
         export PATH="${PATH}:${GITHUB_WORKSPACE}/fixtures/bin"
-        cargo test --verbose
+        cargo test --verbose --color=always
 
   audit:
     runs-on: ubuntu-latest
