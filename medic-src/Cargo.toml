@@ -10,6 +10,7 @@ license.workspace = true
 arboard = "3.2"
 console = { workspace = true }
 envsubst = { workspace = true }
+indoc = { workspace = true }
 retrogress = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

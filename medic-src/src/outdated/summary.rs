@@ -2,10 +2,15 @@
 
 use std::collections::HashMap;
 
+use console::{pad_str, style, Alignment};
+
 #[derive(Debug, Eq, PartialEq)]
 pub struct OutdatedSummary {
     pub deps: Vec<OutdatedDep>,
     pub remedy: Option<String>,
+    pub(crate) max_name_length: usize,
+    pub(crate) max_latest_length: usize,
+    pub(crate) max_version_length: usize,
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -23,6 +28,9 @@ impl OutdatedSummary {
     pub fn from_str(s: &str) -> Result<Self, ParseError> {
         let mut deps: Vec<OutdatedDep> = vec![];
         let mut remedy: Option<String> = None;
+        let mut max_name_length = 4;
+        let mut max_latest_length = 6;
+        let mut max_version_length = 7;
 
         s.lines().for_each(|l| {
             let mut split = l.split("::");
@@ -34,6 +42,15 @@ impl OutdatedSummary {
                 Some("outdated") => {
                     let outdated = split.collect::<Vec<&str>>().join("::");
                     let dep = OutdatedDep::from_str(&outdated).unwrap();
+                    if dep.name.len() > max_name_length {
+                        max_name_length = dep.name.len();
+                    }
+                    if dep.latest.len() > max_latest_length {
+                        max_latest_length = dep.latest.len();
+                    }
+                    if dep.version.len() > max_version_length {
+                        max_version_length = dep.version.len();
+                    }
                     deps.push(dep);
                 }
                 Some(_) => {}
@@ -41,11 +58,25 @@ impl OutdatedSummary {
             }
         });
 
-        Ok(Self { deps, remedy })
+        Ok(Self {
+            deps,
+            remedy,
+            max_name_length,
+            max_latest_length,
+            max_version_length,
+        })
     }
 }
 
 impl OutdatedDep {
+    pub fn new(name: &str, version: &str, latest: &str, parent: Option<&str>) -> Self {
+        Self {
+            latest: latest.into(),
+            name: name.into(),
+            parent: parent.map(|s| s.into()),
+            version: version.into(),
+        }
+    }
     pub fn from_str(s: &str) -> Result<Self, ParseError> {
         let mut inputs: HashMap<&str, &str> = HashMap::with_capacity(4);
 
@@ -60,19 +91,19 @@ impl OutdatedDep {
         let mut keys: Vec<&&str> = inputs.keys().collect();
         keys.sort();
         if keys == vec![&"latest", &"name", &"version"] {
-            Ok(Self {
-                latest: inputs.get("latest").unwrap().to_string(),
-                name: inputs.get("name").unwrap().to_string(),
-                parent: None,
-                version: inputs.get("version").unwrap().to_string(),
-            })
+            Ok(Self::new(
+                inputs.get("name").unwrap(),
+                inputs.get("version").unwrap(),
+                inputs.get("latest").unwrap(),
+                None,
+            ))
         } else if keys == vec![&"latest", &"name", &"parent", &"version"] {
-            Ok(Self {
-                latest: inputs.get("latest").unwrap().to_string(),
-                name: inputs.get("name").unwrap().to_string(),
-                parent: Some(inputs.get("parent").unwrap().to_string()),
-                version: inputs.get("version").unwrap().to_string(),
-            })
+            Ok(Self::new(
+                inputs.get("name").unwrap(),
+                inputs.get("version").unwrap(),
+                inputs.get("latest").unwrap(),
+                Some(inputs.get("parent").unwrap()),
+            ))
         } else {
             Err(ParseError)
         }
@@ -92,5 +123,67 @@ impl std::str::FromStr for OutdatedDep {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Self::from_str(s)
+    }
+}
+
+impl std::fmt::Display for OutdatedSummary {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "    ")?;
+        write!(f, "{}", style("Name").bold().underlined())?;
+        if self.max_name_length > 4 {
+            for _space in 4..self.max_name_length {
+                write!(f, " ")?;
+            }
+        }
+        write!(f, "  ")?;
+        write!(f, "{}", style("Version").bold().underlined())?;
+        if self.max_version_length > 7 {
+            for _space in 7..self.max_version_length {
+                write!(f, " ")?;
+            }
+        }
+        write!(f, "  ")?;
+        write!(f, "{}", style("Latest").bold().underlined())?;
+        if self.max_latest_length > 6 {
+            for _space in 6..self.max_latest_length {
+                write!(f, " ")?;
+            }
+        }
+        write!(f, "  ")?;
+        write!(f, "{}", style("Parent").bold().underlined())?;
+        writeln!(f)?;
+        for dep in &self.deps {
+            write!(f, "    ")?;
+            write!(
+                f,
+                "{}",
+                pad_str(&dep.name, self.max_name_length, Alignment::Left, None)
+            )?;
+            write!(f, "  ")?;
+            write!(
+                f,
+                "{}",
+                pad_str(&dep.version, self.max_version_length, Alignment::Left, None)
+            )?;
+            write!(f, "  ")?;
+            write!(f, "{}", &dep.latest)?;
+            if dep.parent.is_some() {
+                if dep.latest.len() < self.max_latest_length {
+                    write!(
+                        f,
+                        "{}",
+                        pad_str(
+                            "",
+                            self.max_latest_length - dep.latest.len(),
+                            Alignment::Left,
+                            None
+                        )
+                    )?;
+                }
+                write!(f, "  {}", dep.parent.clone().unwrap())?;
+            }
+            writeln!(f)?;
+        }
+        write!(f, "")
     }
 }
