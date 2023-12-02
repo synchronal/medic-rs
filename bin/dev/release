@@ -4,7 +4,6 @@ set -e
 trap "exit" INT
 
 source "$(brew --prefix)/share/medic-bash/cecho.bash"
-source "$(brew --prefix)/share/medic-bash/step.bash"
 
 mkdir -p tmp/release
 mkdir -p target/universal-apple-darwin/release
@@ -13,7 +12,17 @@ rm -f tmp/release/*
 medic-run --name "Build: Darwin aarch64" --cmd "cargo build --target aarch64-apple-darwin --workspace -r --color always" --verbose
 medic-run --name "Build: Darwin x86_64" --cmd "cargo build --target x86_64-apple-darwin --workspace -r --color always" --verbose
 
-medic=(medic medic-audit medic-doctor medic-init medic-run medic-shipit medic-test medic-update)
+medic=(
+  medic
+  medic-audit
+  medic-doctor
+  medic-init
+  medic-outdated
+  medic-run
+  medic-shipit
+  medic-test
+  medic-update
+)
 
 cmds=(${medic[@]})
 
