@@ -56,10 +56,10 @@ jobs:
           target/
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
         restore-keys: ${{ runner.os }}-cargo-
-    - name: Append fixtures paths
-      run: echo "./fixtures/bin" >> $GITHUB_PATH
     - name: Run tests
-      run: cargo test --verbose
+      run: |
+        export PATH="${PATH}:${GITHUB_WORKSPACE}/fixtures/bin"
+        cargo test --verbose
 
   audit:
     runs-on: ubuntu-latest

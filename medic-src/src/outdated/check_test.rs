@@ -143,7 +143,7 @@ fn to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
     let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
     let expected_cmd_str = format!("cd \"{path_expansion}\" && \"medic-outdated-thing\"");
 
-    let cmd = check.to_command().unwrap();
+    let cmd = check.to_command()?;
     let cmd_str = format!("{cmd:?}");
     assert_eq!(cmd_str, expected_cmd_str);
     Ok(())
@@ -159,11 +159,15 @@ fn to_command_cd_absolute() -> Result<(), Box<dyn std::error::Error>> {
         remedy: None,
     };
 
-    let expected_cmd_str = format!("cd \"/private/tmp\" && \"medic-outdated-thing\"");
+    let cmd = check.to_command()?;
+    let cmd_str = &format!("{cmd:?}");
+    let cmd_str = Some(cmd_str.as_str());
 
-    let cmd = check.to_command().unwrap();
-    let cmd_str = format!("{cmd:?}");
-    assert_eq!(cmd_str, expected_cmd_str);
+    assert!(matches!(
+        cmd_str,
+        Some("cd \"/tmp\" && \"medic-outdated-thing\"")
+            | Some("cd \"/private/tmp\" && \"medic-outdated-thing\"")
+    ));
     Ok(())
 }
 
