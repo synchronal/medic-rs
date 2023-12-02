@@ -58,9 +58,43 @@ impl Runnable for OutdatedCheck {
                             return AppResult::Err(Some("Unable to parse outdated output".into()));
                         }
 
-                        progress.println(pb, &format!("{}", summary.unwrap()));
+                        let summary = summary.unwrap();
 
-                        progress.succeeded(pb);
+                        if summary.deps.is_empty() {
+                            progress.succeeded(pb);
+                            return AppResult::Ok(());
+                        }
+
+                        progress.println(pb, "");
+                        progress.println(pb, &format!("{}", summary));
+                        progress.println(pb, "");
+
+                        let mut remedy_str: Option<String> = None;
+
+                        match (summary.remedy, self.cd) {
+                            (Some(remedy), Some(dir)) => {
+                                remedy_str = Some(format!("(cd {} && {})", dir, remedy));
+                            }
+                            (Some(remedy), None) => {
+                                remedy_str = Some(format!("({})", remedy));
+                            }
+                            (_, _) => {}
+                        }
+
+                        if remedy_str.is_some() {
+                            progress.println(
+                                pb,
+                                &format!(
+                                    "    {} {}",
+                                    style("Remedy:").bold().underlined(),
+                                    style(remedy_str.unwrap()).yellow(),
+                                ),
+                            );
+
+                            progress.println(pb, "");
+                        }
+
+                        progress.failed(pb);
                         AppResult::Ok(())
                     }
                     Err(err) => {
