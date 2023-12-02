@@ -300,7 +300,7 @@ commands may be better suited to be written into shell scripts.
 
 Outdated checks work differently from other types of checks.
 
-Outdated checks run commands named `medic-outdated-{check}` that must be
+These checks run commands named `medic-outdated-{check}` that must be
 found in the PATH. These commands must follow these rules:
 
 - Informational output must be written to STDERR.
@@ -341,5 +341,5 @@ cargo run --bin medic-doctor -- -c fixtures/medic.toml
 ## Notes
 
 - This project uses the unstable feature `try_trait_v2`, which requires
-  nightly Rust. Until the feature is made stable, things could break at
-  any moment with changes to Rust.
+  nightly Rust. Until the feature is made stable, compilation of this
+  project could break at any time with changes to nightly Rust.
