@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+## 2.1.0
+
+- Adds `medic outdated`.
 - Attempt to return error rather than panicking when unable to find the
   current working directory.
 
