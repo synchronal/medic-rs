@@ -31,13 +31,14 @@ Medic provides five commands, each of reads its configuration from a
 TOML-formatted file, which defaults to `.config/medic/medic.toml`.
 
 ``` shell
-medic init    # -- add a medic config manifest to a project.
-medic doctor  # -- ensure a project is fully set up for development.
-medic test    # -- run all test commands.
-medic audit   # -- run lints, type checks, dependency audits, etc.
-medic update  # -- update the project with upstream changes.
-medic shipit  # -- run all checks and ship your changes.
-medic run     # -- runs a shell command with medic progress output.
+medic init     # -- add a medic config manifest to a project.
+medic doctor   # -- ensure a project is fully set up for development.
+medic test     # -- run all test commands.
+medic audit    # -- run lints, type checks, dependency audits, etc.
+medic outdated # -- check for outdated project dependencies.
+medic update   # -- update the project with upstream changes.
+medic shipit   # -- run all checks and ship your changes.
+medic run      # -- runs a shell command with medic progress output.
 ```
 
 #### init
@@ -47,8 +48,8 @@ at `.config/medic.toml`.
 
 #### doctor
 
-`medic doctor` runs checks to ensure the project is ready for
-development.
+`medic doctor` runs checks to ensure the project is ready for a
+developer to work on a project.
 
 Examples:
 
@@ -75,7 +76,8 @@ Valid actions:
 
 #### audit
 
-`medic audit` is intended for anything that
+`medic audit` is intended for anything that has to do with formatting or
+security.
 
 Examples:
 
@@ -89,6 +91,16 @@ Valid actions:
 - checks
 - steps
 - shell actions
+
+#### outdated
+
+`medic outdated` checks for dependencies that might be updatable.
+
+Examples:
+
+- language
+- runtime version manager (asdf, rtx)
+- packages (cargo, mix, pip)
 
 #### update
 
@@ -155,12 +167,11 @@ another of its commands.
 
 ``` toml
 [doctor]
-
 checks = [
-  # medic-check-asdf plugin-installed --plugin rust
-  { check = "asdf", command = "plugin-installed", args = { plugin = "rust" } },
-  # medic-check-asdf package-installed --plugin rust
-  { check = "asdf", command = "package-installed", args = { plugin = "rust" } },
+  # medic-check-tool-versions plugin-installed --plugin rust
+  { check = "tool-versions", command = "plugin-installed", args = { plugin = "rust" } },
+  # medic-check-tool-versions package-installed --plugin rust
+  { check = "tool-versions", command = "package-installed", args = { plugin = "rust" } },
   # medic-check-homebrew
   { check = "homebrew", verbose = true, output= "stdio" },
   # ... etc
@@ -170,7 +181,6 @@ checks = [
 ]
 
 [test]
-
 checks = [
   { name = "Check for warnings", shell = "cargo build --workspace --features strict" },
   # medic-step-rust test
@@ -178,7 +188,6 @@ checks = [
 ]
 
 [audit]
-
 checks = [
   { name = "Audit crates", shell = "cargo audit", allow_failure = true, verbose = true },
   { check = "rust", command = "format-check" },
@@ -186,15 +195,21 @@ checks = [
   { step = "rust", command = "clippy" },
 ]
 
-[update]
+[outdated]
+checks = [
+  # medic-outdated-rust
+  { check = "rust" },
+  # cd crates/sub-crate && medic-outdated-rust
+  { check = "rust", cd: "crates/sub-crate" },
+]
 
+[update]
 steps = [
   { step = "git", command = "pull" },
   { doctor = {} },
 ]
 
 [shipit]
-
 steps = [
   { audit = {} },
   { update = {} },
@@ -254,18 +269,13 @@ Custom steps may be run, so long as they are named `medic-step-{name}`
 and are available in the PATH. Steps must follow:
 
 - Informational output may be written to STDERR or STDOUT.
-
 - If the step fails, the process must exit with a non-zero exit status.
-
 - `command` - an optional subcommand to pass as the first argument to
   the check.
-
 - `args` - a map of flag to value(s). When running the command, the flag
   name will be translated to `--flag <value>`. When the value is
   specified as a list, the flag will be output once per value.
-
 - `verbose` - print all stdout/stderr to the terminal as it happens.
-
 - `allow_failure` - continue medic even if the command fails.
 
 ### Shell actions
@@ -285,6 +295,29 @@ commands may be better suited to be written into shell scripts.
 - `verbose`- when `true`, STDOUT and STDERR of the action are printed as
   to the console alongside running progress.
 - `allow_failure` - allow medic to continue even when the process fails.
+
+### Outdated checks
+
+Outdated checks work differently from other types of checks.
+
+Outdated checks run commands named `medic-outdated-{check}` that must be
+found in the PATH. These commands must follow these rules:
+
+- Informational output must be written to STDERR.
+- An outdated dependency must be written to STDOUT in one of the
+  following formats:
+  `::outdated::name=<name>::version=<version>::latest=<latest>`
+  `::outdated::name=<name>::version=<version>::latest=<latest>::parent=<parent>`
+- An optional remedy for updating dependencies may be output to STDOUT
+  in the following format: `::remedy::<command>`
+
+Values to be included:
+
+- `name` - the name of the dependency.
+- `version` - the version of the dependency currently used.
+- `latest` - the most current available version of the dependency.
+- `parent` - if the project does not explicitly declare this dependency,
+  `parent` may be set to show why this is appearing in outdated content.
 
 ### Colorization
 
