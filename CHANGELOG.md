@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.1.1
+
 - Checks and steps verify that their commands exist in PATH before
   running them.
 - Catch more possible errors instead of panicking. Where panics may
