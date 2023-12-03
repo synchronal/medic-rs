@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0
+
 - When `std_to_string` is used to parse content including non-UTF-8
   characters, it panics with `expect` and a message rather than just
   `unwrap`.
