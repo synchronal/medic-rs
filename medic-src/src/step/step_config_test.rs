@@ -5,7 +5,7 @@ use crate::util::StringOrList;
 use std::collections::BTreeMap;
 
 #[test]
-fn test_deserialize_arg_string() {
+fn deserialize_arg_string() {
     let toml = r#"
         step = "step-name"
         command = "subcommand"
@@ -28,7 +28,7 @@ fn test_deserialize_arg_string() {
     )
 }
 #[test]
-fn test_deserialize_arg_list() {
+fn deserialize_arg_list() {
     let toml = r#"
         step = "step-name"
         command = "subcommand"
@@ -52,7 +52,93 @@ fn test_deserialize_arg_list() {
 }
 
 #[test]
-fn test_to_string_single_arg() {
+fn to_command() {
+    let step = StepConfig {
+        args: None,
+        step: "thing".to_string(),
+        command: None,
+        verbose: false,
+        name: None,
+    };
+
+    let cmd = step.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(cmd_str, "\"medic-step-thing\"");
+}
+
+#[test]
+fn to_command_subcommand() {
+    let step = StepConfig {
+        args: None,
+        command: Some("sub-command".to_string()),
+        name: None,
+        step: "thing".to_string(),
+        verbose: false,
+    };
+
+    let cmd = step.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(cmd_str, "\"medic-step-thing\" \"sub-command\"");
+}
+
+#[test]
+fn to_command_args() {
+    let step = StepConfig {
+        args: Some(BTreeMap::from([(
+            "name".to_string(),
+            StringOrList(vec!["first".to_string()]),
+        )])),
+        command: None,
+        name: None,
+        step: "thing".to_string(),
+        verbose: false,
+    };
+
+    let cmd = step.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(cmd_str, "\"medic-step-thing\" \"--name\" \"first\"");
+}
+
+#[test]
+fn to_command_args_list() {
+    let step = StepConfig {
+        args: Some(BTreeMap::from([(
+            "name".to_string(),
+            StringOrList(vec!["first".to_string(), "second".to_string()]),
+        )])),
+        command: None,
+        name: None,
+        step: "thing".to_string(),
+        verbose: false,
+    };
+
+    let cmd = step.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(
+        cmd_str,
+        "\"medic-step-thing\" \"--name\" \"first\" \"--name\" \"second\""
+    );
+}
+
+#[test]
+fn to_command_missing_command() {
+    let step = StepConfig {
+        args: None,
+        command: None,
+        name: None,
+        step: "missing".to_string(),
+        verbose: false,
+    };
+
+    let e = step.to_command().err().unwrap();
+    assert_eq!(
+        format!("{e}"),
+        "executable medic-step-missing not found in PATH".to_string()
+    );
+}
+
+#[test]
+fn to_string_single_arg() {
     let step = StepConfig {
         args: Some(BTreeMap::from([(
             "name".to_string(),
@@ -71,7 +157,7 @@ fn test_to_string_single_arg() {
 }
 
 #[test]
-fn test_to_string_subcommand_single_arg() {
+fn to_string_subcommand_single_arg() {
     let step = StepConfig {
         args: Some(BTreeMap::from([(
             "name".to_string(),
@@ -90,7 +176,7 @@ fn test_to_string_subcommand_single_arg() {
 }
 
 #[test]
-fn test_to_string_subcommand_multiple_args() {
+fn to_string_subcommand_multiple_args() {
     let step = StepConfig {
         args: Some(BTreeMap::from([
             ("name".to_string(), StringOrList(vec!["first".to_string()])),
@@ -112,7 +198,7 @@ fn test_to_string_subcommand_multiple_args() {
 }
 
 #[test]
-fn test_to_string_subcommand_multiple_arg_values() {
+fn to_string_subcommand_multiple_arg_values() {
     let step = StepConfig {
         args: Some(BTreeMap::from([(
             "name".to_string(),
@@ -131,7 +217,7 @@ fn test_to_string_subcommand_multiple_arg_values() {
 }
 
 #[test]
-fn test_to_string_subcommand_multiple_arg_values_and_args() {
+fn to_string_subcommand_multiple_arg_values_and_args() {
     let step = StepConfig {
         args: Some(BTreeMap::from([
             (

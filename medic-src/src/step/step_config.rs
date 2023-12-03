@@ -14,6 +14,7 @@ use std::fmt;
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use std::thread;
+use which::which;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct StepConfig {
@@ -103,9 +104,14 @@ impl Runnable for StepConfig {
         }
     }
     fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
-        let mut check_cmd: String = "medic-step-".to_owned();
-        check_cmd.push_str(&self.step);
-        let mut command = Command::new(check_cmd);
+        let mut step_cmd: String = "medic-step-".to_owned();
+        step_cmd.push_str(&self.step);
+        if let Err(_err) = which(&step_cmd) {
+            let msg: Box<dyn std::error::Error> =
+                format!("executable {step_cmd} not found in PATH").into();
+            return Err(msg);
+        };
+        let mut command = Command::new(step_cmd);
 
         if let Some(subcmd) = &self.command {
             command.arg(subcmd);

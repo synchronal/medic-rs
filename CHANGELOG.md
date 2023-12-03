@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Checks and steps verify that their commands exist in PATH before
+  running them.
 - Catch more possible errors instead of panicking. Where panics may
   still be the best approach, prefer `expect` in place of `unwrap`.
 

@@ -49,7 +49,7 @@ fn deserialize_args_string() {
 }
 
 #[test]
-fn deserialize_args_value_lsit_string() {
+fn deserialize_args_value_list_string() {
     let toml = r#"
         args = { argument = ["value 1", "value 2"] }
         check = "outdated-name"

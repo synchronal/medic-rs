@@ -20,6 +20,7 @@ use std::collections::BTreeMap;
 use std::fmt;
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
+use which::which;
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Check {
@@ -86,6 +87,13 @@ impl Runnable for Check {
     fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
         let mut check_cmd: String = "medic-check-".to_owned();
         check_cmd.push_str(&self.check);
+
+        if let Err(_err) = which(&check_cmd) {
+            let msg: Box<dyn std::error::Error> =
+                format!("executable {check_cmd} not found in PATH").into();
+            return Err(msg);
+        };
+
         let mut command = Command::new(check_cmd);
         command.env("MEDIC_OUTPUT_FORMAT", self.output.to_string());
 

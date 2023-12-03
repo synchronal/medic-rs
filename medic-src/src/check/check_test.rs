@@ -3,7 +3,7 @@
 use super::*;
 
 #[test]
-fn test_deserialize_arg_string() {
+fn deserialize_arg_string() {
     let toml = r#"
         check = "check-name"
         command = "subcommand"
@@ -26,7 +26,7 @@ fn test_deserialize_arg_string() {
     )
 }
 #[test]
-fn test_deserialize_arg_list() {
+fn deserialize_arg_list() {
     let toml = r#"
         check = "check-name"
         command = "subcommand"
@@ -50,7 +50,117 @@ fn test_deserialize_arg_list() {
 }
 
 #[test]
-fn test_to_string_single_arg() {
+fn to_command() {
+    let check = Check {
+        args: None,
+        check: "json".to_string(),
+        command: None,
+        output: OutputFormat::Json,
+        verbose: false,
+    };
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(cmd_str, "MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\"");
+}
+
+#[test]
+fn to_command_subcommand() {
+    let check = Check {
+        args: None,
+        check: "json".to_string(),
+        command: Some("sub-command".to_string()),
+        output: OutputFormat::Json,
+        verbose: false,
+    };
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(
+        cmd_str,
+        "MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\" \"sub-command\""
+    );
+}
+
+#[test]
+fn to_command_stdio() {
+    let check = Check {
+        args: None,
+        check: "json".to_string(),
+        command: None,
+        output: OutputFormat::Stdio,
+        verbose: false,
+    };
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(
+        cmd_str,
+        "MEDIC_OUTPUT_FORMAT=\"stdio\" \"medic-check-json\""
+    );
+}
+
+#[test]
+fn to_command_args() {
+    let check = Check {
+        args: Some(BTreeMap::from([(
+            "name".to_string(),
+            StringOrList(vec!["first".to_string()]),
+        )])),
+        check: "json".to_string(),
+        command: None,
+        output: OutputFormat::Json,
+        verbose: false,
+    };
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(
+        cmd_str,
+        "MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\" \"--name\" \"first\""
+    );
+}
+
+#[test]
+fn to_command_args_list() {
+    let check = Check {
+        args: Some(BTreeMap::from([(
+            "name".to_string(),
+            StringOrList(vec!["first".to_string(), "second".to_string()]),
+        )])),
+        check: "json".to_string(),
+        command: None,
+        output: OutputFormat::Json,
+        verbose: false,
+    };
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(
+        cmd_str,
+        "MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\" \"--name\" \"first\" \"--name\" \"second\""
+    );
+}
+
+#[test]
+fn to_command_missing_command() {
+    let check = Check {
+        args: None,
+        check: "missing".to_string(),
+        command: None,
+        output: OutputFormat::Json,
+        verbose: false,
+    };
+
+    let e = check.to_command().err().unwrap();
+    assert_eq!(
+        format!("{e}"),
+        "executable medic-check-missing not found in PATH".to_string()
+    );
+}
+
+#[test]
+fn to_string_single_arg() {
     let check = Check {
         args: Some(BTreeMap::from([(
             "name".to_string(),
@@ -69,7 +179,7 @@ fn test_to_string_single_arg() {
 }
 
 #[test]
-fn test_to_string_subcommand_single_arg() {
+fn to_string_subcommand_single_arg() {
     let check = Check {
         args: Some(BTreeMap::from([(
             "name".to_string(),
@@ -88,7 +198,7 @@ fn test_to_string_subcommand_single_arg() {
 }
 
 #[test]
-fn test_to_string_subcommand_multiple_args() {
+fn to_string_subcommand_multiple_args() {
     let check = Check {
         args: Some(BTreeMap::from([
             ("name".to_string(), StringOrList(vec!["first".to_string()])),
@@ -110,7 +220,7 @@ fn test_to_string_subcommand_multiple_args() {
 }
 
 #[test]
-fn test_to_string_subcommand_multiple_arg_values() {
+fn to_string_subcommand_multiple_arg_values() {
     let check = Check {
         args: Some(BTreeMap::from([(
             "name".to_string(),
@@ -129,7 +239,7 @@ fn test_to_string_subcommand_multiple_arg_values() {
 }
 
 #[test]
-fn test_to_string_subcommand_multiple_arg_values_and_args() {
+fn to_string_subcommand_multiple_arg_values_and_args() {
     let check = Check {
         args: Some(BTreeMap::from([
             (
