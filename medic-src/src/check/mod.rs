@@ -41,7 +41,10 @@ impl Runnable for Check {
             let output = if verbose {
                 command.stderr(Stdio::piped());
                 let mut child = command.spawn()?;
-                let stderr = child.stderr.take().unwrap();
+                let stderr = child
+                    .stderr
+                    .take()
+                    .ok_or("Error capturing stderr of check.")?;
                 let reader = BufReader::new(stderr);
 
                 reader
@@ -65,8 +68,8 @@ impl Runnable for Check {
                         eprint!("{output}");
 
                         if output.remedy.is_some() {
-                            let mut clipboard = Clipboard::new().unwrap();
-                            clipboard.set_text(output.remedy.unwrap()).unwrap();
+                            let mut clipboard = Clipboard::new()?;
+                            clipboard.set_text(output.remedy.unwrap())?;
                         }
                         AppResult::Err(None)
                     }

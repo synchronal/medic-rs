@@ -12,7 +12,6 @@ use console::style;
 use retrogress::Progress;
 use serde::Deserialize;
 use std::fmt;
-use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use std::thread;
@@ -53,7 +52,6 @@ impl Runnable for ShellConfig {
         let verbose = self.verbose();
         let pb = progress.append(&self.to_string());
 
-        io::stdout().flush().unwrap();
         match self.to_command() {
             Ok(mut command) => {
                 let output = if verbose {
@@ -63,8 +61,14 @@ impl Runnable for ShellConfig {
                         .stderr(Stdio::piped());
 
                     let mut child = command.spawn()?;
-                    let stderr = child.stderr.take().unwrap();
-                    let stdout = child.stdout.take().unwrap();
+                    let stderr = child
+                        .stderr
+                        .take()
+                        .ok_or("Error capturing stderr of shell command.")?;
+                    let stdout = child
+                        .stdout
+                        .take()
+                        .ok_or("Error capturing stdout of shell command.")?;
 
                     let mut out_progress = progress.clone();
                     let mut err_progress = progress.clone();
@@ -121,8 +125,8 @@ impl Runnable for ShellConfig {
                                 if let Some(remedy) = self.remedy {
                                     eprint!("\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m");
                                     eprintln!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
-                                    let mut clipboard = Clipboard::new().unwrap();
-                                    clipboard.set_text(remedy).unwrap();
+                                    let mut clipboard = Clipboard::new()?;
+                                    clipboard.set_text(remedy)?;
                                 }
                                 AppResult::Err(None)
                             }

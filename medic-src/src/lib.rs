@@ -24,5 +24,6 @@ pub use shipit_step::ShipitStep;
 pub use step::Step;
 
 pub fn std_to_string(data: Vec<u8>) -> String {
-    String::from_utf8(data).unwrap()
+    String::from_utf8(data)
+        .expect("Unable to parse text from STDIO. Output must be valid UTF-8 content.")
 }

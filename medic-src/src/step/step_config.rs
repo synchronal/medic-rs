@@ -11,7 +11,7 @@ use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use std::thread;
 
@@ -31,7 +31,6 @@ impl Runnable for StepConfig {
         let verbose = self.verbose();
         let pb = progress.append(&self.to_string());
 
-        io::stdout().flush().unwrap();
         if let Ok(mut command) = self.to_command() {
             let output = if verbose {
                 command
@@ -40,8 +39,14 @@ impl Runnable for StepConfig {
                     .stderr(Stdio::piped());
 
                 let mut child = command.spawn()?;
-                let stderr = child.stderr.take().unwrap();
-                let stdout = child.stdout.take().unwrap();
+                let stderr = child
+                    .stderr
+                    .take()
+                    .ok_or("Error capturing stderr of step.")?;
+                let stdout = child
+                    .stdout
+                    .take()
+                    .ok_or("Error capturing stdout of step.")?;
 
                 let mut out_progress = progress.clone();
                 let mut err_progress = progress.clone();

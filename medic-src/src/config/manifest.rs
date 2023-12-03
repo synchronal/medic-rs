@@ -27,7 +27,7 @@ impl Manifest {
             context.insert(key, value);
         }
 
-        let path_expansion = envsubst::substitute(path.to_string_lossy(), &context).unwrap();
+        let path_expansion = envsubst::substitute(path.to_string_lossy(), &context)?;
         let expanded_path = std::path::Path::new(&path_expansion);
 
         if expanded_path.exists() {

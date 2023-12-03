@@ -11,7 +11,7 @@ use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use std::thread;
 use which::which;
@@ -29,13 +29,15 @@ impl Runnable for OutdatedCheck {
     fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
         let pb = progress.append(&self.to_string());
 
-        io::stdout().flush().unwrap();
         match self.to_command() {
             Ok(mut command) => {
                 command.stdout(Stdio::piped()).stderr(Stdio::piped());
 
                 let mut child = command.spawn()?;
-                let stderr = child.stderr.take().unwrap();
+                let stderr = child
+                    .stderr
+                    .take()
+                    .ok_or("Error capturing stderr of outdated check.")?;
                 let mut err_progress = progress.clone();
 
                 let err_thr = thread::spawn(move || {

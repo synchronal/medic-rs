@@ -42,6 +42,24 @@ impl<T> FromResidual for AppResult<T> {
     }
 }
 
+impl<T> FromResidual<Result<std::convert::Infallible, &str>> for AppResult<T> {
+    fn from_residual(r: Result<std::convert::Infallible, &str>) -> Self {
+        Self::Err(Some(r.unwrap_err().into()))
+    }
+}
+
+impl<T> FromResidual<Result<std::convert::Infallible, arboard::Error>> for AppResult<T> {
+    fn from_residual(r: Result<std::convert::Infallible, arboard::Error>) -> Self {
+        Self::Err(Some(r.unwrap_err().into()))
+    }
+}
+
+impl<T> FromResidual<Result<std::convert::Infallible, envsubst::Error>> for AppResult<T> {
+    fn from_residual(r: Result<std::convert::Infallible, envsubst::Error>) -> Self {
+        Self::Err(Some(r.unwrap_err().into()))
+    }
+}
+
 impl<T> FromResidual<Result<std::convert::Infallible, std::io::Error>> for AppResult<T> {
     fn from_residual(r: Result<std::convert::Infallible, std::io::Error>) -> Self {
         Self::Err(Some(Box::new(r.unwrap_err())))

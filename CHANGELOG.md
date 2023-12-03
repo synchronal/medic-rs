@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Catch more possible errors instead of panicking. Where panics may
+  still be the best approach, prefer `expect` in place of `unwrap`.
+
 ## 2.1.0
 
 - Adds `medic outdated`.
