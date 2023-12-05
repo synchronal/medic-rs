@@ -1,3 +1,5 @@
+// @related [tests](medic-src/src/config/manifest_test.rs)
+
 use crate::AppResult;
 use crate::AuditStep;
 use crate::DoctorStep;
@@ -8,7 +10,7 @@ use crate::Step;
 use serde::Deserialize;
 use std::path::PathBuf;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct Manifest {
     pub audit: Option<AuditConfig>,
     pub doctor: Option<DoctorConfig>,
@@ -54,32 +56,32 @@ impl Manifest {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct AuditConfig {
     pub checks: Vec<AuditStep>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct DoctorConfig {
     pub checks: Vec<DoctorStep>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct OutdatedConfig {
     pub checks: Vec<OutdatedCheck>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct ShipitConfig {
     pub steps: Vec<ShipitStep>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct TestConfig {
     pub checks: Vec<Step>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct UpdateConfig {
     pub steps: Vec<Step>,
 }

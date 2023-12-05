@@ -16,7 +16,7 @@ use std::process::{Command, Stdio};
 use std::thread;
 use which::which;
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct StepConfig {
     pub args: Option<BTreeMap<String, StringOrList>>,
     pub command: Option<String>,

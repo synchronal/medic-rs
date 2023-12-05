@@ -7,7 +7,7 @@ use serde::Deserialize;
 use std::fmt;
 use std::process::Command;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 #[serde(untagged)]
 pub enum AuditStep {
     Check(Check),

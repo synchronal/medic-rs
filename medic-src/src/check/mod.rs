@@ -6,7 +6,7 @@ mod check_test;
 mod check_output;
 mod output_format;
 
-use self::output_format::OutputFormat;
+pub use self::output_format::OutputFormat;
 use crate::optional_styled::OptionalStyled;
 use crate::runnable::Runnable;
 use crate::util::StringOrList;
@@ -22,7 +22,7 @@ use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use which::which;
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct Check {
     pub args: Option<BTreeMap<String, StringOrList>>,
     pub check: String,

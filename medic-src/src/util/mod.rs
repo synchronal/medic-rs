@@ -2,7 +2,7 @@ use serde::de::{self, value, SeqAccess, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
 use std::fmt;
 
-#[derive(Debug, Deserialize, PartialEq, Serialize)]
+#[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct StringOrList(#[serde(deserialize_with = "string_or_vec")] pub Vec<String>);
 
 impl IntoIterator for StringOrList {
