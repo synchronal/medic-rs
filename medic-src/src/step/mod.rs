@@ -4,6 +4,7 @@ mod step_config_test;
 pub mod step_config;
 pub use step_config::StepConfig;
 
+use crate::noop_config::NoopConfig;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::{AppResult, Check};
@@ -21,9 +22,6 @@ pub enum Step {
     Step(StepConfig),
     Doctor(DoctorConfig),
 }
-
-#[derive(Debug, Deserialize, Eq, PartialEq)]
-pub struct NoopConfig {}
 
 #[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct DoctorConfig {

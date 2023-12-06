@@ -1,3 +1,4 @@
+use crate::noop_config::NoopConfig;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::step::StepConfig;
@@ -19,9 +20,6 @@ pub enum ShipitStep {
     Test(TestConfig),
     Update(UpdateConfig),
 }
-
-#[derive(Debug, Deserialize, Eq, PartialEq)]
-pub struct NoopConfig {}
 
 #[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct AuditConfig {

@@ -4,6 +4,7 @@ use super::manifest::*;
 use crate::audit_step::*;
 use crate::check::OutputFormat;
 use crate::doctor_step::*;
+use crate::noop_config::NoopConfig;
 use crate::shell::ShellConfig;
 use crate::shipit_step;
 use crate::step;
@@ -179,13 +180,13 @@ fn deserialize_shipit() {
             shipit: Some(ShipitConfig {
                 steps: vec![
                     ShipitStep::Audit(shipit_step::AuditConfig {
-                        audit: shipit_step::NoopConfig {}
+                        audit: NoopConfig {}
                     }),
                     ShipitStep::Update(shipit_step::UpdateConfig {
-                        update: shipit_step::NoopConfig {}
+                        update: NoopConfig {}
                     }),
                     ShipitStep::Test(shipit_step::TestConfig {
-                        test: shipit_step::NoopConfig {}
+                        test: NoopConfig {}
                     }),
                     ShipitStep::Check(Check {
                         args: None,
@@ -240,7 +241,7 @@ fn deserialize_test() {
             test: Some(TestConfig {
                 checks: vec![
                     Step::Doctor(step::DoctorConfig {
-                        doctor: step::NoopConfig {}
+                        doctor: NoopConfig {}
                     }),
                     Step::Check(Check {
                         args: None,
@@ -295,7 +296,7 @@ fn deserialize_update() {
             update: Some(UpdateConfig {
                 steps: vec![
                     Step::Doctor(step::DoctorConfig {
-                        doctor: step::NoopConfig {}
+                        doctor: NoopConfig {}
                     }),
                     Step::Check(Check {
                         args: None,

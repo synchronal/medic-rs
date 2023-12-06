@@ -6,6 +6,7 @@ pub mod audit_step;
 pub mod check;
 pub mod config;
 pub mod doctor_step;
+pub mod noop_config;
 pub mod outdated;
 pub mod runnable;
 pub mod shell;
