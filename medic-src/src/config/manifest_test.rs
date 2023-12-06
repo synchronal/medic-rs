@@ -1,12 +1,12 @@
 // @related [subject](medic-src/src/config/manifest.rs)
 
 use super::manifest::*;
-use crate::audit_step::*;
+use crate::audit::*;
 use crate::check::OutputFormat;
-use crate::doctor_step::*;
+use crate::doctor::*;
 use crate::noop_config::NoopConfig;
 use crate::shell::ShellConfig;
-use crate::shipit_step;
+use crate::shipit;
 use crate::step;
 use crate::step::StepConfig;
 use crate::Check;
@@ -179,13 +179,13 @@ fn deserialize_shipit() {
             outdated: None,
             shipit: Some(ShipitConfig {
                 steps: vec![
-                    ShipitStep::Audit(shipit_step::AuditConfig {
+                    ShipitStep::Audit(shipit::AuditConfig {
                         audit: NoopConfig {}
                     }),
-                    ShipitStep::Update(shipit_step::UpdateConfig {
+                    ShipitStep::Update(shipit::UpdateConfig {
                         update: NoopConfig {}
                     }),
-                    ShipitStep::Test(shipit_step::TestConfig {
+                    ShipitStep::Test(shipit::TestConfig {
                         test: NoopConfig {}
                     }),
                     ShipitStep::Check(Check {

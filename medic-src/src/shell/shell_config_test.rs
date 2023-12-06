@@ -1,4 +1,4 @@
-// @related [subject](medic-src/src/step/step_config.rs)
+// @related [subject](medic-src/src/shell/shell_config.rs)
 
 use super::*;
 
