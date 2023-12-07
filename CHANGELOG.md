@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.1.2
+
 - Show STDERR from outdated checks in progress bar.
 - Error handling when parsing outdated STDOUT.
 
