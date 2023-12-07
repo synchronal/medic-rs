@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.2.0
+
 - `medic init` can `--force` overwrite the config file.
 - Include outdated in `medic init`
 
