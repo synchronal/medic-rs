@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `medic init` can `--force` overwrite the config file.
+- Include outdated in `medic init`
+
 ## 2.1.2
 
 - Show STDERR from outdated checks in progress bar.
