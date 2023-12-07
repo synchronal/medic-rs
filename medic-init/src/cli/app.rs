@@ -14,6 +14,9 @@ pub struct CliArgs {
     )]
     pub config: std::path::PathBuf,
 
+    #[clap(long, short, action)]
+    pub force: bool,
+
     /// Shell to generate completions for
     #[clap(long, value_enum, value_parser)]
     pub completion: Option<Shell>,

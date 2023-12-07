@@ -23,7 +23,7 @@ pub enum Command {
     /// Runs checks to ensure that a project is fully set up for development.
     Doctor(ManifestArgs),
     /// Creates the shell of a medic manifest file.
-    Init(ManifestArgs),
+    Init(InitArgs),
     /// Runs checks for outdated dependencies
     Outdated(ManifestArgs),
     /// Runs an arbitrary shell command.
@@ -42,6 +42,16 @@ pub struct ManifestArgs {
     #[clap(value_parser)]
     #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.config/medic.toml", value_hint = clap::ValueHint::FilePath)]
     pub config: PathBuf,
+}
+
+#[derive(Args, Debug)]
+pub struct InitArgs {
+    /// Path to a file where medic config can be found
+    #[clap(value_parser)]
+    #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.config/medic.toml", value_hint = clap::ValueHint::FilePath)]
+    pub config: PathBuf,
+    #[clap(short, long, action)]
+    pub force: bool,
 }
 
 impl Default for CliArgs {
