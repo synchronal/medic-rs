@@ -27,7 +27,8 @@ pub struct OutdatedCheck {
 
 impl Runnable for OutdatedCheck {
     fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
-        let pb = progress.append(&self.to_string());
+        let command_name = self.to_string();
+        let pb = progress.append(&command_name);
 
         match self.to_command() {
             Ok(mut command) => {
@@ -39,17 +40,21 @@ impl Runnable for OutdatedCheck {
                     .take()
                     .ok_or("Error capturing stderr of outdated check.")?;
                 let mut err_progress = progress.clone();
+                let command_name_err = command_name.clone();
 
                 let err_thr = thread::spawn(move || {
                     let reader = BufReader::new(stderr);
-                    reader
-                        .lines()
-                        .map_while(Result::ok)
-                        .for_each(|line| err_progress.println(pb, &line));
+                    reader.lines().map_while(Result::ok).for_each(|line| {
+                        let msg = line.split("::").last().unwrap_or("");
+                        err_progress
+                            .set_message(pb, format!("{command_name_err}\t{}", style(msg).dim()));
+                    })
                 });
 
                 let output = child.wait_with_output();
                 err_thr.join().unwrap();
+
+                progress.set_message(pb, command_name);
 
                 match output {
                     Ok(result) => {

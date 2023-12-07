@@ -10,6 +10,8 @@ for i in {1..10}; do
   sleep 0.1
 done
 
+echo >&2
+echo >&2
 echo "::success::doing stuff::" >&2
 
 echo "::outdated::name=thingy::version=1.2.3::latest=1.2.4::"
