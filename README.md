@@ -20,9 +20,14 @@ Rather than proscribe, medic should assist.
 ``` shell
 brew install synchronal/tap/medic
 
-brew install synchronal/tap/medic-elixir
-brew install synchronal/tap/medic-node
-brew install synchronal/tap/medic-rust
+# optionally add extensions which include steps, checks, and/or outdated checks:
+brew install synchronal/tap/medic-ext-elixir
+brew install synchronal/tap/medic-ext-git
+brew install synchronal/tap/medic-ext-homebrew
+brew install synchronal/tap/medic-ext-node
+brew install synchronal/tap/medic-ext-rust
+brew install synchronal/tap/medic-ext-tool-versions
+brew install synchronal/tap/medic-ext-postgres
 ```
 
 ## Usage
