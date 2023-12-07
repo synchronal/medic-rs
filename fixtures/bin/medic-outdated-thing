@@ -1,1 +1,16 @@
 #!/usr/bin/env bash
+
+random_actions=("Downloading some things" "Compiling…" "Conjoining the frabnasticators" "Downloading more things" "Smashing bits together")
+RANDOM=$$$(date +%s)
+
+echo "::action::doing stuff::Installing some dependencies" >&2
+
+for i in {1..10}; do
+  echo "::info::doing stuff::${random_actions[ $RANDOM % ${#random_actions[@]} ]}" >&2
+  sleep 0.1
+done
+
+echo "::success::doing stuff::" >&2
+
+echo "::outdated::name=thingy::version=1.2.3::latest=1.2.4::"
+echo "::outdated::name=other-thingy::version=1.2.3::latest=1.2.4::parent=thingy"

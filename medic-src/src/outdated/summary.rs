@@ -22,7 +22,13 @@ pub struct OutdatedDep {
 }
 
 #[derive(Debug)]
-pub struct ParseError;
+pub struct ParseError(String);
+
+impl std::fmt::Display for ParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 
 impl OutdatedSummary {
     pub fn from_str(s: &str) -> Result<Self, ParseError> {
@@ -32,8 +38,8 @@ impl OutdatedSummary {
         let mut max_latest_length = 6;
         let mut max_version_length = 7;
 
-        s.lines().for_each(|l| {
-            let mut split = l.split("::");
+        for line in s.lines() {
+            let mut split = line.split("::");
             split.next();
             match split.next() {
                 Some("remedy") => {
@@ -41,7 +47,8 @@ impl OutdatedSummary {
                 }
                 Some("outdated") => {
                     let outdated = split.collect::<Vec<&str>>().join("::");
-                    let dep = OutdatedDep::from_str(&outdated).unwrap();
+                    let dep = OutdatedDep::from_str(&outdated)?;
+
                     if dep.name.len() > max_name_length {
                         max_name_length = dep.name.len();
                     }
@@ -56,7 +63,7 @@ impl OutdatedSummary {
                 Some(_) => {}
                 None => {}
             }
-        });
+        }
 
         Ok(Self {
             deps,
@@ -80,12 +87,22 @@ impl OutdatedDep {
     pub fn from_str(s: &str) -> Result<Self, ParseError> {
         let mut inputs: HashMap<&str, &str> = HashMap::with_capacity(4);
 
-        for value_pair in s.trim().split("::") {
-            if let Some((key, value)) = value_pair.split_once('=') {
-                inputs.insert(key, value);
-            } else {
-                return Err(ParseError);
+        for mut value_pair in s.trim().split("::") {
+            value_pair = value_pair.trim();
+
+            if value_pair.is_empty() {
+                continue;
             }
+
+            match value_pair.split_once('=') {
+                Some((key, value)) => inputs.insert(key, value),
+                None => {
+                    return Err(ParseError(format!(
+                        "Expected key=value\r\nFound: {}\r\nOutdated: {}",
+                        value_pair, s
+                    )));
+                }
+            };
         }
 
         let mut keys: Vec<&&str> = inputs.keys().collect();
@@ -105,7 +122,9 @@ impl OutdatedDep {
                 Some(inputs.get("parent").unwrap()),
             ))
         } else {
-            Err(ParseError)
+            Err(ParseError(format!(
+                "Expected name, version, latest, <parent>, found: {keys:?}"
+            )))
         }
     }
 }

@@ -54,13 +54,19 @@ impl Runnable for OutdatedCheck {
                 match output {
                     Ok(result) => {
                         let stdout = &std_to_string(result.stdout);
-                        let summary = OutdatedSummary::from_str(stdout);
-                        if !result.status.success() || summary.is_err() {
+                        let summary_result = OutdatedSummary::from_str(stdout);
+                        if !result.status.success() || summary_result.is_err() {
                             progress.failed(pb);
-                            return AppResult::Err(Some("Unable to parse outdated output".into()));
+                            return AppResult::Err(Some(
+                                format!(
+                                    "Unable to parse outdated output:\r\n{}",
+                                    summary_result.err().unwrap()
+                                )
+                                .into(),
+                            ));
                         }
 
-                        let summary = summary.unwrap();
+                        let summary = summary_result.unwrap();
 
                         if summary.deps.is_empty() {
                             progress.succeeded(pb);

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Error handling when parsing outdated stdout.
+
 ## 2.1.1
 
 - Checks and steps verify that their commands exist in PATH before
