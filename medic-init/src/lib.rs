@@ -40,7 +40,6 @@ pub fn create_config_file(path: std::path::PathBuf, force: bool) -> AppResult<()
 
     let mut file = std::fs::OpenOptions::new()
         .create_new(true)
-        .write(true)
         .append(true)
         .open(expanded_path)?;
 
