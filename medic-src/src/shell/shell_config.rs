@@ -1,11 +1,12 @@
 // @related [test](medic-src/src/shell/shell_config_test.rs)
 
+use crate::optional_styled::OptionalStyled;
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::AppResult;
 
 use arboard::Clipboard;
-use console::style;
+use console::{style, Style};
 use retrogress::Progress;
 use serde::Deserialize;
 use std::fmt;
@@ -17,6 +18,7 @@ use std::thread;
 pub struct ShellConfig {
     #[serde(default)]
     pub allow_failure: bool,
+    pub cd: Option<String>,
     #[serde(default)]
     pub inline: bool,
     pub name: String,
@@ -29,6 +31,7 @@ pub struct ShellConfig {
 impl ShellConfig {
     pub fn new(name: String, shell: String, remedy: Option<String>, verbose: bool) -> Self {
         Self {
+            cd: None,
             name,
             shell,
             remedy,
@@ -144,6 +147,17 @@ impl Runnable for ShellConfig {
         } else {
             let mut command = Command::new("sh");
             command.arg("-c").arg(&self.shell);
+
+            if let Some(directory) = &self.cd {
+                if let Ok(expanded) = std::fs::canonicalize(directory) {
+                    command.current_dir(&expanded);
+                } else {
+                    let msg: Box<dyn std::error::Error> =
+                        format!("directory {} does not exist", directory).into();
+                    return Err(msg);
+                }
+            }
+
             Ok(command)
         }
     }
@@ -154,13 +168,23 @@ impl Runnable for ShellConfig {
 }
 impl fmt::Display for ShellConfig {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut cd_str =
+            OptionalStyled::with_style(Style::new().force_styling(true).green()).prefixed(" ");
+
+        if let Some(dir) = &self.cd {
+            cd_str.push('(');
+            cd_str.push_str(dir);
+            cd_str.push(')');
+        }
+
         write!(f, "{}", style(&self.name).force_styling(true).cyan())?;
         write!(
             f,
-            " {}",
+            " {}{}",
             style(format!("({})", self.shell))
                 .force_styling(true)
-                .yellow()
+                .yellow(),
+            cd_str
         )
     }
 }

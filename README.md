@@ -294,6 +294,7 @@ commands may be better suited to be written into shell scripts.
 
 - `name` - the description to be shown to the user when run.
 - `shell` - the command to run
+- `cd` - change directory before running commands.
 - `inline` - when `true`, disables running progress bars and prints all
   output directly to the terminal. This flag takes priority over
   `verbose`, and is useful when running scripts that handle their own
