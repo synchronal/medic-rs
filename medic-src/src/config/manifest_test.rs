@@ -51,6 +51,7 @@ fn deserialize_audit() {
                     }),
                     AuditStep::Step(StepConfig {
                         args: None,
+                        cd: None,
                         command: Some("clippy".to_string()),
                         name: None,
                         step: "rust".to_string(),
@@ -104,6 +105,7 @@ fn deserialize_doctor() {
                     }),
                     DoctorStep::Step(StepConfig {
                         args: None,
+                        cd: None,
                         command: Some("clippy".to_string()),
                         name: None,
                         step: "rust".to_string(),
@@ -211,6 +213,7 @@ fn deserialize_shipit() {
                     }),
                     ShipitStep::Step(StepConfig {
                         args: None,
+                        cd: None,
                         command: None,
                         name: None,
                         step: "rust".to_string(),
@@ -268,6 +271,7 @@ fn deserialize_test() {
                     }),
                     Step::Step(StepConfig {
                         args: None,
+                        cd: None,
                         command: None,
                         name: None,
                         step: "rust".to_string(),
@@ -325,6 +329,7 @@ fn deserialize_update() {
                     }),
                     Step::Step(StepConfig {
                         args: None,
+                        cd: None,
                         command: None,
                         name: None,
                         step: "rust".to_string(),

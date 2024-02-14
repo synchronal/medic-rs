@@ -19,6 +19,7 @@ use which::which;
 #[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct StepConfig {
     pub args: Option<BTreeMap<String, StringOrList>>,
+    pub cd: Option<String>,
     pub command: Option<String>,
     pub name: Option<String>,
     pub step: String,
@@ -113,6 +114,16 @@ impl Runnable for StepConfig {
         };
         let mut command = Command::new(step_cmd);
 
+        if let Some(directory) = &self.cd {
+            if let Ok(expanded) = std::fs::canonicalize(directory) {
+                command.current_dir(&expanded);
+            } else {
+                let msg: Box<dyn std::error::Error> =
+                    format!("directory {} does not exist", directory).into();
+                return Err(msg);
+            }
+        }
+
         if let Some(subcmd) = &self.command {
             command.arg(subcmd);
         }
@@ -147,6 +158,15 @@ impl fmt::Display for StepConfig {
                 cmd_str.push('!');
             }
 
+            let mut cd_str =
+                OptionalStyled::with_style(Style::new().force_styling(true).green()).prefixed(" ");
+
+            if let Some(dir) = &self.cd {
+                cd_str.push('(');
+                cd_str.push_str(dir);
+                cd_str.push(')');
+            }
+
             let mut args_str =
                 OptionalStyled::with_style(Style::new().force_styling(true).yellow()).prefixed(" ");
             if let Some(args) = &self.args {
@@ -169,9 +189,10 @@ impl fmt::Display for StepConfig {
 
             write!(
                 f,
-                "{}{}",
+                "{}{}{}",
                 style(cmd_str).force_styling(true).cyan(),
-                args_str
+                args_str,
+                cd_str,
             )
         }
     }
