@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.4.0
+
 - steps can be configured with `cd` to change directory.
 
 ## 2.3.0
