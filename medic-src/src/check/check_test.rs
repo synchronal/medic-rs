@@ -18,6 +18,7 @@ fn deserialize_arg_string() {
                 "name".to_string(),
                 StringOrList(vec!["first".to_string()])
             )])),
+            cd: None,
             check: "check-name".to_string(),
             command: Some("subcommand".to_string()),
             output: OutputFormat::Json,
@@ -41,8 +42,30 @@ fn deserialize_arg_list() {
                 "name".to_string(),
                 StringOrList(vec!["first".to_string(), "second".to_string()])
             )])),
+            cd: None,
             check: "check-name".to_string(),
             command: Some("subcommand".to_string()),
+            output: OutputFormat::Json,
+            verbose: false
+        }
+    )
+}
+
+#[test]
+fn deserialize_cd_string() {
+    let toml = r#"
+        cd = "./subdirectory"
+        check = "check-name"
+        "#;
+
+    let result: Check = toml::from_str(toml).unwrap();
+    assert_eq!(
+        result,
+        Check {
+            args: None,
+            cd: Some("./subdirectory".to_string()),
+            check: "check-name".to_string(),
+            command: None,
             output: OutputFormat::Json,
             verbose: false
         }
@@ -53,6 +76,7 @@ fn deserialize_arg_list() {
 fn to_command() {
     let check = Check {
         args: None,
+        cd: None,
         check: "json".to_string(),
         command: None,
         output: OutputFormat::Json,
@@ -65,9 +89,34 @@ fn to_command() {
 }
 
 #[test]
+fn to_command_cd_relative() {
+    let check = Check {
+        args: None,
+        cd: Some("../fixtures/bin".to_string()),
+        check: "json".to_string(),
+        command: None,
+        output: OutputFormat::Json,
+        verbose: false,
+    };
+
+    let mut context = std::collections::HashMap::new();
+    for (key, value) in std::env::vars() {
+        context.insert(key, value);
+    }
+    let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
+    let expected_cmd_str =
+        format!("cd \"{path_expansion}\" && MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\"");
+
+    let cmd = check.to_command().unwrap();
+    let cmd_str = format!("{cmd:?}");
+    assert_eq!(cmd_str, expected_cmd_str);
+}
+
+#[test]
 fn to_command_subcommand() {
     let check = Check {
         args: None,
+        cd: None,
         check: "json".to_string(),
         command: Some("sub-command".to_string()),
         output: OutputFormat::Json,
@@ -86,6 +135,7 @@ fn to_command_subcommand() {
 fn to_command_stdio() {
     let check = Check {
         args: None,
+        cd: None,
         check: "json".to_string(),
         command: None,
         output: OutputFormat::Stdio,
@@ -107,6 +157,7 @@ fn to_command_args() {
             "name".to_string(),
             StringOrList(vec!["first".to_string()]),
         )])),
+        cd: None,
         check: "json".to_string(),
         command: None,
         output: OutputFormat::Json,
@@ -128,6 +179,7 @@ fn to_command_args_list() {
             "name".to_string(),
             StringOrList(vec!["first".to_string(), "second".to_string()]),
         )])),
+        cd: None,
         check: "json".to_string(),
         command: None,
         output: OutputFormat::Json,
@@ -146,6 +198,7 @@ fn to_command_args_list() {
 fn to_command_missing_command() {
     let check = Check {
         args: None,
+        cd: None,
         check: "missing".to_string(),
         command: None,
         output: OutputFormat::Json,
@@ -166,6 +219,7 @@ fn to_string_single_arg() {
             "name".to_string(),
             StringOrList(vec!["first".to_string()]),
         )])),
+        cd: None,
         check: "check-name".to_string(),
         command: None,
         output: OutputFormat::Json,
@@ -185,6 +239,7 @@ fn to_string_subcommand_single_arg() {
             "name".to_string(),
             StringOrList(vec!["first".to_string()]),
         )])),
+        cd: None,
         check: "check-name".to_string(),
         command: Some("subcommand".to_string()),
         output: OutputFormat::Json,
@@ -207,6 +262,7 @@ fn to_string_subcommand_multiple_args() {
                 StringOrList(vec!["second".to_string()]),
             ),
         ])),
+        cd: None,
         check: "check-name".to_string(),
         command: Some("subcommand".to_string()),
         output: OutputFormat::Json,
@@ -226,6 +282,7 @@ fn to_string_subcommand_multiple_arg_values() {
             "name".to_string(),
             StringOrList(vec!["first".to_string(), "second".to_string()]),
         )])),
+        cd: None,
         check: "check-name".to_string(),
         command: Some("subcommand".to_string()),
         output: OutputFormat::Json,
@@ -248,6 +305,7 @@ fn to_string_subcommand_multiple_arg_values_and_args() {
             ),
             ("other".to_string(), StringOrList(vec!["third".to_string()])),
         ])),
+        cd: None,
         check: "check-name".to_string(),
         command: Some("subcommand".to_string()),
         output: OutputFormat::Json,
@@ -257,5 +315,22 @@ fn to_string_subcommand_multiple_arg_values_and_args() {
     assert_eq!(
         format!("{check}"),
         "\u{1b}[36mcheck-name: subcommand?\u{1b}[0m \u{1b}[33m(name: first, name: second, other: third)\u{1b}[0m"
+    )
+}
+
+#[test]
+fn to_string_cd() {
+    let check = Check {
+        args: None,
+        cd: Some("../subdirectory".to_string()),
+        check: "check-name".to_string(),
+        command: None,
+        output: OutputFormat::Json,
+        verbose: false,
+    };
+
+    assert_eq!(
+        format!("{check}"),
+        "\u{1b}[36mcheck-name\u{1b}[0m \u{1b}[32m(../subdirectory)\u{1b}[0m"
     )
 }

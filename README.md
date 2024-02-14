@@ -237,6 +237,7 @@ and are available in the PATH.
 - `args` - a map of flag to value(s). When running the command, the flag
   name will be translated to `--flag <value>`. When the value is
   specified as a list, the flag will be output once per value.
+- `cd` - change directory before running checks.
 - `output` - the output format used by the check.
 - `verbose` - when `true`, STDERR of the check is redirected to STDERR
   of the current medic process.

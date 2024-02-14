@@ -43,6 +43,7 @@ fn deserialize_audit() {
                     AuditStep::Check(Check {
                         verbose: false,
                         args: None,
+                        cd: None,
                         check: "rust".to_string(),
                         command: Some("format-check".to_string()),
                         output: OutputFormat::Json,
@@ -94,6 +95,7 @@ fn deserialize_doctor() {
                     DoctorStep::Check(Check {
                         verbose: false,
                         args: None,
+                        cd: None,
                         check: "rust".to_string(),
                         command: Some("format-check".to_string()),
                         output: OutputFormat::Json,
@@ -190,6 +192,7 @@ fn deserialize_shipit() {
                     }),
                     ShipitStep::Check(Check {
                         args: None,
+                        cd: None,
                         check: "rust".to_string(),
                         command: None,
                         output: OutputFormat::Json,
@@ -245,6 +248,7 @@ fn deserialize_test() {
                     }),
                     Step::Check(Check {
                         args: None,
+                        cd: None,
                         check: "rust".to_string(),
                         command: None,
                         output: OutputFormat::Json,
@@ -300,6 +304,7 @@ fn deserialize_update() {
                     }),
                     Step::Check(Check {
                         args: None,
+                        cd: None,
                         check: "rust".to_string(),
                         command: None,
                         output: OutputFormat::Json,

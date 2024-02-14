@@ -1,4 +1,4 @@
-// @related [subject](medic-src/src/outdated_check/check.rs)
+// @related [subject](medic-src/src/outdated/check.rs)
 
 use crate::util::StringOrList;
 

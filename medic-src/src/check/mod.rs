@@ -25,6 +25,7 @@ use which::which;
 #[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct Check {
     pub args: Option<BTreeMap<String, StringOrList>>,
+    pub cd: Option<String>,
     pub check: String,
     pub command: Option<String>,
     #[serde(default)]
@@ -97,6 +98,16 @@ impl Runnable for Check {
         let mut command = Command::new(check_cmd);
         command.env("MEDIC_OUTPUT_FORMAT", self.output.to_string());
 
+        if let Some(directory) = &self.cd {
+            if let Ok(expanded) = std::fs::canonicalize(directory) {
+                command.current_dir(&expanded);
+            } else {
+                let msg: Box<dyn std::error::Error> =
+                    format!("directory {} does not exist", directory).into();
+                return Err(msg);
+            }
+        }
+
         if let Some(subcmd) = &self.command {
             command.arg(subcmd);
         }
@@ -129,6 +140,15 @@ impl fmt::Display for Check {
             cmd_str.push('?');
         }
 
+        let mut cd_str =
+            OptionalStyled::with_style(Style::new().force_styling(true).green()).prefixed(" ");
+
+        if let Some(dir) = &self.cd {
+            cd_str.push('(');
+            cd_str.push_str(dir);
+            cd_str.push(')');
+        }
+
         let mut args_str =
             OptionalStyled::with_style(Style::new().force_styling(true).yellow()).prefixed(" ");
         if let Some(args) = &self.args {
@@ -150,9 +170,10 @@ impl fmt::Display for Check {
 
         write!(
             f,
-            "{}{}",
+            "{}{}{}",
             style(cmd_str).force_styling(true).cyan(),
-            args_str
+            args_str,
+            cd_str,
         )
     }
 }
