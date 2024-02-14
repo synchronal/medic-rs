@@ -29,9 +29,15 @@ pub struct ShellConfig {
 }
 
 impl ShellConfig {
-    pub fn new(name: String, shell: String, remedy: Option<String>, verbose: bool) -> Self {
+    pub fn new(
+        name: String,
+        shell: String,
+        cd: Option<String>,
+        remedy: Option<String>,
+        verbose: bool,
+    ) -> Self {
         Self {
-            cd: None,
+            cd,
             name,
             shell,
             remedy,

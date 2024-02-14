@@ -27,6 +27,7 @@ fn main() -> AppResult<()> {
         Command::Run(args) => medic_run::run_shell(
             args.name,
             args.cmd,
+            args.cd,
             args.remedy,
             args.verbose,
             &mut progress,

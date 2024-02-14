@@ -19,6 +19,7 @@ fn main() -> AppResult<()> {
     medic_run::run_shell(
         cli_args.name,
         cli_args.cmd,
+        cli_args.cd,
         cli_args.remedy,
         cli_args.verbose,
         &mut progress,

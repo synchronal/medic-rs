@@ -5,6 +5,8 @@ use clap_complete::Shell;
 #[clap(author, version, about)]
 #[clap(bin_name = "medic run")]
 pub struct CliArgs {
+    #[clap(long)]
+    pub cd: Option<String>,
     #[clap(short, long)]
     pub name: String,
     #[clap(short, long)]
