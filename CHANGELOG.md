@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2.3.0
+
+- `medic run` accepts a `--cd` option.
+- checks and shells actions can be configured via `cd` to change
+  directories before running their commands.
+
 ## 2.2.0
 
 - `medic init` can `--force` overwrite the config file.
