@@ -1,3 +1,5 @@
+name: Test & Audit
+
 on:
   push:
     branches: [ "main", "ci-*" ]
