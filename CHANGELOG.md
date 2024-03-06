@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.4.1
+
 - Update deps.
 
 ## 2.4.0
