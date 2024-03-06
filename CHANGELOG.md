@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Update deps.
+
 ## 2.4.0
 
 - steps can be configured with `cd` to change directory.
