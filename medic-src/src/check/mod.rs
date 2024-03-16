@@ -65,7 +65,7 @@ impl Runnable for Check {
                         AppResult::Ok(())
                     } else {
                         progress.failed(pb);
-                        let mut output = self.output.parse(result);
+                        let mut output = self.output.parse(result, self.cd);
                         output.verbose(verbose);
                         eprint!("{output}");
 

@@ -13,7 +13,7 @@ pub enum OutputFormat {
 }
 
 impl OutputFormat {
-    pub(crate) fn parse(self, result: std::process::Output) -> CheckOutput {
+    pub(crate) fn parse(self, result: std::process::Output, cd: Option<String>) -> CheckOutput {
         match self {
             OutputFormat::Json => {
                 let stdout = std_to_string(result.stdout);
@@ -23,6 +23,11 @@ impl OutputFormat {
                     Ok(mut check_output) => {
                         if check_output.stderr.is_none() && !stderr.is_empty() {
                             check_output.stderr = Some(stderr.trim().to_owned());
+                        }
+                        if cd.is_some() && check_output.remedy.is_some() {
+                            let directory = cd.unwrap();
+                            let remedy = check_output.remedy.unwrap();
+                            check_output.remedy = Some(format!("(cd {directory} && {remedy})"))
                         }
                         check_output
                     }
@@ -41,7 +46,13 @@ impl OutputFormat {
                 let remedy = if result.stdout.is_empty() {
                     None
                 } else {
-                    Some(std_to_string(result.stdout).trim().to_owned())
+                    let remedy = std_to_string(result.stdout).trim().to_owned();
+                    if cd.is_some() {
+                        let dir = cd.unwrap();
+                        Some(format!("(cd {dir} && {remedy})"))
+                    } else {
+                        Some(format!("{remedy}"))
+                    }
                 };
 
                 CheckOutput {
