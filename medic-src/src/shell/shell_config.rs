@@ -128,7 +128,11 @@ impl Runnable for ShellConfig {
                                 eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
                                 AppResult::Ok(())
                             } else {
-                                if let Some(remedy) = self.remedy {
+                                if let Some(mut remedy) = self.remedy {
+                                    if self.cd.is_some() {
+                                        let dir = self.cd.unwrap();
+                                        remedy = format!("(cd {dir} && {remedy})");
+                                    }
                                     eprint!("\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m");
                                     eprintln!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
                                     let mut clipboard = Clipboard::new()?;

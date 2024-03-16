@@ -51,7 +51,7 @@ impl OutputFormat {
                         let dir = cd.unwrap();
                         Some(format!("(cd {dir} && {remedy})"))
                     } else {
-                        Some(format!("{remedy}"))
+                        Some(remedy)
                     }
                 };
 

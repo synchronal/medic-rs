@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Checks and shell steps include the `cd` option in remedies.
+
 ## 2.4.1
 
 - Update deps.
