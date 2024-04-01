@@ -28,6 +28,7 @@ medic-src = { path = "./medic-src" }
 medic-test = { path = "./medic-test" }
 medic-update = { path = "./medic-update" }
 
+arboard = "3.3"
 clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 clap_complete = "4.1.4"
 console = "0.15"

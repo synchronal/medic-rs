@@ -7,7 +7,7 @@ license.workspace = true
 
 
 [dependencies]
-arboard = "3.2"
+arboard = { workspace = true }
 console = { workspace = true }
 envsubst = { workspace = true }
 indoc = { workspace = true }
