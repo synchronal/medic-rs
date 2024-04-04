@@ -7,13 +7,13 @@ use medic_src::runnable::Runnable;
 use medic_src::AppResult;
 
 pub fn run_steps(manifest: Manifest, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
-    match manifest.test {
-        Some(test) => {
-            for check in test.checks {
-                check.run(progress)?;
-            }
-            AppResult::Ok(())
-        }
-        None => AppResult::Err(Some("No test checks found in medic config.".into())),
+  match manifest.test {
+    Some(test) => {
+      for check in test.checks {
+        check.run(progress)?;
+      }
+      AppResult::Ok(())
     }
+    None => AppResult::Err(Some("No test checks found in medic config.".into())),
+  }
 }

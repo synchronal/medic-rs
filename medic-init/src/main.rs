@@ -5,7 +5,7 @@ use medic_src::AppResult;
 use clap::Parser;
 
 fn main() -> AppResult<()> {
-    let cli_args = CliArgs::parse();
+  let cli_args = CliArgs::parse();
 
-    create_config_file(cli_args.config, cli_args.force)
+  create_config_file(cli_args.config, cli_args.force)
 }
