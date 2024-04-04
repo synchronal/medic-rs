@@ -33,7 +33,8 @@ brew install synchronal/tap/medic-ext-postgres
 ## Usage
 
 Medic provides five commands, each of reads its configuration from a
-TOML-formatted file, which defaults to `.config/medic/medic.toml`.
+[TOML-formatted file](#configuration), which defaults to
+`.config/medic/medic.toml`.
 
 ``` shell
 medic init     # -- add a medic config manifest to a project.
@@ -207,14 +208,15 @@ another of its commands.
 ``` toml
 [doctor]
 checks = [
-  # medic-check-tool-versions plugin-installed --plugin rust
+  # the following executes: `medic-check-tool-versions plugin-installed --plugin rust`
   { check = "tool-versions", command = "plugin-installed", args = { plugin = "rust" } },
-  # medic-check-tool-versions package-installed --plugin rust
+  # the following executes: `medic-check-tool-versions package-installed --plugin rust`
   { check = "tool-versions", command = "package-installed", args = { plugin = "rust" } },
-  # medic-check-homebrew
+  # the following executes: `medic-check-homebrew`
   { check = "homebrew", verbose = true, output= "stdio" },
-  # ... etc
+  # the following executes: `medic-check-rust crate-installed --name cargo-audit --name cargo-outdated`
   { check = "rust", command = "crate-installed", args = { name = ["cargo-audit", "cargo-outdated"] } },
+  # ... etc
   { check = "rust", command = "target-installed", args = { target = "aarch64-apple-darwin" } },
   { check = "rust", command = "target-installed", args = { target = "x86_64-apple-darwin" } },
 ]
@@ -222,7 +224,7 @@ checks = [
 [test]
 checks = [
   { name = "Check for warnings", shell = "cargo build --workspace --features strict" },
-  # medic-step-rust test
+  # the following executes: `medic-step-rust test`
   { step = "rust", command = "test", verbose = true },
 ]
 
@@ -236,9 +238,9 @@ checks = [
 
 [outdated]
 checks = [
-  # medic-outdated-rust
+  # the following executes: `medic-outdated-rust`
   { check = "rust" },
-  # cd crates/sub-crate && medic-outdated-rust
+  # the following executes: `(cd crates/sub-crate && medic-outdated-rust)`
   { check = "rust", cd: "crates/sub-crate" },
 ]
 
@@ -272,7 +274,8 @@ and are available in the PATH.
   name will be translated to `--flag <value>`. When the value is
   specified as a list, the flag will be output once per value.
 - `cd` - change directory before running checks.
-- `output` - the output format used by the check.
+- `output` - the output format used by the check, either
+  [`json`](#json-default) or [`stdio`](#stdio)
 - `verbose` - when `true`, STDERR of the check is redirected to STDERR
   of the current medic process.
 
@@ -331,8 +334,9 @@ commands may be better suited to be written into shell scripts.
 - `cd` - change directory before running commands.
 - `inline` - when `true`, disables running progress bars and prints all
   output directly to the terminal. This flag takes priority over
-  `verbose`, and is useful when running scripts that handle their own
-  progress indicators, for example when using `medic run`.
+  `verbose`, and is useful when running commands that handle their own
+  progress indicators, for example when using `medic run` from shell
+  scripts.
 - `verbose`- when `true`, STDOUT and STDERR of the action are printed as
   to the console alongside running progress.
 - `allow_failure` - allow medic to continue even when the process fails.
