@@ -34,7 +34,7 @@ brew install synchronal/tap/medic-ext-postgres
 
 Medic provides five commands, each of reads its configuration from a
 [TOML-formatted file](#configuration), which defaults to
-`.config/medic/medic.toml`.
+`.config/medic.toml`.
 
 ``` shell
 medic init     # -- add a medic config manifest to a project.
