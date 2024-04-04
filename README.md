@@ -11,9 +11,13 @@ are satisfied, with suggested remedies. Checks should be written such
 that they only care about the dependency being met, rather than how it's
 met—all suggested remedies might be applied as-is on a shared
 workstation, while an individual might choose alternate solutions on
-their personal hardware.
+their personal hardware. Updates to operating systems and/or dependency
+management tools may make a usual remediation temporarily unworkable,
+requiring manual workarounds for a day or a week until further upstream
+updates fix the problem.
 
-Rather than proscribe, medic should assist.
+Medic should above all else assist its adopters, and only sometimes or
+on some teams should it proscribe.
 
 ## Installation
 
@@ -32,9 +36,10 @@ brew install synchronal/tap/medic-ext-postgres
 
 ## Usage
 
-Medic provides five commands, each of reads its configuration from a
-[TOML-formatted file](#configuration), which defaults to
-`.config/medic.toml`.
+Medic provides a set of subcommands, each of which reads configuration
+from a [TOML-formatted file](#configuration) with a default path of
+`.config/medic.toml`. This can be overridden with `-c`, `--config`, or
+by setting the `MEDIC_CONFIG` environment variable.
 
 ``` shell
 medic init     # -- add a medic config manifest to a project.
@@ -50,7 +55,7 @@ medic run      # -- runs a shell command with medic progress output.
 #### init
 
 `medic init` creates a medic config manifest in the current directory,
-at `.config/medic.toml`.
+defaulting to `./.config/medic.toml`.
 
 #### doctor
 
