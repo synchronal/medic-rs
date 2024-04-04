@@ -65,7 +65,9 @@ Examples:
 
 Valid actions:
 
-- checks
+- [checks](#checks)
+- [shell actions](#shell-actions)
+- [steps](#steps)
 
 #### test
 
@@ -75,9 +77,10 @@ suite used for your project, but for when multiple test suites are used
 
 Valid actions:
 
-- steps
-- shell actions
-- doctor
+- [checks](#checks)
+- [doctor](#doctor) - specified with `{doctor = {}}`.
+- [shell actions](#shell-actions)
+- [steps](#steps)
 
 #### audit
 
@@ -93,9 +96,9 @@ Examples:
 
 Valid actions:
 
-- checks
-- steps
-- shell actions
+- [checks](#checks)
+- [shell actions](#shell-actions)
+- [steps](#steps)
 
 #### outdated
 
@@ -107,6 +110,9 @@ Examples:
 - runtime version manager (asdf, rtx)
 - packages (cargo, mix, pip)
 
+See [Outdated checks](#outdated-checks) for examples of writing new
+checks.
+
 #### update
 
 `medic update` updates the project with upstream changes.
@@ -114,16 +120,39 @@ Examples:
 Examples:
 
 - git pull
-- update dependencies (without checking)
+- install dependencies (automatically, without checking)
 - compile dependencies
 - run database migrations
 - run `medic doctor`
 
 Valid actions:
 
-- steps
-- shell actions
-- doctor
+- [checks](#checks)
+- [doctor](#doctor) - specified with `{doctor = {}}`.
+- [shell actions](#shell-actions)
+- [steps](#steps)
+
+A typical `update` configuration pulls changes from remote source
+control, runs any automated steps that should be applied on every pull
+(install 3rd-party libraries or run database migrations, for instance),
+then runs `doctor` to verify that any new checks that have been pulled
+are run.
+
+It's a fairly regular occurrence to find or create race conditions
+between `update` and `doctor`, for example:
+
+- A new step added to `update` may only succeed if new checks in
+  `doctor` have been run.
+- `update` may automatically apply steps that allow a project work, but
+  where no `doctor` check has been added. One's current workstation,
+  where `medic update` is run more often than `medic doctor`, may
+  continue to work, while a new person to the project may find that
+  doctor does not leave them in a position to start work.
+
+Upon a failure of `medic update` one may want to have the habit of
+immediately running `medic doctor`. When making changes to `update`
+configuration, one may want to try to manually *undo* the changes and
+see if `medic doctor` results in a working installation.
 
 #### shipit
 
@@ -132,12 +161,17 @@ manner.
 
 Valid actions:
 
-- checks
-- steps
-- shell actions
-- audit
-- test
-- update
+- [checks](#checks)
+- [shell actions](#shell-actions)
+- [steps](#steps)
+- [audit](#audit) - specified with `{audit = {}}`.
+- [test](#test) - specified with `{test = {}}`.
+- [update](#update) - specified with `{update = {}}`.
+
+A typical `shipit` configuration runs `audit`, then `update`, then
+`test`, then whatever additional checks and steps are required to build
+a project for release, then runs a step or shell action to push changes
+to remote source control.
 
 #### run
 
@@ -302,6 +336,8 @@ commands may be better suited to be written into shell scripts.
 - `verbose`- when `true`, STDOUT and STDERR of the action are printed as
   to the console alongside running progress.
 - `allow_failure` - allow medic to continue even when the process fails.
+- `remedy` - an optional command to print out on failure to suggest as a
+  remediation.
 
 ### Outdated checks
 
