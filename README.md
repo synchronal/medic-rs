@@ -59,6 +59,8 @@ defaulting to `./.config/medic.toml`.
 
 #### doctor
 
+![medic doctor](guides/assets/doctor.gif)
+
 `medic doctor` runs checks to ensure the project is ready for a
 developer to work on a project.
 
@@ -77,6 +79,8 @@ Valid actions:
 
 #### test
 
+![medic test](guides/assets/test.gif)
+
 `medic test` runs all tests. Useful not just for documenting *the* test
 suite used for your project, but for when multiple test suites are used
 (`ExUnut + bats`, etc)
@@ -89,6 +93,8 @@ Valid actions:
 - [steps](#steps)
 
 #### audit
+
+![medic audit](guides/assets/audit.gif)
 
 `medic audit` is intended for anything that has to do with formatting or
 security.
@@ -108,6 +114,8 @@ Valid actions:
 
 #### outdated
 
+![medic outdated](guides/assets/outdated.gif)
+
 `medic outdated` checks for dependencies that might be updatable.
 
 Examples:
@@ -120,6 +128,8 @@ See [Outdated checks](#outdated-checks) for examples of writing new
 checks.
 
 #### update
+
+![medic update](guides/assets/update.gif)
 
 `medic update` updates the project with upstream changes.
 
@@ -161,6 +171,8 @@ configuration, one may want to try to manually *undo* the changes and
 see if `medic doctor` results in a working installation.
 
 #### shipit
+
+![medic shipit](guides/assets/shipit.gif)
 
 `medic shipit` runs all necessary actions to ship new code in a safe
 manner.
