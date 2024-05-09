@@ -9,6 +9,7 @@ license.workspace = true
 [dependencies]
 clap = { workspace = true }
 clap_complete = { workspace = true }
+console = { workspace = true }
 indoc = { workspace = true }
 medic-src = { workspace = true }
 retrogress = { workspace = true }

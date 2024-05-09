@@ -478,6 +478,7 @@ version = "2.4.2"
 dependencies = [
  "clap",
  "clap_complete",
+ "console",
  "indoc",
  "medic-audit",
  "medic-doctor",
@@ -497,6 +498,7 @@ version = "2.4.2"
 dependencies = [
  "clap",
  "clap_complete",
+ "console",
  "indoc",
  "medic-src",
  "retrogress",
@@ -508,6 +510,7 @@ version = "2.4.2"
 dependencies = [
  "clap",
  "clap_complete",
+ "console",
  "indoc",
  "medic-src",
  "retrogress",
@@ -537,6 +540,7 @@ version = "2.4.2"
 dependencies = [
  "clap",
  "clap_complete",
+ "console",
  "indoc",
  "medic-src",
  "retrogress",
@@ -548,6 +552,7 @@ version = "2.4.2"
 dependencies = [
  "clap",
  "clap_complete",
+ "console",
  "indoc",
  "medic-src",
  "retrogress",
@@ -559,6 +564,7 @@ version = "2.4.2"
 dependencies = [
  "clap",
  "clap_complete",
+ "console",
  "indoc",
  "medic-src",
  "retrogress",
@@ -585,6 +591,7 @@ version = "2.4.2"
 dependencies = [
  "clap",
  "clap_complete",
+ "console",
  "indoc",
  "medic-src",
  "retrogress",
@@ -596,6 +603,7 @@ version = "2.4.2"
 dependencies = [
  "clap",
  "clap_complete",
+ "console",
  "indoc",
  "medic-src",
  "retrogress",
@@ -758,9 +766,9 @@ dependencies = [
 
 [[package]]
 name = "retrogress"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2c19edd8cf93a203763bfcaeefe1a0c23121630099105eeb46afe5460d062d8"
+checksum = "af8928691c18e78ee4c0ead7fb90419b7d9b5067064a4b5875d9b38738a69c92"
 dependencies = [
  "console",
  "indicatif",

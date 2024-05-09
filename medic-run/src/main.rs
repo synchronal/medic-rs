@@ -1,8 +1,10 @@
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;
+use console::Term;
 use medic_run::cli::CliArgs;
 use medic_src::AppResult;
 use std::io::stdout;
+use std::panic;
 
 fn main() -> AppResult<()> {
   let cli_args = CliArgs::parse();
@@ -15,13 +17,28 @@ fn main() -> AppResult<()> {
     std::process::exit(0);
   }
 
-  let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
-  medic_run::run_shell(
-    cli_args.name,
-    cli_args.cmd,
-    cli_args.cd,
-    cli_args.remedy,
-    cli_args.verbose,
-    &mut progress,
-  )
+  console::set_colors_enabled(true);
+  console::set_colors_enabled_stderr(true);
+  let _ = Term::stderr().hide_cursor();
+  let _ = Term::stdout().hide_cursor();
+
+  let result = panic::catch_unwind(|| {
+    let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
+    medic_run::run_shell(
+      cli_args.name,
+      cli_args.cmd,
+      cli_args.cd,
+      cli_args.remedy,
+      cli_args.verbose,
+      &mut progress,
+    )
+  });
+
+  let _ = Term::stderr().show_cursor();
+  let _ = Term::stdout().show_cursor();
+
+  match result {
+    Ok(inner) => inner,
+    Err(_) => std::process::exit(1),
+  }
 }

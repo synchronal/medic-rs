@@ -1,41 +1,59 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
+use clap::Parser;
+use console::Term;
 use medic::cli::app::{CliArgs, Command};
 use medic_src::config::Manifest;
 use medic_src::AppResult;
-
-use clap::Parser;
+use std::panic;
 
 fn main() -> AppResult<()> {
   let cli = CliArgs::parse();
-  let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
 
-  match cli.command {
-    Command::Audit(args) => {
-      let manifest = Manifest::new(args.config)?;
-      medic_audit::run_steps(manifest, &mut progress)
+  console::set_colors_enabled(true);
+  console::set_colors_enabled_stderr(true);
+  let _ = Term::stderr().hide_cursor();
+  let _ = Term::stdout().hide_cursor();
+
+  let result = panic::catch_unwind(|| {
+    let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
+    match cli.command {
+      Command::Audit(args) => {
+        let manifest = Manifest::new(args.config)?;
+        medic_audit::run_steps(manifest, &mut progress)
+      }
+      Command::Doctor(args) => {
+        let manifest = Manifest::new(args.config)?;
+        medic_doctor::run_checks(manifest, &mut progress)
+      }
+      Command::Init(args) => medic_init::create_config_file(args.config, args.force),
+      Command::Outdated(args) => {
+        let manifest = Manifest::new(args.config)?;
+        medic_outdated::run_checks(manifest, &mut progress)
+      }
+      Command::Run(args) => {
+        medic_run::run_shell(args.name, args.cmd, args.cd, args.remedy, args.verbose, &mut progress)
+      }
+      Command::Test(args) => {
+        let manifest = Manifest::new(args.config)?;
+        medic_test::run_steps(manifest, &mut progress)
+      }
+      Command::Update(args) => {
+        let manifest = Manifest::new(args.config)?;
+        medic_update::run_steps(manifest, &mut progress)
+      }
+      Command::Shipit(args) => {
+        let manifest = Manifest::new(args.config)?;
+        medic_shipit::run_steps(manifest, &mut progress)
+      }
     }
-    Command::Doctor(args) => {
-      let manifest = Manifest::new(args.config)?;
-      medic_doctor::run_checks(manifest, &mut progress)
-    }
-    Command::Init(args) => medic_init::create_config_file(args.config, args.force),
-    Command::Outdated(args) => {
-      let manifest = Manifest::new(args.config)?;
-      medic_outdated::run_checks(manifest, &mut progress)
-    }
-    Command::Run(args) => medic_run::run_shell(args.name, args.cmd, args.cd, args.remedy, args.verbose, &mut progress),
-    Command::Test(args) => {
-      let manifest = Manifest::new(args.config)?;
-      medic_test::run_steps(manifest, &mut progress)
-    }
-    Command::Update(args) => {
-      let manifest = Manifest::new(args.config)?;
-      medic_update::run_steps(manifest, &mut progress)
-    }
-    Command::Shipit(args) => {
-      let manifest = Manifest::new(args.config)?;
-      medic_shipit::run_steps(manifest, &mut progress)
-    }
+  });
+
+  let _ = Term::stderr().show_cursor();
+  let _ = Term::stdout().show_cursor();
+
+  match result {
+    Ok(inner) => inner,
+    Err(_) => std::process::exit(1),
   }
 }
