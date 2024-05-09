@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.5.0
+
+- Disable cursor when running steps or checks.
+
 ## 2.4.2
 
 - Checks and shell steps include the `cd` option in remedies.
