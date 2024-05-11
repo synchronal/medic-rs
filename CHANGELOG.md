@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.6.0
+
 - Add `env` configuration to checks, steps, and shell steps.
 
 ## 2.5.0
