@@ -14,6 +14,7 @@ use crate::OutdatedCheck;
 use crate::ShipitStep;
 use crate::Step;
 use indoc::indoc;
+use std::collections::BTreeMap;
 
 #[test]
 fn deserialize_audit() {
@@ -47,6 +48,7 @@ fn deserialize_audit() {
             cd: None,
             check: "rust".to_string(),
             command: Some("format-check".to_string()),
+            env: BTreeMap::default(),
             output: OutputFormat::Json,
           }),
           AuditStep::Step(StepConfig {
@@ -101,6 +103,7 @@ fn deserialize_doctor() {
             cd: None,
             check: "rust".to_string(),
             command: Some("format-check".to_string()),
+            env: BTreeMap::default(),
             output: OutputFormat::Json,
           }),
           DoctorStep::Step(StepConfig {
@@ -193,6 +196,7 @@ fn deserialize_shipit() {
             cd: None,
             check: "rust".to_string(),
             command: None,
+            env: BTreeMap::default(),
             output: OutputFormat::Json,
             verbose: false
           }),
@@ -249,6 +253,7 @@ fn deserialize_test() {
             cd: None,
             check: "rust".to_string(),
             command: None,
+            env: BTreeMap::default(),
             output: OutputFormat::Json,
             verbose: false
           }),
@@ -305,6 +310,7 @@ fn deserialize_update() {
             cd: None,
             check: "rust".to_string(),
             command: None,
+            env: BTreeMap::default(),
             output: OutputFormat::Json,
             verbose: false
           }),

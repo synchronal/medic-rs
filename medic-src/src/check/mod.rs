@@ -29,6 +29,8 @@ pub struct Check {
   pub check: String,
   pub command: Option<String>,
   #[serde(default)]
+  pub env: BTreeMap<String, String>,
+  #[serde(default)]
   pub output: OutputFormat,
   #[serde(default)]
   pub verbose: bool,
@@ -117,6 +119,10 @@ impl Runnable for Check {
           command.arg(flag_arg).arg(value);
         }
       }
+    }
+
+    for (var, value) in &self.env {
+      command.env(var, value);
     }
 
     Ok(command)

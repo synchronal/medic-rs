@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `env` configuration to checks.
+
 ## 2.5.0
 
 - Disable cursor when running steps or checks.

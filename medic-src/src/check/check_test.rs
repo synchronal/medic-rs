@@ -21,6 +21,7 @@ fn deserialize_arg_string() {
       cd: None,
       check: "check-name".to_string(),
       command: Some("subcommand".to_string()),
+      env: BTreeMap::default(),
       output: OutputFormat::Json,
       verbose: false
     }
@@ -45,6 +46,7 @@ fn deserialize_arg_list() {
       cd: None,
       check: "check-name".to_string(),
       command: Some("subcommand".to_string()),
+      env: BTreeMap::default(),
       output: OutputFormat::Json,
       verbose: false
     }
@@ -66,6 +68,32 @@ fn deserialize_cd_string() {
       cd: Some("./subdirectory".to_string()),
       check: "check-name".to_string(),
       command: None,
+      env: BTreeMap::default(),
+      output: OutputFormat::Json,
+      verbose: false
+    }
+  )
+}
+
+#[test]
+fn deserialize_env() {
+  let toml = r#"
+        check = "check-name"
+        env = { MY_VAR = "first", SECOND_VAR = "second" }
+        "#;
+
+  let result: Check = toml::from_str(toml).unwrap();
+  assert_eq!(
+    result,
+    Check {
+      args: None,
+      cd: None,
+      check: "check-name".to_string(),
+      command: None,
+      env: BTreeMap::from([
+        ("MY_VAR".to_string(), "first".to_string()),
+        ("SECOND_VAR".to_string(), "second".to_string())
+      ]),
       output: OutputFormat::Json,
       verbose: false
     }
@@ -79,6 +107,7 @@ fn to_command() {
     cd: None,
     check: "json".to_string(),
     command: None,
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -95,6 +124,7 @@ fn to_command_cd_relative() {
     cd: Some("../fixtures/bin".to_string()),
     check: "json".to_string(),
     command: None,
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -118,6 +148,7 @@ fn to_command_subcommand() {
     cd: None,
     check: "json".to_string(),
     command: Some("sub-command".to_string()),
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -131,12 +162,36 @@ fn to_command_subcommand() {
 }
 
 #[test]
+fn to_command_env() {
+  let check = Check {
+    args: None,
+    cd: None,
+    check: "json".to_string(),
+    command: None,
+    env: BTreeMap::from([
+      ("VAR".to_string(), "value".to_string()),
+      ("OTHER".to_string(), "other".to_string()),
+    ]),
+    output: OutputFormat::Json,
+    verbose: false,
+  };
+
+  let cmd = check.to_command().unwrap();
+  let cmd_str = format!("{cmd:?}");
+  assert_eq!(
+    cmd_str,
+    "MEDIC_OUTPUT_FORMAT=\"json\" OTHER=\"other\" VAR=\"value\" \"medic-check-json\""
+  );
+}
+
+#[test]
 fn to_command_stdio() {
   let check = Check {
     args: None,
     cd: None,
     check: "json".to_string(),
     command: None,
+    env: BTreeMap::default(),
     output: OutputFormat::Stdio,
     verbose: false,
   };
@@ -156,6 +211,7 @@ fn to_command_args() {
     cd: None,
     check: "json".to_string(),
     command: None,
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -178,6 +234,7 @@ fn to_command_args_list() {
     cd: None,
     check: "json".to_string(),
     command: None,
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -197,6 +254,7 @@ fn to_command_missing_command() {
     cd: None,
     check: "missing".to_string(),
     command: None,
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -218,6 +276,7 @@ fn to_string_single_arg() {
     cd: None,
     check: "check-name".to_string(),
     command: None,
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -238,6 +297,7 @@ fn to_string_subcommand_single_arg() {
     cd: None,
     check: "check-name".to_string(),
     command: Some("subcommand".to_string()),
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -258,6 +318,7 @@ fn to_string_subcommand_multiple_args() {
     cd: None,
     check: "check-name".to_string(),
     command: Some("subcommand".to_string()),
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -278,6 +339,7 @@ fn to_string_subcommand_multiple_arg_values() {
     cd: None,
     check: "check-name".to_string(),
     command: Some("subcommand".to_string()),
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -301,6 +363,7 @@ fn to_string_subcommand_multiple_arg_values_and_args() {
     cd: None,
     check: "check-name".to_string(),
     command: Some("subcommand".to_string()),
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
@@ -318,6 +381,7 @@ fn to_string_cd() {
     cd: Some("../subdirectory".to_string()),
     check: "check-name".to_string(),
     command: None,
+    env: BTreeMap::default(),
     output: OutputFormat::Json,
     verbose: false,
   };
