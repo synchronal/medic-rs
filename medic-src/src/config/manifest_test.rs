@@ -36,6 +36,7 @@ fn deserialize_audit() {
           AuditStep::Shell(ShellConfig {
             allow_failure: false,
             cd: None,
+            env: BTreeMap::default(),
             inline: false,
             name: "Shell check".to_string(),
             remedy: None,
@@ -92,6 +93,7 @@ fn deserialize_doctor() {
           DoctorStep::Shell(ShellConfig {
             allow_failure: false,
             cd: None,
+            env: BTreeMap::default(),
             inline: false,
             name: "Shell check".to_string(),
             remedy: None,
@@ -205,6 +207,7 @@ fn deserialize_shipit() {
           ShipitStep::Shell(ShellConfig {
             allow_failure: false,
             cd: None,
+            env: BTreeMap::default(),
             inline: false,
             name: "Do stuff".to_string(),
             remedy: None,
@@ -263,6 +266,7 @@ fn deserialize_test() {
           Step::Shell(ShellConfig {
             allow_failure: false,
             cd: None,
+            env: BTreeMap::default(),
             inline: false,
             name: "Do stuff".to_string(),
             remedy: None,
@@ -321,6 +325,7 @@ fn deserialize_update() {
           Step::Shell(ShellConfig {
             allow_failure: false,
             cd: None,
+            env: BTreeMap::default(),
             inline: false,
             name: "Do stuff".to_string(),
             remedy: None,

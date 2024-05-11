@@ -9,6 +9,7 @@ use arboard::Clipboard;
 use console::{style, Style};
 use retrogress::Progress;
 use serde::Deserialize;
+use std::collections::BTreeMap;
 use std::fmt;
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
@@ -19,6 +20,8 @@ pub struct ShellConfig {
   #[serde(default)]
   pub allow_failure: bool,
   pub cd: Option<String>,
+  #[serde(default)]
+  pub env: BTreeMap<String, String>,
   #[serde(default)]
   pub inline: bool,
   pub name: String,
@@ -32,6 +35,7 @@ impl ShellConfig {
   pub fn new(name: String, shell: String, cd: Option<String>, remedy: Option<String>, verbose: bool) -> Self {
     Self {
       cd,
+      env: BTreeMap::default(),
       name,
       shell,
       remedy,
@@ -159,6 +163,10 @@ impl Runnable for ShellConfig {
           let msg: Box<dyn std::error::Error> = format!("directory {} does not exist", directory).into();
           return Err(msg);
         }
+      }
+
+      for (var, value) in &self.env {
+        command.env(var, value);
       }
 
       Ok(command)

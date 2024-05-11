@@ -2,6 +2,7 @@
 
 use super::*;
 use crate::runnable::Runnable;
+use std::collections::BTreeMap;
 
 #[test]
 fn test_deserialize() {
@@ -16,6 +17,7 @@ fn test_deserialize() {
     ShellConfig {
       allow_failure: false,
       cd: None,
+      env: BTreeMap::default(),
       inline: false,
       name: "Run some command".to_string(),
       remedy: None,
@@ -39,6 +41,34 @@ fn test_deserialize_cd() {
     ShellConfig {
       allow_failure: false,
       cd: Some("./subdirectory".to_string()),
+      env: BTreeMap::default(),
+      inline: false,
+      name: "Run some command".to_string(),
+      remedy: None,
+      shell: "some command".to_string(),
+      verbose: false,
+    }
+  );
+}
+
+#[test]
+fn test_deserialize_env() {
+  let toml = r#"
+        env = { MY_VAR = "first", SECOND_VAR = "second" }
+        shell = "some command"
+        name = "Run some command"
+        "#;
+
+  let result: ShellConfig = toml::from_str(toml).unwrap();
+  assert_eq!(
+    result,
+    ShellConfig {
+      allow_failure: false,
+      cd: None,
+      env: BTreeMap::from([
+        ("MY_VAR".to_string(), "first".to_string()),
+        ("SECOND_VAR".to_string(), "second".to_string())
+      ]),
       inline: false,
       name: "Run some command".to_string(),
       remedy: None,
@@ -62,6 +92,7 @@ fn test_deserialize_verbose() {
     ShellConfig {
       allow_failure: false,
       cd: None,
+      env: BTreeMap::default(),
       inline: false,
       name: "Run some command".to_string(),
       remedy: None,
@@ -85,6 +116,7 @@ fn test_deserialize_allow_failure() {
     ShellConfig {
       allow_failure: true,
       cd: None,
+      env: BTreeMap::default(),
       inline: false,
       name: "Run some command".to_string(),
       remedy: None,
@@ -99,6 +131,7 @@ fn test_to_command() {
   let shell = ShellConfig {
     allow_failure: false,
     cd: None,
+    env: BTreeMap::default(),
     inline: false,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),
@@ -117,6 +150,7 @@ fn test_to_command_cd() {
   let shell = ShellConfig {
     allow_failure: false,
     cd: Some("../fixtures/bin".to_string()),
+    env: BTreeMap::default(),
     inline: false,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),
@@ -138,6 +172,29 @@ fn test_to_command_cd() {
 }
 
 #[test]
+fn test_to_command_env() {
+  let shell = ShellConfig {
+    allow_failure: false,
+    cd: None,
+    env: BTreeMap::from([
+      ("VAR".to_string(), "value".to_string()),
+      ("OTHER".to_string(), "other".to_string()),
+    ]),
+    inline: false,
+    name: "Run some command".to_string(),
+    remedy: Some("do something".to_string()),
+    shell: "some command".to_string(),
+    verbose: false,
+  };
+  let expected_cmd_str = format!("OTHER=\"other\" VAR=\"value\" \"sh\" \"-c\" \"some command\"");
+
+  let cmd = shell.to_command().unwrap();
+  let cmd_str = format!("{cmd:?}");
+
+  assert_eq!(cmd_str, expected_cmd_str)
+}
+
+#[test]
 fn test_deserialize_remedy() {
   let toml = r#"
         shell = "some command"
@@ -151,6 +208,7 @@ fn test_deserialize_remedy() {
     ShellConfig {
       allow_failure: false,
       cd: None,
+      env: BTreeMap::default(),
       inline: false,
       name: "Run some command".to_string(),
       remedy: Some("do something".to_string()),
@@ -165,6 +223,7 @@ fn test_to_string() {
   let shell = ShellConfig {
     allow_failure: false,
     cd: None,
+    env: BTreeMap::default(),
     inline: false,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),
@@ -183,6 +242,7 @@ fn test_to_string_cd() {
   let shell = ShellConfig {
     allow_failure: false,
     cd: Some("../fixtures/bin".to_string()),
+    env: BTreeMap::default(),
     inline: false,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),
