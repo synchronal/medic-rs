@@ -21,6 +21,8 @@ pub struct StepConfig {
   pub args: Option<BTreeMap<String, StringOrList>>,
   pub cd: Option<String>,
   pub command: Option<String>,
+  #[serde(default)]
+  pub env: BTreeMap<String, String>,
   pub name: Option<String>,
   pub step: String,
   #[serde(default)]
@@ -133,6 +135,10 @@ impl Runnable for StepConfig {
           command.arg(flag_arg).arg(value);
         }
       }
+    }
+
+    for (var, value) in &self.env {
+      command.env(var, value);
     }
 
     Ok(command)

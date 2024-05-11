@@ -17,9 +17,10 @@ fn deserialize_cd() {
     StepConfig {
       args: None,
       cd: Some("./subdirectory".to_string()),
+      command: None,
+      env: BTreeMap::default(),
       name: None,
       step: "step-name".to_string(),
-      command: None,
       verbose: false
     }
   )
@@ -41,9 +42,10 @@ fn deserialize_arg_string() {
         StringOrList(vec!["first".to_string()])
       )])),
       cd: None,
+      command: Some("subcommand".to_string()),
+      env: BTreeMap::default(),
       name: None,
       step: "step-name".to_string(),
-      command: Some("subcommand".to_string()),
       verbose: false
     }
   )
@@ -65,9 +67,34 @@ fn deserialize_arg_list() {
         StringOrList(vec!["first".to_string(), "second".to_string()])
       )])),
       cd: None,
+      command: Some("subcommand".to_string()),
+      env: BTreeMap::default(),
       name: None,
       step: "step-name".to_string(),
-      command: Some("subcommand".to_string()),
+      verbose: false
+    }
+  )
+}
+#[test]
+fn deserialize_env() {
+  let toml = r#"
+        env = { MY_VAR = "first", SECOND_VAR = "second" }
+        step = "step-name"
+        "#;
+
+  let result: StepConfig = toml::from_str(toml).unwrap();
+  assert_eq!(
+    result,
+    StepConfig {
+      args: None,
+      cd: None,
+      command: None,
+      env: BTreeMap::from([
+        ("MY_VAR".to_string(), "first".to_string()),
+        ("SECOND_VAR".to_string(), "second".to_string())
+      ]),
+      name: None,
+      step: "step-name".to_string(),
       verbose: false
     }
   )
@@ -79,6 +106,7 @@ fn to_command() {
     args: None,
     cd: None,
     command: None,
+    env: BTreeMap::default(),
     name: None,
     step: "thing".to_string(),
     verbose: false,
@@ -95,6 +123,7 @@ fn to_command_cd() {
     args: None,
     cd: Some("../fixtures/bin".to_string()),
     command: None,
+    env: BTreeMap::default(),
     name: None,
     step: "thing".to_string(),
     verbose: false,
@@ -118,6 +147,7 @@ fn to_command_subcommand() {
     args: None,
     cd: None,
     command: Some("sub-command".to_string()),
+    env: BTreeMap::default(),
     name: None,
     step: "thing".to_string(),
     verbose: false,
@@ -137,6 +167,7 @@ fn to_command_args() {
     )])),
     cd: None,
     command: None,
+    env: BTreeMap::default(),
     name: None,
     step: "thing".to_string(),
     verbose: false,
@@ -156,6 +187,7 @@ fn to_command_args_list() {
     )])),
     cd: None,
     command: None,
+    env: BTreeMap::default(),
     name: None,
     step: "thing".to_string(),
     verbose: false,
@@ -170,11 +202,32 @@ fn to_command_args_list() {
 }
 
 #[test]
+fn to_command_env() {
+  let step = StepConfig {
+    args: None,
+    cd: None,
+    command: None,
+    env: BTreeMap::from([
+      ("VAR".to_string(), "value".to_string()),
+      ("OTHER".to_string(), "other".to_string()),
+    ]),
+    name: None,
+    step: "thing".to_string(),
+    verbose: false,
+  };
+
+  let cmd = step.to_command().unwrap();
+  let cmd_str = format!("{cmd:?}");
+  assert_eq!(cmd_str, "OTHER=\"other\" VAR=\"value\" \"medic-step-thing\"");
+}
+
+#[test]
 fn to_command_missing_command() {
   let step = StepConfig {
     args: None,
     cd: None,
     command: None,
+    env: BTreeMap::default(),
     name: None,
     step: "missing".to_string(),
     verbose: false,
@@ -193,6 +246,7 @@ fn to_string_cd() {
     args: None,
     cd: Some("./subdirectory".to_string()),
     command: None,
+    env: BTreeMap::default(),
     name: None,
     step: "step-name".to_string(),
     verbose: false,
@@ -213,6 +267,7 @@ fn to_string_single_arg() {
     )])),
     cd: None,
     command: None,
+    env: BTreeMap::default(),
     name: None,
     step: "step-name".to_string(),
     verbose: false,
@@ -233,6 +288,7 @@ fn to_string_subcommand_single_arg() {
     )])),
     cd: None,
     command: Some("subcommand".to_string()),
+    env: BTreeMap::default(),
     name: None,
     step: "step-name".to_string(),
     verbose: false,
@@ -253,6 +309,7 @@ fn to_string_subcommand_multiple_args() {
     ])),
     cd: None,
     command: Some("subcommand".to_string()),
+    env: BTreeMap::default(),
     name: None,
     step: "step-name".to_string(),
     verbose: false,
@@ -273,6 +330,7 @@ fn to_string_subcommand_multiple_arg_values() {
     )])),
     cd: None,
     command: Some("subcommand".to_string()),
+    env: BTreeMap::default(),
     name: None,
     step: "step-name".to_string(),
     verbose: false,
@@ -296,6 +354,7 @@ fn to_string_subcommand_multiple_arg_values_and_args() {
     ])),
     cd: None,
     command: Some("subcommand".to_string()),
+    env: BTreeMap::default(),
     name: None,
     step: "step-name".to_string(),
     verbose: false,

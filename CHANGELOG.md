@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add `env` configuration to steps.
 - Add `env` configuration to checks.
 
 ## 2.5.0

@@ -55,6 +55,7 @@ fn deserialize_audit() {
             args: None,
             cd: None,
             command: Some("clippy".to_string()),
+            env: BTreeMap::default(),
             name: None,
             step: "rust".to_string(),
             verbose: false,
@@ -110,6 +111,7 @@ fn deserialize_doctor() {
             args: None,
             cd: None,
             command: Some("clippy".to_string()),
+            env: BTreeMap::default(),
             name: None,
             step: "rust".to_string(),
             verbose: false,
@@ -213,6 +215,7 @@ fn deserialize_shipit() {
             args: None,
             cd: None,
             command: None,
+            env: BTreeMap::default(),
             name: None,
             step: "rust".to_string(),
             verbose: false
@@ -270,6 +273,7 @@ fn deserialize_test() {
             args: None,
             cd: None,
             command: None,
+            env: BTreeMap::default(),
             name: None,
             step: "rust".to_string(),
             verbose: false
@@ -327,6 +331,7 @@ fn deserialize_update() {
             args: None,
             cd: None,
             command: None,
+            env: BTreeMap::default(),
             name: None,
             step: "rust".to_string(),
             verbose: false
