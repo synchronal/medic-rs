@@ -10,6 +10,8 @@ use std::panic;
 fn main() -> AppResult<()> {
   let cli = CliArgs::parse();
 
+  ctrlc::set_handler(reset_term).expect("Unable to set Ctrl-C handler");
+
   console::set_colors_enabled(true);
   console::set_colors_enabled_stderr(true);
   let _ = Term::stderr().hide_cursor();
@@ -49,11 +51,15 @@ fn main() -> AppResult<()> {
     }
   });
 
-  let _ = Term::stderr().show_cursor();
-  let _ = Term::stdout().show_cursor();
+  reset_term();
 
   match result {
     Ok(inner) => inner,
     Err(_) => std::process::exit(1),
   }
+}
+
+fn reset_term() {
+  let _ = Term::stderr().show_cursor();
+  let _ = Term::stdout().show_cursor();
 }

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Reset cursor when interrupting commands with Ctrl-C.
+
 ## 2.6.0
 
 - Add `env` configuration to checks, steps, and shell steps.
