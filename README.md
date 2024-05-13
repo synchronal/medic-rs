@@ -291,10 +291,25 @@ and are available in the PATH.
   name will be translated to `--flag <value>`. When the value is
   specified as a list, the flag will be output once per value.
 - `cd` - change directory before running checks.
+- `env` - environment variables to set when running checks.
 - `output` - the output format used by the check, either
   [`json`](#json-default) or [`stdio`](#stdio)
 - `verbose` - when `true`, STDERR of the check is redirected to STDERR
   of the current medic process.
+
+``` toml
+# runs: (cd ./subdir \
+#         && MEDIC_OUTPUT_FORMAT=json VAR=value \
+#           medic-check-my-check sub-option --with thing --and first --and second)
+{
+  check = "my-check",
+  command = "sub-option",
+  args = { with = "thing", and = ["first", "second"]},
+  cd = "./subdir",
+  env = { VAR = "value" },
+  verbose = true
+}
+```
 
 Checks must follow one or more output format, which is provided to the
 check in the environment: variable `MEDIC_OUTPUT_FORMAT`:
@@ -335,8 +350,24 @@ and are available in the PATH. Steps must follow:
 - `args` - a map of flag to value(s). When running the command, the flag
   name will be translated to `--flag <value>`. When the value is
   specified as a list, the flag will be output once per value.
+- `cd` - change directory before running checks.
+- `env` - environment variables to set when running steps.
 - `verbose` - print all stdout/stderr to the terminal as it happens.
 - `allow_failure` - continue medic even if the command fails.
+
+``` toml
+# runs: (cd ./subdir \
+#         && VAR=value \
+#           medic-step-my-step sub-option --with thing --and first --and second)
+{
+  step = "my-step",
+  command = "sub-option",
+  args = { with = "thing", and = ["first", "second"]},
+  cd = "./subdir",
+  env = { VAR = "value" },
+  verbose = true
+}
+```
 
 ### Shell actions
 
@@ -349,6 +380,7 @@ commands may be better suited to be written into shell scripts.
 - `name` - the description to be shown to the user when run.
 - `shell` - the command to run
 - `cd` - change directory before running commands.
+- `env` - environment variables to set when running commands.
 - `inline` - when `true`, disables running progress bars and prints all
   output directly to the terminal. This flag takes priority over
   `verbose`, and is useful when running commands that handle their own
@@ -359,6 +391,20 @@ commands may be better suited to be written into shell scripts.
 - `allow_failure` - allow medic to continue even when the process fails.
 - `remedy` - an optional command to print out on failure to suggest as a
   remediation.
+
+``` toml
+# runs: (cd ./subdir \
+#         && VAR=value \
+#           ls -al ./some/dir)
+{
+  name = "my shell step",
+  shell = "ls -al ./some/dir",
+  remedy = "mkdir -p ./some/dir",
+  cd = "./subdir",
+  env = { VAR = "value" },
+  verbose = true
+}
+```
 
 ### Outdated checks
 
