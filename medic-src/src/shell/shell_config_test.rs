@@ -186,7 +186,7 @@ fn test_to_command_env() {
     shell: "some command".to_string(),
     verbose: false,
   };
-  let expected_cmd_str = format!("OTHER=\"other\" VAR=\"value\" \"sh\" \"-c\" \"some command\"");
+  let expected_cmd_str = "OTHER=\"other\" VAR=\"value\" \"sh\" \"-c\" \"some command\"".to_string();
 
   let cmd = shell.to_command().unwrap();
   let cmd_str = format!("{cmd:?}");
