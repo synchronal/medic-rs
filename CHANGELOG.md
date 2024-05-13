@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.6.1
+
 - Reset cursor when interrupting commands with Ctrl-C.
 
 ## 2.6.0
