@@ -26,6 +26,9 @@ impl Manifest {
     let mut context = std::collections::HashMap::new();
     context.insert("CWD".to_string(), cwd);
     for (key, value) in std::env::vars() {
+      if value.contains(['{', '}']) {
+        continue;
+      };
       context.insert(key, value);
     }
 

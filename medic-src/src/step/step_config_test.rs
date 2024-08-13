@@ -131,6 +131,9 @@ fn to_command_cd() {
 
   let mut context = std::collections::HashMap::new();
   for (key, value) in std::env::vars() {
+    if value.contains(['{', '}']) {
+      continue;
+    };
     context.insert(key, value);
   }
   let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
