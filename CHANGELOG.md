@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2.6.2
+
+- Do not crash or use variables that include `{}` characters in values
+  when interpolating ENV variables into the manifest path.
+
 ## 2.6.1
 
 - Reset cursor when interrupting commands with Ctrl-C.
