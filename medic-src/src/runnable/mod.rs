@@ -11,3 +11,7 @@ pub trait Runnable: std::fmt::Display {
     false
   }
 }
+
+pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  runnable.run(progress)
+}

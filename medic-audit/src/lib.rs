@@ -3,14 +3,14 @@
 pub mod cli;
 
 use medic_src::config::Manifest;
-use medic_src::runnable::Runnable;
+use medic_src::runnable::run;
 use medic_src::AppResult;
 
 pub fn run_steps(manifest: Manifest, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
   match manifest.audit {
     Some(audit) => {
       for step in audit.checks {
-        step.run(progress)?;
+        run(step, progress)?;
       }
       AppResult::Ok(())
     }
