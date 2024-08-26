@@ -4,6 +4,7 @@ use clap::Args;
 use clap::Parser;
 use clap::Subcommand;
 use medic_run::cli::CliArgs as RunArgs;
+use medic_src::cli::Flags;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -42,6 +43,10 @@ pub struct ManifestArgs {
   #[clap(value_parser)]
   #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.config/medic.toml", value_hint = clap::ValueHint::FilePath)]
   pub config: PathBuf,
+
+  /// Provide interactive prompts when possible instead of failing
+  #[arg(short, long, env = "MEDIC_INTERACTIVE", action)]
+  pub interactive: bool,
 }
 
 #[derive(Args, Debug)]
@@ -63,5 +68,13 @@ impl Default for CliArgs {
 impl CliArgs {
   pub fn new() -> Self {
     CliArgs::parse()
+  }
+}
+
+impl From<ManifestArgs> for Flags {
+  fn from(args: ManifestArgs) -> Self {
+    Self {
+      interactive: args.interactive,
+    }
   }
 }

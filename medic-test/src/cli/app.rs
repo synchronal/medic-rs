@@ -1,5 +1,6 @@
 use clap::Parser;
 use clap_complete::Shell;
+use medic_src::cli::Flags;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -12,4 +13,16 @@ pub struct CliArgs {
   /// Shell to generate completions for
   #[clap(long, value_enum, value_parser)]
   pub completion: Option<Shell>,
+
+  /// Provide interactive prompts when possible instead of failing
+  #[arg(short, long, env = "MEDIC_INTERACTIVE", action)]
+  pub interactive: bool,
+}
+
+impl From<CliArgs> for Flags {
+  fn from(args: CliArgs) -> Self {
+    Self {
+      interactive: args.interactive,
+    }
+  }
 }

@@ -1,9 +1,9 @@
 // @related [test](medic-src/src/shell/shell_config_test.rs)
 
 use crate::optional_styled::OptionalStyled;
+use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
 use crate::std_to_string;
-use crate::AppResult;
 
 use arboard::Clipboard;
 use console::{style, Style};
@@ -51,7 +51,7 @@ impl Runnable for ShellConfig {
     self.allow_failure
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let allow_failure = self.allow_failure();
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
@@ -115,7 +115,7 @@ impl Runnable for ShellConfig {
           Ok(result) => {
             if result.status.success() {
               progress.succeeded(pb);
-              AppResult::Ok(())
+              Recoverable::Ok(())
             } else {
               progress.failed(pb);
               if !verbose {
@@ -124,29 +124,35 @@ impl Runnable for ShellConfig {
               }
               if allow_failure {
                 eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
-                AppResult::Ok(())
+                Recoverable::Ok(())
               } else {
-                if let Some(mut remedy) = self.remedy {
+                let mut remedy: Option<Remedy> = None;
+
+                if let Some(mut remedy_str) = self.remedy {
+                  remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
+
                   if self.cd.is_some() {
                     let dir = self.cd.unwrap();
-                    remedy = format!("(cd {dir} && {remedy})");
+                    remedy_str = format!("(cd {dir} && {remedy_str})");
                   }
-                  eprint!("\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m");
+
+                  eprint!("\x1b[36mPossible remedy: \x1b[0;33m{remedy_str}\x1b[0m");
                   eprintln!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
+
                   let mut clipboard = Clipboard::new()?;
-                  clipboard.set_text(remedy)?;
+                  clipboard.set_text(remedy_str)?;
                 }
-                AppResult::Err(None)
+                Recoverable::Err(None, remedy)
               }
             }
           }
           Err(err) => {
             progress.failed(pb);
-            AppResult::Err(Some(err.into()))
+            Recoverable::Err(Some(err.into()), None)
           }
         }
       }
-      Err(err) => AppResult::Err(Some(format!("Failed to parse command: {err}").into())),
+      Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
     }
   }
   fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {

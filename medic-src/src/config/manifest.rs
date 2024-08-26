@@ -8,7 +8,7 @@ use crate::ShipitStep;
 use crate::Step;
 
 use serde::Deserialize;
-use std::path::PathBuf;
+use std::path::Path;
 
 #[derive(Debug, Deserialize, Eq, PartialEq)]
 pub struct Manifest {
@@ -21,7 +21,7 @@ pub struct Manifest {
 }
 
 impl Manifest {
-  pub fn new(path: PathBuf) -> AppResult<Manifest> {
+  pub fn new(path: &Path) -> AppResult<Manifest> {
     let cwd = std::env::current_dir()?.into_os_string().into_string()?;
     let mut context = std::collections::HashMap::new();
     context.insert("CWD".to_string(), cwd);

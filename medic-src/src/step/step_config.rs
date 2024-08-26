@@ -1,10 +1,10 @@
 // @related [tests](medic-src/src/step/step_config_test.rs)
 
 use crate::optional_styled::OptionalStyled;
+use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::util::StringOrList;
-use crate::AppResult;
 
 use console::{style, Style};
 use retrogress::Progress;
@@ -30,7 +30,7 @@ pub struct StepConfig {
 }
 
 impl Runnable for StepConfig {
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let allow_failure = self.allow_failure();
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
@@ -81,7 +81,7 @@ impl Runnable for StepConfig {
         Ok(result) => {
           if result.status.success() {
             progress.succeeded(pb);
-            AppResult::Ok(())
+            Recoverable::Ok(())
           } else {
             progress.failed(pb);
             println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
@@ -91,19 +91,19 @@ impl Runnable for StepConfig {
             }
             if allow_failure {
               eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
-              AppResult::Ok(())
+              Recoverable::Ok(())
             } else {
-              AppResult::Err(None)
+              Recoverable::Err(None, None)
             }
           }
         }
         Err(err) => {
           progress.failed(pb);
-          AppResult::Err(Some(err.into()))
+          Recoverable::Err(Some(err.into()), None)
         }
       }
     } else {
-      AppResult::Err(Some("Failed to parse command".into()))
+      Recoverable::Err(Some("Failed to parse command".into()), None)
     }
   }
   fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {

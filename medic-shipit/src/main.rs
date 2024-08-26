@@ -20,7 +20,7 @@ fn main() -> AppResult<()> {
     std::process::exit(0);
   }
 
-  let manifest = Manifest::new(cli_args.config)?;
+  let manifest = Manifest::new(&cli_args.config)?;
 
   ctrlc::set_handler(reset_term).expect("Unable to set Ctrl-C handler");
 
@@ -31,7 +31,7 @@ fn main() -> AppResult<()> {
 
   let result = panic::catch_unwind(|| {
     let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
-    run_steps(manifest, &mut progress)
+    run_steps(manifest, &mut progress, cli_args.into())
   });
 
   reset_term();

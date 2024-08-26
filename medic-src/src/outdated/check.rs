@@ -2,10 +2,10 @@
 
 use super::summary::OutdatedSummary;
 use crate::optional_styled::OptionalStyled;
+use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::util::StringOrList;
-use crate::AppResult;
 use console::{style, Style};
 use retrogress::Progress;
 use serde::Deserialize;
@@ -26,7 +26,7 @@ pub struct OutdatedCheck {
 }
 
 impl Runnable for OutdatedCheck {
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let command_name = self.to_string();
     let pb = progress.append(&command_name);
 
@@ -61,32 +61,29 @@ impl Runnable for OutdatedCheck {
             let summary_result = OutdatedSummary::from_str(stdout);
             if !result.status.success() || summary_result.is_err() {
               progress.failed(pb);
-              return AppResult::Err(Some(
-                format!("Unable to parse outdated output:\r\n{}", summary_result.err().unwrap()).into(),
-              ));
+              return Recoverable::Err(
+                Some(format!("Unable to parse outdated output:\r\n{}", summary_result.err().unwrap()).into()),
+                None,
+              );
             }
 
             let summary = summary_result.unwrap();
 
             if summary.deps.is_empty() {
               progress.succeeded(pb);
-              return AppResult::Ok(());
+              return Recoverable::Ok(());
             }
 
             progress.println(pb, "");
             progress.println(pb, &format!("{}", summary));
             progress.println(pb, "");
 
+            let mut remedy: Option<Remedy> = None;
             let mut remedy_str: Option<String> = None;
 
-            match (summary.remedy, self.cd) {
-              (Some(remedy), Some(dir)) => {
-                remedy_str = Some(format!("(cd {} && {})", dir, remedy));
-              }
-              (Some(remedy), None) => {
-                remedy_str = Some(format!("({})", remedy));
-              }
-              (_, _) => {}
+            if let Some(remedy_cmd) = summary.remedy {
+              remedy = Some(Remedy::new(remedy_cmd.clone(), self.cd.clone()));
+              remedy_str = Some(crate::extra::command::to_string(&remedy_cmd, &self.cd));
             }
 
             if remedy_str.is_some() {
@@ -95,7 +92,7 @@ impl Runnable for OutdatedCheck {
                 &format!(
                   "    {} {}",
                   style("Remedy:").bold().underlined(),
-                  style(remedy_str.unwrap()).yellow(),
+                  style(remedy_str.as_ref().unwrap()).yellow(),
                 ),
               );
 
@@ -103,15 +100,15 @@ impl Runnable for OutdatedCheck {
             }
 
             progress.failed(pb);
-            AppResult::Ok(())
+            Recoverable::Optional((), remedy)
           }
           Err(err) => {
             progress.failed(pb);
-            AppResult::Err(Some(err.into()))
+            Recoverable::Err(Some(err.into()), None)
           }
         }
       }
-      Err(err) => AppResult::Err(Some(format!("Failed to parse command: {err}").into())),
+      Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
     }
   }
   fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {

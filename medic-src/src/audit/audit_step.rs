@@ -1,7 +1,8 @@
+use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::step::StepConfig;
-use crate::{AppResult, Check};
+use crate::Check;
 use serde::Deserialize;
 
 use std::fmt;
@@ -24,7 +25,7 @@ impl Runnable for AuditStep {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     match self {
       AuditStep::Check(config) => config.run(progress),
       AuditStep::Shell(config) => config.run(progress),

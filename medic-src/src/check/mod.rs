@@ -8,9 +8,9 @@ mod output_format;
 
 pub use self::output_format::OutputFormat;
 use crate::optional_styled::OptionalStyled;
+use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
 use crate::util::StringOrList;
-use crate::AppResult;
 
 use arboard::Clipboard;
 use console::{style, Style};
@@ -37,7 +37,7 @@ pub struct Check {
 }
 
 impl Runnable for Check {
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
 
@@ -64,27 +64,30 @@ impl Runnable for Check {
         Ok(result) => {
           if result.status.success() {
             progress.succeeded(pb);
-            AppResult::Ok(())
+            Recoverable::Ok(())
           } else {
             progress.failed(pb);
-            let mut output = self.output.parse(result, self.cd);
+            let mut output = self.output.parse(result, self.cd.clone());
             output.verbose(verbose);
             eprint!("{output}");
 
-            if output.remedy.is_some() {
+            let mut remedy: Option<Remedy> = None;
+
+            if let Some(remedy_str) = output.remedy {
+              remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
               let mut clipboard = Clipboard::new()?;
-              clipboard.set_text(output.remedy.unwrap())?;
+              clipboard.set_text(remedy_str)?;
             }
-            AppResult::Err(None)
+            Recoverable::Err(None, remedy)
           }
         }
         Err(err) => {
           progress.failed(pb);
-          AppResult::Err(Some(err.into()))
+          Recoverable::Err(Some(err.into()), None)
         }
       }
     } else {
-      AppResult::Err(Some("Unable to parse check".into()))
+      Recoverable::Err(Some("Unable to parse check".into()), None)
     }
   }
   fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {

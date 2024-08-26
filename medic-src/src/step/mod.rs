@@ -5,9 +5,10 @@ pub mod step_config;
 pub use step_config::StepConfig;
 
 use crate::noop_config::NoopConfig;
+use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
-use crate::{AppResult, Check};
+use crate::Check;
 use console::style;
 use retrogress::Progress;
 use serde::Deserialize;
@@ -38,7 +39,7 @@ impl Runnable for Step {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     match self {
       Step::Check(config) => config.run(progress),
       Step::Doctor(_) => run_doctor(progress),
@@ -77,7 +78,7 @@ impl fmt::Display for Step {
   }
 }
 
-fn run_doctor(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   let pb = progress.append("doctor");
   progress.println(
     pb,
@@ -91,12 +92,12 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     .output()
   {
     if result.status.success() {
-      AppResult::Ok(())
+      Recoverable::Ok(())
     } else {
-      AppResult::Err(None)
+      Recoverable::Err(None, None)
     }
   } else {
-    AppResult::Err(Some("Unable to run doctor".into()))
+    Recoverable::Err(Some("Unable to run doctor".into()), None)
   }
 }
 

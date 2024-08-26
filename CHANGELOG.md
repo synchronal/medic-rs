@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `--interactive` flag.
+
 ## 2.6.2
 
 - Do not crash or use variables that include `{}` characters in values
