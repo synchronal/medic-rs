@@ -1,3 +1,4 @@
+use crate::cli::Flags;
 use crate::AppResult;
 
 pub trait Runnable: std::fmt::Display {
@@ -12,6 +13,6 @@ pub trait Runnable: std::fmt::Display {
   }
 }
 
-pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, _flags: &[Flags]) -> AppResult<()> {
   runnable.run(progress)
 }

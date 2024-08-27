@@ -4,6 +4,7 @@
 pub mod app_result;
 pub mod audit;
 pub mod check;
+pub mod cli;
 pub mod config;
 pub mod doctor;
 pub mod noop_config;
