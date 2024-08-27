@@ -4,6 +4,7 @@ use clap::Args;
 use clap::Parser;
 use clap::Subcommand;
 use medic_run::cli::CliArgs as RunArgs;
+use medic_src::cli::Flags;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -67,5 +68,15 @@ impl Default for CliArgs {
 impl CliArgs {
   pub fn new() -> Self {
     CliArgs::parse()
+  }
+}
+
+impl From<ManifestArgs> for Vec<Flags> {
+  fn from(args: ManifestArgs) -> Self {
+    let mut flags = vec![];
+    if args.interactive {
+      flags.push(Flags::Interactive);
+    };
+    flags
   }
 }

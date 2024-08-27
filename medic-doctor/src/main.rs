@@ -22,7 +22,7 @@ fn main() -> AppResult<()> {
     std::process::exit(0);
   }
 
-  let manifest = Manifest::new(cli_args.config)?;
+  let manifest = Manifest::new(&cli_args.config)?;
 
   ctrlc::set_handler(reset_term).expect("Unable to set Ctrl-C handler");
 

@@ -21,31 +21,31 @@ fn main() -> AppResult<()> {
     let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
     match cli.command {
       Command::Audit(args) => {
-        let manifest = Manifest::new(args.config)?;
+        let manifest = Manifest::new(&args.config)?;
         medic_audit::run_steps(manifest, &mut progress, vec![])
       }
       Command::Doctor(args) => {
-        let manifest = Manifest::new(args.config)?;
+        let manifest = Manifest::new(&args.config)?;
         medic_doctor::run_checks(manifest, &mut progress, vec![])
       }
       Command::Init(args) => medic_init::create_config_file(args.config, args.force),
       Command::Outdated(args) => {
-        let manifest = Manifest::new(args.config)?;
+        let manifest = Manifest::new(&args.config)?;
         medic_outdated::run_checks(manifest, &mut progress, vec![])
       }
       Command::Run(args) => {
         medic_run::run_shell(args.name, args.cmd, args.cd, args.remedy, args.verbose, &mut progress)
       }
       Command::Test(args) => {
-        let manifest = Manifest::new(args.config)?;
+        let manifest = Manifest::new(&args.config)?;
         medic_test::run_steps(manifest, &mut progress, vec![])
       }
       Command::Update(args) => {
-        let manifest = Manifest::new(args.config)?;
+        let manifest = Manifest::new(&args.config)?;
         medic_update::run_steps(manifest, &mut progress, vec![])
       }
       Command::Shipit(args) => {
-        let manifest = Manifest::new(args.config)?;
+        let manifest = Manifest::new(&args.config)?;
         medic_shipit::run_steps(manifest, &mut progress, vec![])
       }
     }
