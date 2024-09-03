@@ -9,6 +9,7 @@ pub mod config;
 pub mod doctor;
 pub mod noop_config;
 pub mod outdated;
+pub mod recoverable;
 pub mod runnable;
 pub mod shell;
 pub mod shipit;

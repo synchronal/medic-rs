@@ -2,10 +2,10 @@
 
 use super::summary::OutdatedSummary;
 use crate::optional_styled::OptionalStyled;
+use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::util::StringOrList;
-use crate::AppResult;
 use console::{style, Style};
 use retrogress::Progress;
 use serde::Deserialize;
@@ -26,7 +26,7 @@ pub struct OutdatedCheck {
 }
 
 impl Runnable for OutdatedCheck {
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let command_name = self.to_string();
     let pb = progress.append(&command_name);
 
@@ -61,16 +61,17 @@ impl Runnable for OutdatedCheck {
             let summary_result = OutdatedSummary::from_str(stdout);
             if !result.status.success() || summary_result.is_err() {
               progress.failed(pb);
-              return AppResult::Err(Some(
-                format!("Unable to parse outdated output:\r\n{}", summary_result.err().unwrap()).into(),
-              ));
+              return Recoverable::Err(
+                Some(format!("Unable to parse outdated output:\r\n{}", summary_result.err().unwrap()).into()),
+                None,
+              );
             }
 
             let summary = summary_result.unwrap();
 
             if summary.deps.is_empty() {
               progress.succeeded(pb);
-              return AppResult::Ok(());
+              return Recoverable::Ok(());
             }
 
             progress.println(pb, "");
@@ -103,15 +104,15 @@ impl Runnable for OutdatedCheck {
             }
 
             progress.failed(pb);
-            AppResult::Ok(())
+            Recoverable::Ok(())
           }
           Err(err) => {
             progress.failed(pb);
-            AppResult::Err(Some(err.into()))
+            Recoverable::Err(Some(err.into()), None)
           }
         }
       }
-      Err(err) => AppResult::Err(Some(format!("Failed to parse command: {err}").into())),
+      Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
     }
   }
   fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {

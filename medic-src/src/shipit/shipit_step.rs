@@ -1,8 +1,9 @@
 use crate::noop_config::NoopConfig;
+use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::step::StepConfig;
-use crate::{AppResult, Check};
+use crate::Check;
 use console::style;
 use retrogress::Progress;
 use serde::Deserialize;
@@ -46,7 +47,7 @@ impl Runnable for ShipitStep {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     match self {
       ShipitStep::Check(config) => config.run(progress),
       ShipitStep::Shell(config) => config.run(progress),
@@ -93,7 +94,7 @@ impl fmt::Display for ShipitStep {
   }
 }
 
-fn run_audit(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+fn run_audit(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   let pb = progress.append("doctor");
   progress.println(
     pb,
@@ -107,16 +108,16 @@ fn run_audit(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     .output()
   {
     if result.status.success() {
-      AppResult::Ok(())
+      Recoverable::Ok(())
     } else {
-      AppResult::Err(Some("Audit failure".into()))
+      Recoverable::Err(Some("Audit failure".into()), None)
     }
   } else {
-    AppResult::Err(Some("Unable to run medic audit".into()))
+    Recoverable::Err(Some("Unable to run medic audit".into()), None)
   }
 }
 
-fn run_test(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+fn run_test(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   let pb = progress.append("doctor");
   progress.println(
     pb,
@@ -130,16 +131,16 @@ fn run_test(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     .output()
   {
     if result.status.success() {
-      AppResult::Ok(())
+      Recoverable::Ok(())
     } else {
-      AppResult::Err(Some("Test failure".into()))
+      Recoverable::Err(Some("Test failure".into()), None)
     }
   } else {
-    AppResult::Err(Some("Unable to run medic test".into()))
+    Recoverable::Err(Some("Unable to run medic test".into()), None)
   }
 }
 
-fn run_update(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+fn run_update(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   let pb = progress.append("doctor");
   progress.println(
     pb,
@@ -153,12 +154,12 @@ fn run_update(progress: &mut retrogress::ProgressBar) -> AppResult<()> {
     .output()
   {
     if result.status.success() {
-      AppResult::Ok(())
+      Recoverable::Ok(())
     } else {
-      AppResult::Err(Some("Unable to update project".into()))
+      Recoverable::Err(Some("Unable to update project".into()), None)
     }
   } else {
-    AppResult::Err(Some("Unable to run medic update".into()))
+    Recoverable::Err(Some("Unable to run medic update".into()), None)
   }
 }
 

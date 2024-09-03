@@ -1,8 +1,19 @@
 use std::ops::{ControlFlow, FromResidual, Try};
 
+use crate::recoverable::Recoverable;
+
 pub enum AppResult<T> {
   Ok(T),
   Err(Option<Box<dyn std::error::Error>>),
+}
+
+impl<T> From<Recoverable<T>> for AppResult<T> {
+  fn from(recoverable: Recoverable<T>) -> Self {
+    match recoverable {
+      Recoverable::Ok(val) => Self::Ok(val),
+      Recoverable::Err(e, _) => Self::Err(e),
+    }
+  }
 }
 
 impl<T> std::process::Termination for AppResult<T> {

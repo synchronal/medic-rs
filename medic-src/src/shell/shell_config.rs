@@ -1,9 +1,9 @@
 // @related [test](medic-src/src/shell/shell_config_test.rs)
 
 use crate::optional_styled::OptionalStyled;
+use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::std_to_string;
-use crate::AppResult;
 
 use arboard::Clipboard;
 use console::{style, Style};
@@ -51,7 +51,7 @@ impl Runnable for ShellConfig {
     self.allow_failure
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let allow_failure = self.allow_failure();
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
@@ -115,7 +115,7 @@ impl Runnable for ShellConfig {
           Ok(result) => {
             if result.status.success() {
               progress.succeeded(pb);
-              AppResult::Ok(())
+              Recoverable::Ok(())
             } else {
               progress.failed(pb);
               if !verbose {
@@ -124,7 +124,7 @@ impl Runnable for ShellConfig {
               }
               if allow_failure {
                 eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
-                AppResult::Ok(())
+                Recoverable::Ok(())
               } else {
                 if let Some(mut remedy) = self.remedy {
                   if self.cd.is_some() {
@@ -136,17 +136,17 @@ impl Runnable for ShellConfig {
                   let mut clipboard = Clipboard::new()?;
                   clipboard.set_text(remedy)?;
                 }
-                AppResult::Err(None)
+                Recoverable::Err(None, None)
               }
             }
           }
           Err(err) => {
             progress.failed(pb);
-            AppResult::Err(Some(err.into()))
+            Recoverable::Err(Some(err.into()), None)
           }
         }
       }
-      Err(err) => AppResult::Err(Some(format!("Failed to parse command: {err}").into())),
+      Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
     }
   }
   fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {

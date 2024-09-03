@@ -1,0 +1,74 @@
+use std::ops::{ControlFlow, FromResidual, Try};
+
+pub enum Recoverable<T> {
+  Ok(T),
+  Err(Option<Box<dyn std::error::Error>>, Option<String>),
+}
+
+impl<T> std::process::Termination for Recoverable<T> {
+  fn report(self) -> std::process::ExitCode {
+    match self {
+      Recoverable::Ok(_) => std::process::ExitCode::from(0),
+      Recoverable::Err(err, _remedy) => {
+        if let Some(error) = err {
+          eprintln!("\x1b[31;1mERROR: {}\x1b[0m", error);
+        }
+        std::process::ExitCode::from(1)
+      }
+    }
+  }
+}
+
+pub struct ResultCodeResidual(Option<Box<dyn std::error::Error>>);
+
+impl<T> Try for Recoverable<T> {
+  type Output = T;
+  type Residual = ResultCodeResidual;
+
+  fn branch(self) -> ControlFlow<Self::Residual, T> {
+    match self {
+      Recoverable::Err(err, _) => ControlFlow::Break(ResultCodeResidual(err)),
+      Recoverable::Ok(res) => ControlFlow::Continue(res),
+    }
+  }
+  fn from_output(t: T) -> Self {
+    Recoverable::Ok(t)
+  }
+}
+
+impl<T> FromResidual for Recoverable<T> {
+  fn from_residual(r: ResultCodeResidual) -> Self {
+    Self::Err(r.0, None)
+  }
+}
+
+impl<T> FromResidual<Result<std::convert::Infallible, &str>> for Recoverable<T> {
+  fn from_residual(r: Result<std::convert::Infallible, &str>) -> Self {
+    Self::Err(Some(r.unwrap_err().into()), None)
+  }
+}
+
+impl<T> FromResidual<Result<std::convert::Infallible, arboard::Error>> for Recoverable<T> {
+  fn from_residual(r: Result<std::convert::Infallible, arboard::Error>) -> Self {
+    Self::Err(Some(r.unwrap_err().into()), None)
+  }
+}
+
+impl<T> FromResidual<Result<std::convert::Infallible, envsubst::Error>> for Recoverable<T> {
+  fn from_residual(r: Result<std::convert::Infallible, envsubst::Error>) -> Self {
+    Self::Err(Some(r.unwrap_err().into()), None)
+  }
+}
+
+impl<T> FromResidual<Result<std::convert::Infallible, std::io::Error>> for Recoverable<T> {
+  fn from_residual(r: Result<std::convert::Infallible, std::io::Error>) -> Self {
+    Self::Err(Some(Box::new(r.unwrap_err())), None)
+  }
+}
+
+impl<T> FromResidual<Result<std::convert::Infallible, std::ffi::OsString>> for Recoverable<T> {
+  fn from_residual(r: Result<std::convert::Infallible, std::ffi::OsString>) -> Self {
+    let err = r.unwrap_err();
+    Self::Err(Some(err.into_string()?.into()), None)
+  }
+}

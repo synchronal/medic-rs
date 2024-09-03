@@ -17,6 +17,5 @@ pub fn run_shell(
 ) -> AppResult<()> {
   let shell = ShellConfig::new(name, cmd, cd, remedy, verbose);
   eprintln!();
-  shell.run(progress)?;
-  AppResult::Ok(())
+  shell.run(progress).into()
 }
