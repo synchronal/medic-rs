@@ -12,6 +12,7 @@ impl<T> From<Recoverable<T>> for AppResult<T> {
     match recoverable {
       Recoverable::Ok(val) => Self::Ok(val),
       Recoverable::Err(e, _) => Self::Err(e),
+      Recoverable::Optional(val, _) => Self::Ok(val),
     }
   }
 }

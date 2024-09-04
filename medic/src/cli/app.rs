@@ -71,12 +71,10 @@ impl CliArgs {
   }
 }
 
-impl From<ManifestArgs> for Vec<Flags> {
+impl From<ManifestArgs> for Flags {
   fn from(args: ManifestArgs) -> Self {
-    let mut flags = vec![];
-    if args.interactive {
-      flags.push(Flags::Interactive);
-    };
-    flags
+    Self {
+      interactive: args.interactive,
+    }
   }
 }

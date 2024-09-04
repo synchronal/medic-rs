@@ -7,7 +7,7 @@ use medic_src::config::Manifest;
 use medic_src::runnable::run;
 use medic_src::AppResult;
 
-pub fn run_checks(manifest: Manifest, progress: &mut retrogress::ProgressBar, flags: Vec<Flags>) -> AppResult<()> {
+pub fn run_checks(manifest: Manifest, progress: &mut retrogress::ProgressBar, flags: Flags) -> AppResult<()> {
   match manifest.outdated {
     Some(outdated) => {
       for check in outdated.checks {

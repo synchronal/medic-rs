@@ -2,6 +2,7 @@ use std::ops::{ControlFlow, FromResidual, Try};
 
 pub enum Recoverable<T> {
   Ok(T),
+  Optional(T, Option<String>),
   Err(Option<Box<dyn std::error::Error>>, Option<String>),
 }
 
@@ -15,6 +16,7 @@ impl<T> std::process::Termination for Recoverable<T> {
         }
         std::process::ExitCode::from(1)
       }
+      Recoverable::Optional(_, _) => std::process::ExitCode::from(0),
     }
   }
 }
@@ -27,8 +29,9 @@ impl<T> Try for Recoverable<T> {
 
   fn branch(self) -> ControlFlow<Self::Residual, T> {
     match self {
-      Recoverable::Err(err, _) => ControlFlow::Break(ResultCodeResidual(err)),
+      Recoverable::Err(err, _remedy) => ControlFlow::Break(ResultCodeResidual(err)),
       Recoverable::Ok(res) => ControlFlow::Continue(res),
+      Recoverable::Optional(res, _remedy) => ControlFlow::Continue(res),
     }
   }
   fn from_output(t: T) -> Self {

@@ -96,7 +96,7 @@ impl Runnable for OutdatedCheck {
                 &format!(
                   "    {} {}",
                   style("Remedy:").bold().underlined(),
-                  style(remedy_str.unwrap()).yellow(),
+                  style(remedy_str.as_ref().unwrap()).yellow(),
                 ),
               );
 
@@ -104,7 +104,7 @@ impl Runnable for OutdatedCheck {
             }
 
             progress.failed(pb);
-            Recoverable::Ok(())
+            Recoverable::Optional((), remedy_str)
           }
           Err(err) => {
             progress.failed(pb);

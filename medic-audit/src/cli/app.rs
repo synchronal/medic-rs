@@ -19,12 +19,10 @@ pub struct CliArgs {
   pub interactive: bool,
 }
 
-impl From<CliArgs> for Vec<Flags> {
+impl From<CliArgs> for Flags {
   fn from(args: CliArgs) -> Self {
-    let mut flags = vec![];
-    if args.interactive {
-      flags.push(Flags::Interactive);
-    };
-    flags
+    Self {
+      interactive: args.interactive,
+    }
   }
 }

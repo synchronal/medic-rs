@@ -31,7 +31,7 @@ fn main() -> AppResult<()> {
 
   let result = panic::catch_unwind(|| {
     let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
-    run_steps(manifest, &mut progress, vec![])
+    run_steps(manifest, &mut progress, cli_args.into())
   });
 
   reset_term();

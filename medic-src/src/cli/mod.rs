@@ -1,3 +1,3 @@
-pub enum Flags {
-  Interactive,
+pub struct Flags {
+  pub interactive: bool,
 }

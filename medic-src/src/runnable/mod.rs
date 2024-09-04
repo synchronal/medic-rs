@@ -14,6 +14,13 @@ pub trait Runnable: std::fmt::Display {
   }
 }
 
-pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, _flags: &[Flags]) -> AppResult<()> {
-  runnable.run(progress).into()
+pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flags: &Flags) -> AppResult<()> {
+  let _ = flags;
+  match runnable.run(progress) {
+    Recoverable::Ok(ok) => AppResult::Ok(ok),
+    Recoverable::Err(err, None) => AppResult::Err(err),
+    Recoverable::Err(err, Some(_remedy)) => AppResult::Err(err),
+    Recoverable::Optional(ok, None) => AppResult::Ok(ok),
+    Recoverable::Optional(ok, Some(_remedy)) => AppResult::Ok(ok),
+  }
 }
