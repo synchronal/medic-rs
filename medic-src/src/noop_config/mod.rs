@@ -1,4 +1,4 @@
 use serde::Deserialize;
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct NoopConfig {}

@@ -8,7 +8,7 @@ use serde::Deserialize;
 use std::fmt;
 use std::process::Command;
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(untagged)]
 pub enum DoctorStep {
   Check(Check),

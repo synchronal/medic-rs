@@ -2,7 +2,7 @@ use crate::cli::Flags;
 use crate::recoverable::Recoverable;
 use crate::AppResult;
 
-pub trait Runnable: std::fmt::Display {
+pub trait Runnable: std::fmt::Display + Clone {
   fn allow_failure(&self) -> bool {
     false
   }
@@ -14,9 +14,9 @@ pub trait Runnable: std::fmt::Display {
   }
 }
 
-pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flags: &Flags) -> AppResult<()> {
+pub fn run(runnable: impl Runnable + Clone, progress: &mut retrogress::ProgressBar, flags: &Flags) -> AppResult<()> {
   let _ = flags;
-  match runnable.run(progress) {
+  match runnable.clone().run(progress) {
     Recoverable::Ok(ok) => AppResult::Ok(ok),
     Recoverable::Err(err, None) => AppResult::Err(err),
     Recoverable::Err(err, Some(_remedy)) => AppResult::Err(err),

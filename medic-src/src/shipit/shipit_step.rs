@@ -11,7 +11,7 @@ use serde::Deserialize;
 use std::fmt;
 use std::process::{Command, Stdio};
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(untagged)]
 pub enum ShipitStep {
   Check(Check),
@@ -22,15 +22,15 @@ pub enum ShipitStep {
   Update(UpdateConfig),
 }
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct AuditConfig {
   pub audit: NoopConfig,
 }
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct TestConfig {
   pub test: NoopConfig,
 }
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct UpdateConfig {
   pub update: NoopConfig,
 }

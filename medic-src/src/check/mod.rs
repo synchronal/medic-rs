@@ -22,7 +22,7 @@ use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 use which::which;
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct Check {
   pub args: Option<BTreeMap<String, StringOrList>>,
   pub cd: Option<String>,
