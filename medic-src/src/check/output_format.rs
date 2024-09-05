@@ -3,7 +3,7 @@ use crate::std_to_string;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
-#[derive(Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub enum OutputFormat {
   #[default]
   #[serde(rename(deserialize = "json"))]

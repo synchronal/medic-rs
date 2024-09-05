@@ -14,7 +14,7 @@ use serde::Deserialize;
 use std::fmt;
 use std::process::{Command, Stdio};
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(untagged)]
 pub enum Step {
   Check(Check),
@@ -23,7 +23,7 @@ pub enum Step {
   Doctor(DoctorConfig),
 }
 
-#[derive(Debug, Deserialize, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 pub struct DoctorConfig {
   pub doctor: NoopConfig,
 }
