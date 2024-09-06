@@ -7,6 +7,7 @@ pub mod check;
 pub mod cli;
 pub mod config;
 pub mod doctor;
+pub mod extra;
 pub mod noop_config;
 pub mod outdated;
 pub mod recoverable;

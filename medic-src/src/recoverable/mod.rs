@@ -1,9 +1,32 @@
 use std::ops::{ControlFlow, FromResidual, Try};
+use std::process::Command;
+
+pub struct Remedy {
+  pub command: String,
+  pub cd: Option<String>,
+}
+
+impl Remedy {
+  pub fn new(command: String, cd: Option<String>) -> Self {
+    Self { command, cd }
+  }
+  pub fn to_command(&self) -> Command {
+    Command::new("ls")
+  }
+}
+
+impl std::fmt::Display for Remedy {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}", crate::extra::command::to_str(&self.command, &self.cd))
+  }
+}
+
+// // //
 
 pub enum Recoverable<T> {
   Ok(T),
-  Optional(T, Option<String>),
-  Err(Option<Box<dyn std::error::Error>>, Option<String>),
+  Optional(T, Option<Remedy>),
+  Err(Option<Box<dyn std::error::Error>>, Option<Remedy>),
 }
 
 impl<T> std::process::Termination for Recoverable<T> {

@@ -1,10 +1,18 @@
-use std::ops::{ControlFlow, FromResidual, Try};
-
 use crate::recoverable::Recoverable;
+use std::ops::{ControlFlow, FromResidual, Try};
 
 pub enum AppResult<T> {
   Ok(T),
   Err(Option<Box<dyn std::error::Error>>),
+}
+
+impl From<Result<std::process::Output, std::io::Error>> for AppResult<()> {
+  fn from(result: Result<std::process::Output, std::io::Error>) -> Self {
+    match result {
+      Ok(_) => Self::Ok(()),
+      Err(err) => Self::Err(Some(err.into())),
+    }
+  }
 }
 
 impl<T> From<Recoverable<T>> for AppResult<T> {

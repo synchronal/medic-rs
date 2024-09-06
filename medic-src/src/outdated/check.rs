@@ -2,7 +2,7 @@
 
 use super::summary::OutdatedSummary;
 use crate::optional_styled::OptionalStyled;
-use crate::recoverable::Recoverable;
+use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::util::StringOrList;
@@ -78,16 +78,12 @@ impl Runnable for OutdatedCheck {
             progress.println(pb, &format!("{}", summary));
             progress.println(pb, "");
 
+            let mut remedy: Option<Remedy> = None;
             let mut remedy_str: Option<String> = None;
 
-            match (summary.remedy, self.cd) {
-              (Some(remedy), Some(dir)) => {
-                remedy_str = Some(format!("(cd {} && {})", dir, remedy));
-              }
-              (Some(remedy), None) => {
-                remedy_str = Some(format!("({})", remedy));
-              }
-              (_, _) => {}
+            if let Some(remedy_cmd) = summary.remedy {
+              remedy = Some(Remedy::new(remedy_cmd.clone(), self.cd.clone()));
+              remedy_str = Some(crate::extra::command::to_str(&remedy_cmd, &self.cd));
             }
 
             if remedy_str.is_some() {
@@ -104,7 +100,7 @@ impl Runnable for OutdatedCheck {
             }
 
             progress.failed(pb);
-            Recoverable::Optional((), remedy_str)
+            Recoverable::Optional((), remedy)
           }
           Err(err) => {
             progress.failed(pb);
