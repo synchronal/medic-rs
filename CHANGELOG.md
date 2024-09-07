@@ -6,8 +6,8 @@
 
 ## 2.6.2
 
-- Do not crash or use variables that include `{}` characters in values
-  when interpolating ENV variables into the manifest path.
+- Exclude variables that include `{}` characters when interpolating the
+  manifest path.
 
 ## 2.6.1
 
