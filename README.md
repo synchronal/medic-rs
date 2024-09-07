@@ -1,23 +1,32 @@
 # Medic
 
-Medic is a development workflow management tool. This project is a
-re-implementation of [Elixir medic](https://github.com/synchronal/medic)
-in Rust, with the intention that it can be installed as a set of
-stand-alone binaries and scripts with minimal tool-chain dependencies.
+> Workflow management with less hassle.
 
 The medic workflow is intended to quickly bootstrap development on a
-code project. Steps and checks are run to verify that all dependencies
-are satisfied, with suggested remedies. Checks should be written such
-that they only care about the dependency being met, rather than how it's
-met—all suggested remedies might be applied as-is on a shared
-workstation, while an individual might choose alternate solutions on
-their personal hardware. Updates to operating systems and/or dependency
-management tools may make a usual remediation temporarily unworkable,
-requiring manual workarounds for a day or a week until further upstream
-updates fix the problem.
+project. Steps and checks verify that all dependencies are satisfied,
+with suggested remedies. Quickly applying those remedies can get your
+workstation up and running... or you may meet the dependency requirement
+yourself.
 
-Medic should above all else assist its adopters, and only sometimes or
-on some teams should it proscribe.
+Checks should be written (where possible) such that they only care about
+the dependency being met, rather than how—remedies might be applied
+as-is on a shared workstation, while an individual might choose
+alternate solutions on their personal hardware. New versions of
+operating systems and/or dependency management tools may make usual
+remedies temporarily unworkable, requiring manual workarounds for a day
+or a week until further upstream updates fix the problem... that's ok!
+Over time you can make your checks more resilient to alternatives.
+
+Medic should above all else assist its adopters, and only where
+necessary or on some teams should it proscribe a specific remedy.
+
+- `doctor` - is everything set up on my project?
+- `test` - run all tests, for all test suites.
+- `audit` - do all my lints and security checks pass?
+- `outdated` - how do I update dependencies across multiple toolchains?
+- `update` - pull changes and apply steps such as db migrations or deps
+  updates.
+- `shipit` - run everything before pushing upstream.
 
 ## Installation
 
@@ -42,7 +51,7 @@ from a [TOML-formatted file](#configuration) with a default path of
 by setting the `MEDIC_CONFIG` environment variable.
 
 ``` shell
-medic init     # -- add a medic config manifest to a project.
+medic init     # -- add an empty medic config manifest to a project.
 medic doctor   # -- ensure a project is fully set up for development.
 medic test     # -- run all test commands.
 medic audit    # -- run lints, type checks, dependency audits, etc.
