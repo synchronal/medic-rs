@@ -4,6 +4,7 @@ mod step_config_test;
 pub mod step_config;
 pub use step_config::StepConfig;
 
+use crate::extra;
 use crate::noop_config::NoopConfig;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
@@ -89,6 +90,7 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     .unwrap()
     .stdout(Stdio::inherit())
     .stderr(Stdio::inherit())
+    .stdin(Stdio::inherit())
     .output()
   {
     if result.status.success() {
@@ -102,7 +104,6 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
 }
 
 fn doctor_command() -> Result<Command, Box<dyn std::error::Error>> {
-  let mut command = Command::new("medic");
-  command.arg("doctor");
+  let command = extra::command::from_string("medic doctor", &None);
   Ok(command)
 }

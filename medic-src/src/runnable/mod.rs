@@ -20,7 +20,10 @@ pub trait Runnable: std::fmt::Display + Clone {
 }
 
 pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flags: &Flags) -> AppResult<()> {
-  let _ = flags;
+  if flags.interactive {
+    std::env::set_var("MEDIC_INTERACTIVE", "true");
+  }
+
   match runnable.clone().run(progress) {
     Recoverable::Ok(ok) => AppResult::Ok(ok),
     Recoverable::Err(err, None) => AppResult::Err(err),

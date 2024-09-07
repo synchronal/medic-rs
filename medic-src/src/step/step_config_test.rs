@@ -3,6 +3,7 @@
 use super::*;
 use crate::util::StringOrList;
 use std::collections::BTreeMap;
+use std::ffi::OsStr;
 
 #[test]
 fn deserialize_cd() {
@@ -113,8 +114,17 @@ fn to_command() {
   };
 
   let cmd = step.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(cmd_str, "\"medic-step-thing\"");
+
+  assert_eq!(cmd.get_current_dir(), None);
+  assert_eq!(cmd.get_program(), "medic-step-thing");
+
+  let args: Vec<&OsStr> = cmd.get_args().collect();
+  let expected_args: Vec<&OsStr> = vec![];
+  assert_eq!(args, expected_args);
+
+  // let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
+  // let expected_envs: Vec<(&OsStr, Option<&OsStr>)> = vars_as_osstr();
+  // assert_eq!(envs, expected_envs);
 }
 
 #[test]
@@ -137,11 +147,11 @@ fn to_command_cd() {
     context.insert(key, value);
   }
   let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
-  let expected_cmd_str = format!("cd \"{path_expansion}\" && \"medic-step-thing\"");
-
+  let path: std::path::PathBuf = path_expansion.into();
   let cmd = step.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(cmd_str, expected_cmd_str);
+
+  assert_eq!(cmd.get_current_dir(), Some(path.as_path()));
+  assert_eq!(cmd.get_program(), "medic-step-thing");
 }
 
 #[test]
@@ -157,8 +167,12 @@ fn to_command_subcommand() {
   };
 
   let cmd = step.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(cmd_str, "\"medic-step-thing\" \"sub-command\"");
+
+  assert_eq!(cmd.get_program(), "medic-step-thing");
+
+  let args: Vec<&OsStr> = cmd.get_args().collect();
+  let expected_args: Vec<&OsStr> = vec![OsStr::new("sub-command")];
+  assert_eq!(args, expected_args);
 }
 
 #[test]
@@ -177,8 +191,12 @@ fn to_command_args() {
   };
 
   let cmd = step.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(cmd_str, "\"medic-step-thing\" \"--name\" \"first\"");
+
+  assert_eq!(cmd.get_program(), "medic-step-thing");
+
+  let args: Vec<&OsStr> = cmd.get_args().collect();
+  let expected_args: Vec<&OsStr> = vec![OsStr::new("--name"), OsStr::new("first")];
+  assert_eq!(args, expected_args);
 }
 
 #[test]
@@ -197,11 +215,17 @@ fn to_command_args_list() {
   };
 
   let cmd = step.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(
-    cmd_str,
-    "\"medic-step-thing\" \"--name\" \"first\" \"--name\" \"second\""
-  );
+
+  assert_eq!(cmd.get_program(), "medic-step-thing");
+
+  let args: Vec<&OsStr> = cmd.get_args().collect();
+  let expected_args = vec![
+    OsStr::new("--name"),
+    OsStr::new("first"),
+    OsStr::new("--name"),
+    OsStr::new("second"),
+  ];
+  assert_eq!(args, expected_args);
 }
 
 #[test]
@@ -220,8 +244,14 @@ fn to_command_env() {
   };
 
   let cmd = step.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(cmd_str, "OTHER=\"other\" VAR=\"value\" \"medic-step-thing\"");
+
+  let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
+  let expected = vec![
+    (OsStr::new("OTHER"), Some(OsStr::new("other"))),
+    (OsStr::new("VAR"), Some(OsStr::new("value"))),
+  ];
+
+  assert!(expected.iter().all(|item| envs.contains(item)));
 }
 
 #[test]

@@ -7,6 +7,7 @@ mod check_output;
 mod output_format;
 
 pub use self::output_format::OutputFormat;
+use crate::extra;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
@@ -99,17 +100,8 @@ impl Runnable for Check {
       return Err(msg);
     };
 
-    let mut command = Command::new(check_cmd);
+    let mut command = extra::command::new(&check_cmd, &self.cd);
     command.env("MEDIC_OUTPUT_FORMAT", self.output.to_string());
-
-    if let Some(directory) = &self.cd {
-      if let Ok(expanded) = std::fs::canonicalize(directory) {
-        command.current_dir(&expanded);
-      } else {
-        let msg: Box<dyn std::error::Error> = format!("directory {} does not exist", directory).into();
-        return Err(msg);
-      }
-    }
 
     if let Some(subcmd) = &self.command {
       command.arg(subcmd);

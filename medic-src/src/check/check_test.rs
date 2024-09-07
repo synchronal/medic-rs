@@ -1,5 +1,7 @@
 // @related [subject](medic-src/src/check/mod.rs)
 
+use std::ffi::OsStr;
+
 use super::*;
 
 #[test]
@@ -113,8 +115,18 @@ fn to_command() {
   };
 
   let cmd = check.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(cmd_str, "MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\"");
+
+  assert_eq!(cmd.get_current_dir(), None);
+  assert_eq!(cmd.get_program(), "medic-check-json");
+
+  let args: Vec<&OsStr> = cmd.get_args().collect();
+  let expected_args: Vec<&OsStr> = vec![];
+  assert_eq!(args, expected_args);
+
+  let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
+  let expected = vec![(OsStr::new("MEDIC_OUTPUT_FORMAT"), Some(OsStr::new("json")))];
+
+  assert!(expected.iter().all(|item| envs.contains(item)));
 }
 
 #[test]
@@ -137,11 +149,10 @@ fn to_command_cd_relative() {
     context.insert(key, value);
   }
   let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
-  let expected_cmd_str = format!("cd \"{path_expansion}\" && MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\"");
-
+  let path: std::path::PathBuf = path_expansion.into();
   let cmd = check.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(cmd_str, expected_cmd_str);
+
+  assert_eq!(cmd.get_current_dir(), Some(path.as_path()));
 }
 
 #[test]
@@ -157,11 +168,10 @@ fn to_command_subcommand() {
   };
 
   let cmd = check.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(
-    cmd_str,
-    "MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\" \"sub-command\""
-  );
+
+  let args: Vec<&OsStr> = cmd.get_args().collect();
+  let expected_args: Vec<&OsStr> = vec![OsStr::new("sub-command")];
+  assert_eq!(args, expected_args);
 }
 
 #[test]
@@ -180,11 +190,14 @@ fn to_command_env() {
   };
 
   let cmd = check.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(
-    cmd_str,
-    "MEDIC_OUTPUT_FORMAT=\"json\" OTHER=\"other\" VAR=\"value\" \"medic-check-json\""
-  );
+
+  let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
+  let expected = vec![
+    (OsStr::new("OTHER"), Some(OsStr::new("other"))),
+    (OsStr::new("VAR"), Some(OsStr::new("value"))),
+  ];
+
+  assert!(expected.iter().all(|item| envs.contains(item)));
 }
 
 #[test]
@@ -200,8 +213,11 @@ fn to_command_stdio() {
   };
 
   let cmd = check.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(cmd_str, "MEDIC_OUTPUT_FORMAT=\"stdio\" \"medic-check-json\"");
+
+  let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
+  let expected = vec![(OsStr::new("MEDIC_OUTPUT_FORMAT"), Some(OsStr::new("stdio")))];
+
+  assert!(expected.iter().all(|item| envs.contains(item)));
 }
 
 #[test]
@@ -220,11 +236,10 @@ fn to_command_args() {
   };
 
   let cmd = check.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(
-    cmd_str,
-    "MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\" \"--name\" \"first\""
-  );
+
+  let args: Vec<&OsStr> = cmd.get_args().collect();
+  let expected_args: Vec<&OsStr> = vec![OsStr::new("--name"), OsStr::new("first")];
+  assert_eq!(args, expected_args);
 }
 
 #[test]
@@ -243,11 +258,15 @@ fn to_command_args_list() {
   };
 
   let cmd = check.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
-  assert_eq!(
-    cmd_str,
-    "MEDIC_OUTPUT_FORMAT=\"json\" \"medic-check-json\" \"--name\" \"first\" \"--name\" \"second\""
-  );
+
+  let args: Vec<&OsStr> = cmd.get_args().collect();
+  let expected_args: Vec<&OsStr> = vec![
+    OsStr::new("--name"),
+    OsStr::new("first"),
+    OsStr::new("--name"),
+    OsStr::new("second"),
+  ];
+  assert_eq!(args, expected_args);
 }
 
 #[test]

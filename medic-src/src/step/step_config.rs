@@ -3,8 +3,8 @@
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
-use crate::std_to_string;
 use crate::util::StringOrList;
+use crate::{extra, std_to_string};
 
 use console::{style, Style};
 use retrogress::Progress;
@@ -113,16 +113,7 @@ impl Runnable for StepConfig {
       let msg: Box<dyn std::error::Error> = format!("executable {step_cmd} not found in PATH").into();
       return Err(msg);
     };
-    let mut command = Command::new(step_cmd);
-
-    if let Some(directory) = &self.cd {
-      if let Ok(expanded) = std::fs::canonicalize(directory) {
-        command.current_dir(&expanded);
-      } else {
-        let msg: Box<dyn std::error::Error> = format!("directory {} does not exist", directory).into();
-        return Err(msg);
-      }
-    }
+    let mut command = extra::command::new(&step_cmd, &self.cd);
 
     if let Some(subcmd) = &self.command {
       command.arg(subcmd);
