@@ -57,9 +57,17 @@ impl Runnable for OutdatedCheck {
 
         match output {
           Ok(result) => {
+            if !result.status.success() {
+              progress.failed(pb);
+              let stderr = &std_to_string(result.stderr);
+              return Recoverable::Err(
+                Some(format!("Unable to parse outdated output:\r\n{stderr}").into()),
+                None,
+              );
+            }
             let stdout = &std_to_string(result.stdout);
             let summary_result = OutdatedSummary::from_str(stdout);
-            if !result.status.success() || summary_result.is_err() {
+            if summary_result.is_err() {
               progress.failed(pb);
               return Recoverable::Err(
                 Some(format!("Unable to parse outdated output:\r\n{}", summary_result.err().unwrap()).into()),
