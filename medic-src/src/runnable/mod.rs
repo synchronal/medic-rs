@@ -52,12 +52,13 @@ fn ask(
   flags: &Flags,
 ) -> AppResult<()> {
   match prompt("Apply this remedy") {
+    PromptResult::No => default_exit,
+    PromptResult::Quit => AppResult::Err(Some("aborting".into())),
+    PromptResult::Skip => AppResult::Ok(()),
     PromptResult::Yes => {
       run_remedy(remedy, progress)?;
       run(runnable, progress, flags)
     }
-    PromptResult::No => default_exit,
-    PromptResult::Quit => AppResult::Err(Some("aborting".into())),
     PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags),
   }
 }
@@ -66,7 +67,7 @@ fn prompt(msg: &str) -> PromptResult {
   let prompt = format!(
     "{} {}{}",
     style(msg).force_styling(true).cyan(),
-    style("[y,n,q]").force_styling(true).cyan().bold(),
+    style("[y,n,s,q]").force_styling(true).cyan().bold(),
     style("?").cyan()
   );
   eprint!("  {prompt} ");
@@ -127,6 +128,7 @@ enum PromptResult {
   Yes,
   No,
   Quit,
+  Skip,
   Unknown,
 }
 
@@ -134,9 +136,10 @@ impl From<String> for PromptResult {
   fn from(value: String) -> Self {
     let str = value.as_str();
     match str {
-      "y" | "Y" => Self::Yes,
       "n" | "N" => Self::No,
       "q" | "Q" => Self::Quit,
+      "s" | "S" => Self::Skip,
+      "y" | "Y" => Self::Yes,
       _ => Self::Unknown,
     }
   }
