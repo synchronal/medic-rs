@@ -70,11 +70,13 @@ fn prompt(msg: &str) -> PromptResult {
     style("[y,n,s,q]").force_styling(true).cyan().bold(),
     style("?").cyan()
   );
-  eprint!("  {prompt} ");
+  eprint!("— {prompt} ");
   Term::stdout().read_line().unwrap().into()
 }
 
 fn run_remedy(remedy: Remedy, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+  console::set_colors_enabled(true);
+  console::set_colors_enabled_stderr(true);
   Term::stderr().clear_line().unwrap();
 
   let mut command = remedy.to_command();
