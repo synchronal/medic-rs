@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.7.0
+
 - Fix potential panic in `medic outdated`.
 - Add `--interactive` flag.
 
