@@ -55,14 +55,26 @@ fn ask(
   flags: &Flags,
 ) -> AppResult<()> {
   match prompt("Apply this remedy") {
+    PromptResult::Help => {
+      eprintln!(
+        r#"
+  - y - yes  - apply the remedy.
+  - n - no   - do not run this remedy; if the check is optional continue, otherwise exit.
+  - s - skip - skip this step, continuing with future checks and steps.
+  - q - quit - abort medic with a non-zero exit code.
+  - ? - help - print this message.
+"#
+      );
+      ask(runnable, remedy, progress, default_exit, flags)
+    }
     PromptResult::No => default_exit,
     PromptResult::Quit => AppResult::Err(Some("aborting".into())),
     PromptResult::Skip => AppResult::Ok(()),
+    PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags),
     PromptResult::Yes => {
       run_remedy(remedy, progress)?;
       run(runnable, progress, flags)
     }
-    PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags),
   }
 }
 
@@ -70,7 +82,7 @@ fn prompt(msg: &str) -> PromptResult {
   let prompt = format!(
     "{} {}{}",
     style(msg).force_styling(true).cyan(),
-    style("[y,n,s,q]").force_styling(true).cyan().bold(),
+    style("[y,n,s,q,?]").force_styling(true).cyan().bold(),
     style("?").cyan()
   );
   eprint!("— {prompt} ");
@@ -130,11 +142,12 @@ fn run_remedy(remedy: Remedy, progress: &mut retrogress::ProgressBar) -> AppResu
 }
 
 enum PromptResult {
-  Yes,
+  Help,
   No,
   Quit,
   Skip,
   Unknown,
+  Yes,
 }
 
 impl From<String> for PromptResult {
@@ -145,6 +158,7 @@ impl From<String> for PromptResult {
       "q" | "Q" => Self::Quit,
       "s" | "S" => Self::Skip,
       "y" | "Y" => Self::Yes,
+      "?" => Self::Help,
       _ => Self::Unknown,
     }
   }

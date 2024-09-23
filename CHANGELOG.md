@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `?` help option to interactive prompt.
+
 ## 2.7.0
 
 - Fix potential panic in `medic outdated`.
