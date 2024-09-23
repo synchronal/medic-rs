@@ -124,7 +124,7 @@ fn to_command() {
   assert_eq!(args, expected_args);
 
   let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
-  let expected = vec![(OsStr::new("MEDIC_OUTPUT_FORMAT"), Some(OsStr::new("json")))];
+  let expected = [(OsStr::new("MEDIC_OUTPUT_FORMAT"), Some(OsStr::new("json")))];
 
   assert!(expected.iter().all(|item| envs.contains(item)));
 }
@@ -192,7 +192,7 @@ fn to_command_env() {
   let cmd = check.to_command().unwrap();
 
   let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
-  let expected = vec![
+  let expected = [
     (OsStr::new("OTHER"), Some(OsStr::new("other"))),
     (OsStr::new("VAR"), Some(OsStr::new("value"))),
   ];
@@ -215,7 +215,7 @@ fn to_command_stdio() {
   let cmd = check.to_command().unwrap();
 
   let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
-  let expected = vec![(OsStr::new("MEDIC_OUTPUT_FORMAT"), Some(OsStr::new("stdio")))];
+  let expected = [(OsStr::new("MEDIC_OUTPUT_FORMAT"), Some(OsStr::new("stdio")))];
 
   assert!(expected.iter().all(|item| envs.contains(item)));
 }

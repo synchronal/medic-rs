@@ -246,7 +246,7 @@ fn to_command_env() {
   let cmd = step.to_command().unwrap();
 
   let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
-  let expected = vec![
+  let expected = [
     (OsStr::new("OTHER"), Some(OsStr::new("other"))),
     (OsStr::new("VAR"), Some(OsStr::new("value"))),
   ];
