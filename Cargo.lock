@@ -496,7 +496,7 @@ checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 
 [[package]]
 name = "medic"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -517,7 +517,7 @@ dependencies = [
 
 [[package]]
 name = "medic-audit"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -530,7 +530,7 @@ dependencies = [
 
 [[package]]
 name = "medic-doctor"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -543,7 +543,7 @@ dependencies = [
 
 [[package]]
 name = "medic-init"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -561,7 +561,7 @@ dependencies = [
 
 [[package]]
 name = "medic-outdated"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -574,7 +574,7 @@ dependencies = [
 
 [[package]]
 name = "medic-run"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -587,7 +587,7 @@ dependencies = [
 
 [[package]]
 name = "medic-shipit"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -600,7 +600,7 @@ dependencies = [
 
 [[package]]
 name = "medic-src"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "arboard",
  "console",
@@ -615,7 +615,7 @@ dependencies = [
 
 [[package]]
 name = "medic-test"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",
@@ -628,7 +628,7 @@ dependencies = [
 
 [[package]]
 name = "medic-update"
-version = "2.7.0"
+version = "2.8.0"
 dependencies = [
  "clap",
  "clap_complete",

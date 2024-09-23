@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.8.0
+
 - Add `?` help option to interactive prompt.
 
 ## 2.7.0
