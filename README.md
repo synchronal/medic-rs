@@ -61,6 +61,15 @@ medic shipit   # -- run all checks and ship your changes.
 medic run      # -- runs a shell command with medic progress output.
 ```
 
+Subcommands (with the exception of `init` and `run`) may be run
+interactively via `-i`, `--interactive`, or by assigning
+`MEDIC_INTERACTIVE=true` in the shell. When run interactively, if checks
+fail with suggested remedies, medic will prompt the user for action.
+Remedies may be automatically applied, skipped, or medic may be entirely
+quit.
+
+## Subcommands
+
 #### init
 
 `medic init` creates a medic config manifest in the current directory,
