@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.9.0
+
 - Add `--apply-remedies` flag.
 
 ## 2.8.0
