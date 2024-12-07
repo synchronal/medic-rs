@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add `--apply-remedies` flag.
+
 ## 2.8.0
 
 - Add `?` help option to interactive prompt.

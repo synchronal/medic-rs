@@ -14,6 +14,10 @@ pub struct CliArgs {
   #[clap(long, value_enum, value_parser)]
   pub completion: Option<Shell>,
 
+  /// Automatically apply suggested remedies
+  #[arg(short, long, env = "MEDIC_APPLY_REMEDIES", action)]
+  pub apply_remedies: bool,
+
   /// Provide interactive prompts when possible instead of failing
   #[arg(short, long, env = "MEDIC_INTERACTIVE", action)]
   pub interactive: bool,
@@ -22,6 +26,7 @@ pub struct CliArgs {
 impl From<CliArgs> for Flags {
   fn from(args: CliArgs) -> Self {
     Self {
+      auto_apply_remedy: args.apply_remedies,
       interactive: args.interactive,
     }
   }

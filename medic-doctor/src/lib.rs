@@ -7,11 +7,11 @@ use medic_src::config::Manifest;
 use medic_src::runnable::run;
 use medic_src::AppResult;
 
-pub fn run_checks(manifest: Manifest, progress: &mut retrogress::ProgressBar, flags: Flags) -> AppResult<()> {
+pub fn run_checks(manifest: Manifest, progress: &mut retrogress::ProgressBar, mut flags: Flags) -> AppResult<()> {
   match manifest.doctor {
     Some(doctor) => {
       for check in doctor.checks {
-        run(check, progress, &flags)?;
+        run(check, progress, &mut flags)?;
       }
       AppResult::Ok(())
     }

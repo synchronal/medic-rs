@@ -19,7 +19,10 @@ pub trait Runnable: std::fmt::Display + Clone {
   }
 }
 
-pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flags: &Flags) -> AppResult<()> {
+pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flags: &mut Flags) -> AppResult<()> {
+  if flags.auto_apply_remedy {
+    std::env::set_var("MEDIC_APPLY_REMEDIES", "true");
+  }
   if flags.interactive {
     std::env::set_var("MEDIC_INTERACTIVE", "true");
   }
@@ -28,6 +31,16 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
     Recoverable::Ok(ok) => AppResult::Ok(ok),
     Recoverable::Err(err, None) => AppResult::Err(err),
     Recoverable::Err(err, Some(remedy)) => {
+      if flags.auto_apply_remedy {
+        eprintln!(
+          "— {} —",
+          style("Automatically applying remedy")
+            .force_styling(true)
+            .yellow()
+        );
+        run_remedy(remedy, progress)?;
+        return run(runnable, progress, flags);
+      }
       if flags.interactive {
         eprintln!();
         ask(runnable, remedy, progress, AppResult::Err(err), flags)
@@ -52,12 +65,13 @@ fn ask(
   remedy: Remedy,
   progress: &mut retrogress::ProgressBar,
   default_exit: AppResult<()>,
-  flags: &Flags,
+  flags: &mut Flags,
 ) -> AppResult<()> {
   match prompt("Apply this remedy") {
     PromptResult::Help => {
       eprintln!(
         r#"
+  - a - all  - apply this and all future remedies.
   - y - yes  - apply the remedy.
   - n - no   - do not run this remedy; if the check is optional continue, otherwise exit.
   - s - skip - skip this step, continuing with future checks and steps.
@@ -66,6 +80,11 @@ fn ask(
 "#
       );
       ask(runnable, remedy, progress, default_exit, flags)
+    }
+    PromptResult::All => {
+      flags.auto_apply_remedy = true;
+      run_remedy(remedy, progress)?;
+      run(runnable, progress, flags)
     }
     PromptResult::No => default_exit,
     PromptResult::Quit => AppResult::Err(Some("aborting".into())),
@@ -82,7 +101,7 @@ fn prompt(msg: &str) -> PromptResult {
   let prompt = format!(
     "{} {}{}",
     style(msg).force_styling(true).cyan(),
-    style("[y,n,s,q,?]").force_styling(true).cyan().bold(),
+    style("[y,n,a,s,q,?]").force_styling(true).cyan().bold(),
     style("?").cyan()
   );
   eprint!("— {prompt} ");
@@ -142,6 +161,7 @@ fn run_remedy(remedy: Remedy, progress: &mut retrogress::ProgressBar) -> AppResu
 }
 
 enum PromptResult {
+  All,
   Help,
   No,
   Quit,
@@ -154,6 +174,7 @@ impl From<String> for PromptResult {
   fn from(value: String) -> Self {
     let str = value.as_str();
     match str {
+      "a" | "A" => Self::All,
       "n" | "N" => Self::No,
       "q" | "Q" => Self::Quit,
       "s" | "S" => Self::Skip,

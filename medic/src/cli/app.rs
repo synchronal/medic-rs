@@ -44,6 +44,10 @@ pub struct ManifestArgs {
   #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.config/medic.toml", value_hint = clap::ValueHint::FilePath)]
   pub config: PathBuf,
 
+  /// Automatically apply suggested remedies
+  #[arg(short, long, env = "MEDIC_APPLY_REMEDIES", action)]
+  pub apply_remedies: bool,
+
   /// Provide interactive prompts when possible instead of failing
   #[arg(short, long, env = "MEDIC_INTERACTIVE", action)]
   pub interactive: bool,
@@ -74,6 +78,7 @@ impl CliArgs {
 impl From<ManifestArgs> for Flags {
   fn from(args: ManifestArgs) -> Self {
     Self {
+      auto_apply_remedy: args.apply_remedies,
       interactive: args.interactive,
     }
   }
