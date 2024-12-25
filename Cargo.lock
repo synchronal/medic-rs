@@ -607,6 +607,7 @@ dependencies = [
  "console",
  "envsubst",
  "indoc",
+ "once_cell",
  "retrogress",
  "serde",
  "serde_json",
