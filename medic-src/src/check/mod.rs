@@ -75,7 +75,7 @@ impl Runnable for Check {
             let mut remedy: Option<Remedy> = None;
 
             if let Some(remedy_str) = output.remedy {
-              remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
+              remedy = Some(Remedy::new(remedy_str.clone(), None));
               let mut clipboard = Clipboard::new()?;
               clipboard.set_text(remedy_str)?;
             }

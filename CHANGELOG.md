@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fix: applying a check remedy with a `cd` configuration would attempt to
+  change directories twice, usually resulting in a directory not found error.
+
 ## 2.9.0
 
 - Add `--apply-remedies` flag.
