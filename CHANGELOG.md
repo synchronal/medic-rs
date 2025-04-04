@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.9.2
+
+- Update dependencies.
+
 ## 2.9.1
 
 - Fix: applying a check remedy with a `cd` configuration would attempt
