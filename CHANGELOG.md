@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Set `MEDIC_APPLY_REMEDIES` when running remedies from interactive
+  mode.
+
 ## 2.9.2
 
 - Update dependencies.

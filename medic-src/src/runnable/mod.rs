@@ -116,6 +116,7 @@ fn run_remedy(remedy: Remedy, progress: &mut retrogress::ProgressBar) -> AppResu
   let mut command = remedy.to_command();
 
   command
+    .env("MEDIC_APPLY_REMEDIES", "true")
     .stdin(Stdio::piped())
     .stdout(Stdio::piped())
     .stderr(Stdio::piped());
