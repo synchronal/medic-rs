@@ -36,7 +36,7 @@ impl<T> std::process::Termination for Recoverable<T> {
       Recoverable::Ok(_) => std::process::ExitCode::from(0),
       Recoverable::Err(err, _remedy) => {
         if let Some(error) = err {
-          eprintln!("\x1b[31;1mERROR: {}\x1b[0m", error);
+          eprintln!("\x1b[31;1mERROR: {error}\x1b[0m");
         }
         std::process::ExitCode::from(1)
       }

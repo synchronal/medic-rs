@@ -24,11 +24,7 @@ pub fn create_config_file(path: std::path::PathBuf, force: bool) -> AppResult<()
       (false, _) => println!("Creating file: {:?}", &expanded_path),
       (true, false) => {
         return AppResult::Err(Some(
-          format!(
-            "File {:?} already exists!\r\n       Use `--force` to overwrite file.",
-            expanded_path
-          )
-          .into(),
+          format!("File {expanded_path:?} already exists!\r\n       Use `--force` to overwrite file.").into(),
         ))
       }
       (true, true) => {

@@ -31,7 +31,7 @@ impl<T> std::process::Termination for AppResult<T> {
       AppResult::Ok(_) => std::process::ExitCode::from(0),
       AppResult::Err(err) => {
         if let Some(error) = err {
-          eprintln!("\x1b[31;1mERROR: {}\x1b[0m", error);
+          eprintln!("\x1b[31;1mERROR: {error}\x1b[0m");
         }
         std::process::ExitCode::from(1)
       }

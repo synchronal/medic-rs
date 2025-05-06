@@ -83,7 +83,7 @@ impl Runnable for OutdatedCheck {
             }
 
             progress.println(pb, "");
-            progress.println(pb, &format!("{}", summary));
+            progress.println(pb, &format!("{summary}"));
             progress.println(pb, "");
 
             let mut remedy: Option<Remedy> = None;
@@ -132,7 +132,7 @@ impl Runnable for OutdatedCheck {
       if let Ok(expanded) = std::fs::canonicalize(directory) {
         command.current_dir(&expanded);
       } else {
-        let msg: Box<dyn std::error::Error> = format!("directory {} does not exist", directory).into();
+        let msg: Box<dyn std::error::Error> = format!("directory {directory} does not exist").into();
         return Err(msg);
       }
     }

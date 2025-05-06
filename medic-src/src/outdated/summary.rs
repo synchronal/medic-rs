@@ -98,8 +98,7 @@ impl OutdatedDep {
         Some((key, value)) => inputs.insert(key, value),
         None => {
           return Err(ParseError(format!(
-            "Expected key=value\r\nFound: {}\r\nOutdated: {}",
-            value_pair, s
+            "Expected key=value\r\nFound: {value_pair}\r\nOutdated: {s}"
           )));
         }
       };
