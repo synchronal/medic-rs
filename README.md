@@ -101,7 +101,7 @@ Valid actions:
 
 `medic test` runs all tests. Useful not just for documenting *the* test
 suite used for your project, but for when multiple test suites are used
-(`ExUnut + bats`, etc)
+(`ExUnit + bats`, etc)
 
 Valid actions:
 
