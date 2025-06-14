@@ -1,0 +1,58 @@
+name: Build Pkg
+
+on:
+  push:
+    branches: [ "main", "ci-*" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency: pkg
+
+env:
+  FREEBSD_VERSION: "14.2"
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build_freebsd_14:
+    name: Build FreeBSD 14 package
+    runs-on: ubuntu-latest
+    env:
+      FREEBSD_VERSION: "14.2"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build in FreeBSD
+        id: build
+        uses: vmactions/freebsd-vm@v1
+        with:
+          release: ${{ env.FREEBSD_VERSION }}
+          envs: 'GITHUB_RUN_NUMBER GITHUB_SHA CARGO_TERM_COLOR'
+          usesh: true
+          prepare: |
+            mkdir -p /usr/local/etc/pkg/repos
+            echo 'FreeBSD: { url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+            pkg update -f
+
+            pkg install -y \
+              rust-nightly \
+
+          run: |
+            pwd
+
+            cargo build --workspace --release
+      - name: Create package
+        run: |
+          ssh freebsd << EOF
+            pwd
+            cd /home/runner/work/medic-rs/medic-rs
+
+            bin/freebsd/package
+            tar czf "medic-$GITHUB_RUN_NUMBER.txz" medic-*.pkg
+          EOF
+
+          scp -r freebsd:/home/runner/work/fugu-*.txz .
+      - name: Save pkg artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: medic-*.txz
+
