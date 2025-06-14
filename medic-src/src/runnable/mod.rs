@@ -29,7 +29,14 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
 
   match runnable.clone().run(progress) {
     Recoverable::Ok(ok) => AppResult::Ok(ok),
-    Recoverable::Err(err, None) => AppResult::Err(err),
+    Recoverable::Err(err, None) => {
+      if flags.interactive {
+        eprintln!();
+        ask(runnable, None, progress, AppResult::Err(err), flags)
+      } else {
+        AppResult::Err(err)
+      }
+    }
     Recoverable::Err(err, Some(remedy)) => {
       if flags.auto_apply_remedy {
         eprintln!(
@@ -43,7 +50,7 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
       }
       if flags.interactive {
         eprintln!();
-        ask(runnable, remedy, progress, AppResult::Err(err), flags)
+        ask(runnable, Some(remedy), progress, AppResult::Err(err), flags)
       } else {
         AppResult::Err(err)
       }
@@ -52,7 +59,7 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
     Recoverable::Optional(ok, Some(remedy)) => {
       if flags.interactive {
         eprintln!();
-        ask(runnable, remedy, progress, AppResult::Ok(ok), flags)
+        ask(runnable, Some(remedy), progress, AppResult::Ok(ok), flags)
       } else {
         AppResult::Ok(ok)
       }
@@ -62,19 +69,23 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
 
 fn ask(
   runnable: impl Runnable,
-  remedy: Remedy,
+  remedy: Option<Remedy>,
   progress: &mut retrogress::ProgressBar,
   default_exit: AppResult<()>,
   flags: &mut Flags,
 ) -> AppResult<()> {
-  match prompt("Apply this remedy") {
+  match prompt(&remedy, &default_exit) {
     PromptResult::Help => {
-      eprintln!(
-        r#"
-  - a - all  - apply this and all future remedies.
+      if remedy.is_some() {
+        eprintln!(
+          r#" - a - all  - apply this and all future remedies.
   - y - yes  - apply the remedy.
   - n - no   - do not run this remedy; if the check is optional continue, otherwise exit.
-  - s - skip - skip this step, continuing with future checks and steps.
+"#
+        );
+      }
+      eprintln!(
+        r#" - s - skip - skip this step, continuing with future checks and steps.
   - q - quit - abort medic with a non-zero exit code.
   - ? - help - print this message.
 "#
@@ -83,7 +94,7 @@ fn ask(
     }
     PromptResult::All => {
       flags.auto_apply_remedy = true;
-      run_remedy(remedy, progress)?;
+      run_remedy(remedy.unwrap(), progress)?;
       run(runnable, progress, flags)
     }
     PromptResult::No => default_exit,
@@ -91,17 +102,26 @@ fn ask(
     PromptResult::Skip => AppResult::Ok(()),
     PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags),
     PromptResult::Yes => {
-      run_remedy(remedy, progress)?;
+      run_remedy(remedy.unwrap(), progress)?;
       run(runnable, progress, flags)
     }
   }
 }
 
-fn prompt(msg: &str) -> PromptResult {
+fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
+  if let AppResult::Err(Some(err)) = result {
+    eprintln!("\n{} {:?}\n", style("Error").force_styling(true).red().bold(), err);
+  }
+  let msg = if remedy.is_some() {
+    "Apply this remedy"
+  } else {
+    "The last step encountered a problem"
+  };
+  let options = if remedy.is_some() { "[y,n,a,s,q,?]" } else { "[s,q,?]" };
   let prompt = format!(
     "{} {}{}",
     style(msg).force_styling(true).cyan(),
-    style("[y,n,a,s,q,?]").force_styling(true).cyan().bold(),
+    style(options).force_styling(true).cyan().bold(),
     style("?").cyan()
   );
   eprint!("— {prompt} ");

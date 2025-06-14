@@ -104,7 +104,10 @@ impl Runnable for StepConfig {
           }
         }
       }
-      Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
+      Err(err) => {
+        progress.failed(pb);
+        Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None)
+      }
     }
   }
 
