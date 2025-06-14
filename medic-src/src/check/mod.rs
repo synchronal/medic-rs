@@ -42,55 +42,57 @@ impl Runnable for Check {
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
 
-    if let Ok(mut command) = self.to_command() {
-      let output = if verbose {
-        command.stderr(Stdio::piped());
-        let mut child = command.spawn()?;
-        let stderr = child
-          .stderr
-          .take()
-          .ok_or("Error capturing stderr of check.")?;
-        let reader = BufReader::new(stderr);
+    match self.to_command() {
+      Ok(mut command) => {
+        let output = if verbose {
+          command.stderr(Stdio::piped());
+          let mut child = command.spawn()?;
+          let stderr = child
+            .stderr
+            .take()
+            .ok_or("Error capturing stderr of check.")?;
+          let reader = BufReader::new(stderr);
 
-        reader
-          .lines()
-          .map_while(Result::ok)
-          .for_each(|line| progress.println(pb, &line));
-        child.wait_with_output()
-      } else {
-        command.output()
-      };
+          reader
+            .lines()
+            .map_while(Result::ok)
+            .for_each(|line| progress.println(pb, &line));
+          child.wait_with_output()
+        } else {
+          command.output()
+        };
 
-      match output {
-        Ok(result) => {
-          if result.status.success() {
-            progress.succeeded(pb);
-            Recoverable::Ok(())
-          } else {
-            progress.failed(pb);
-            let mut output = self.output.parse(result, self.cd.clone());
-            output.verbose(verbose);
-            eprint!("{output}");
+        match output {
+          Ok(result) => {
+            if result.status.success() {
+              progress.succeeded(pb);
+              Recoverable::Ok(())
+            } else {
+              progress.failed(pb);
+              let mut output = self.output.parse(result, self.cd.clone());
+              output.verbose(verbose);
+              eprint!("{output}");
 
-            let mut remedy: Option<Remedy> = None;
+              let mut remedy: Option<Remedy> = None;
 
-            if let Some(remedy_str) = output.remedy {
-              remedy = Some(Remedy::new(remedy_str.clone(), None));
-              let mut clipboard = Clipboard::new()?;
-              clipboard.set_text(remedy_str)?;
+              if let Some(remedy_str) = output.remedy {
+                remedy = Some(Remedy::new(remedy_str.clone(), None));
+                let mut clipboard = Clipboard::new()?;
+                clipboard.set_text(remedy_str)?;
+              }
+              Recoverable::Err(None, remedy)
             }
-            Recoverable::Err(None, remedy)
+          }
+          Err(err) => {
+            progress.failed(pb);
+            Recoverable::Err(Some(err.into()), None)
           }
         }
-        Err(err) => {
-          progress.failed(pb);
-          Recoverable::Err(Some(err.into()), None)
-        }
       }
-    } else {
-      Recoverable::Err(Some("Unable to parse check".into()), None)
+      Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
     }
   }
+
   fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
     let mut check_cmd: String = "medic-check-".to_owned();
     check_cmd.push_str(&self.check);

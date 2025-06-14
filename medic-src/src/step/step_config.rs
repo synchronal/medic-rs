@@ -35,77 +35,79 @@ impl Runnable for StepConfig {
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
 
-    if let Ok(mut command) = self.to_command() {
-      let output = if verbose {
-        command
-          .stdin(Stdio::piped())
-          .stdout(Stdio::piped())
-          .stderr(Stdio::piped());
+    match self.to_command() {
+      Ok(mut command) => {
+        let output = if verbose {
+          command
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped());
 
-        let mut child = command.spawn()?;
-        let stderr = child
-          .stderr
-          .take()
-          .ok_or("Error capturing stderr of step.")?;
-        let stdout = child
-          .stdout
-          .take()
-          .ok_or("Error capturing stdout of step.")?;
+          let mut child = command.spawn()?;
+          let stderr = child
+            .stderr
+            .take()
+            .ok_or("Error capturing stderr of step.")?;
+          let stdout = child
+            .stdout
+            .take()
+            .ok_or("Error capturing stdout of step.")?;
 
-        let mut out_progress = progress.clone();
-        let mut err_progress = progress.clone();
+          let mut out_progress = progress.clone();
+          let mut err_progress = progress.clone();
 
-        let out_thr = thread::spawn(move || {
-          let reader = BufReader::new(stdout);
-          reader
-            .lines()
-            .map_while(Result::ok)
-            .for_each(|line| out_progress.println(pb, &line));
-        });
-        let err_thr = thread::spawn(move || {
-          let reader = BufReader::new(stderr);
-          reader
-            .lines()
-            .map_while(Result::ok)
-            .for_each(|line| err_progress.println(pb, &line));
-        });
+          let out_thr = thread::spawn(move || {
+            let reader = BufReader::new(stdout);
+            reader
+              .lines()
+              .map_while(Result::ok)
+              .for_each(|line| out_progress.println(pb, &line));
+          });
+          let err_thr = thread::spawn(move || {
+            let reader = BufReader::new(stderr);
+            reader
+              .lines()
+              .map_while(Result::ok)
+              .for_each(|line| err_progress.println(pb, &line));
+          });
 
-        let res = child.wait_with_output();
-        out_thr.join().unwrap();
-        err_thr.join().unwrap();
-        res
-      } else {
-        command.output()
-      };
-      match output {
-        Ok(result) => {
-          if result.status.success() {
-            progress.succeeded(pb);
-            Recoverable::Ok(())
-          } else {
-            progress.failed(pb);
-            println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-            if !verbose {
-              eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
-              eprint!("{}", std_to_string(result.stderr));
-            }
-            if allow_failure {
-              eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
+          let res = child.wait_with_output();
+          out_thr.join().unwrap();
+          err_thr.join().unwrap();
+          res
+        } else {
+          command.output()
+        };
+        match output {
+          Ok(result) => {
+            if result.status.success() {
+              progress.succeeded(pb);
               Recoverable::Ok(())
             } else {
-              Recoverable::Err(None, None)
+              progress.failed(pb);
+              println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
+              if !verbose {
+                eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
+                eprint!("{}", std_to_string(result.stderr));
+              }
+              if allow_failure {
+                eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
+                Recoverable::Ok(())
+              } else {
+                Recoverable::Err(None, None)
+              }
             }
           }
-        }
-        Err(err) => {
-          progress.failed(pb);
-          Recoverable::Err(Some(err.into()), None)
+          Err(err) => {
+            progress.failed(pb);
+            Recoverable::Err(Some(err.into()), None)
+          }
         }
       }
-    } else {
-      Recoverable::Err(Some("Failed to parse command".into()), None)
+      Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
     }
   }
+
   fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
     let mut step_cmd: String = "medic-step-".to_owned();
     step_cmd.push_str(&self.step);
