@@ -33,7 +33,7 @@ jobs:
             pkg update -f
 
             pkg install -y \
-              rust-nightly \
+              rust-nightly
 
           run: |
             pwd
