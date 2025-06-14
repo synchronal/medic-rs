@@ -46,3 +46,5 @@ cat > "${PKG_DIR}/+MANIFEST" <<EOF
   "www": "https://github.com/synchronal/medic-rs"
 }
 EOF
+
+pkg create -M "${PKG_DIR}/+MANIFEST" -r "${PKG_DIR}/stage" -p "${PKG_DIR}/pkg-list"
