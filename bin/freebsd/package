@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+VERSION=$(grep '^version' Cargo.toml | cut -d'"' -f2)
+
+SYSTEM=$(uname -o)
+ARCH=$(uname -p)
+KERNEL=$(uname -K | head -c2)
+
+PKG_DIR="tmp/${SYSTEM}:${KERNEL}:${ARCH}"
+
+cargo build --workspace -r
+
+medic=(
+  medic
+  medic-audit
+  medic-doctor
+  medic-init
+  medic-outdated
+  medic-run
+  medic-shipit
+  medic-test
+  medic-update
+)
+cmds=(${medic[@]})
+
+if [[ -d "${PKG_DIR}" ]]; then
+  rm -rf "${PKG_DIR}"
+fi
+mkdir -p "${PKG_DIR}/stage/usr/local/bin"
+
+for cmd in ${cmds[@]}; do
+  cp target/release/${cmd} "${PKG_DIR}/stage/usr/local/bin/"
+  echo "bin/${cmd}" >> "${PKG_DIR}/pkg-plist"
+done
+
+cat > "${PKG_DIR}/+MANIFEST" <<EOF
+{
+  "name": "medic",
+  "version": "${VERSION}",
+  "origin": "devel/medic",
+  "prefix": "/usr/local",
+  "desc": "Command line development workflow tool",
+  "comment": "Command line development workflow tool",
+  "maintainer": "support@reflective.dev",
+  "scripts": {},
+  "www": "https://github.com/synchronal/medic-rs"
+}
+EOF
