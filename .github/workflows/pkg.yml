@@ -50,7 +50,7 @@ jobs:
             tar czf "medic-$GITHUB_RUN_NUMBER.txz" medic-*.pkg
           EOF
 
-          scp -r freebsd:$GITHUB_WORKSPACE/medic-*.txz
+          scp -r freebsd:$GITHUB_WORKSPACE/medic-*.txz .
       - name: Save pkg artifact
         uses: actions/upload-artifact@v4
         with:
