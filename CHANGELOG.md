@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- *Slightly* better handling of errors in interactive mode.
 - Checks and steps print more complete error messages when executables
   are not found in PATH.
 
