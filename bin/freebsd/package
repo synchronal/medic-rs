@@ -8,6 +8,7 @@ KERNEL=$(uname -K | head -c2)
 
 PKG_DIR="tmp/${SYSTEM}:${KERNEL}:${ARCH}"
 
+echo "==== Building workspace"
 cargo build --workspace -r
 
 medic=(
@@ -23,16 +24,23 @@ medic=(
 )
 cmds=(${medic[@]})
 
+echo "==== Creating staging directory"
 if [[ -d "${PKG_DIR}" ]]; then
   rm -rf "${PKG_DIR}"
 fi
 mkdir -p "${PKG_DIR}/stage/usr/local/bin"
 
+echo "==== Copying medic binaries into staging directory"
 for cmd in ${cmds[@]}; do
   cp target/release/${cmd} "${PKG_DIR}/stage/usr/local/bin/"
+done
+
+echo "==== Creating pkg-plist"
+for cmd in ${cmds[@]}; do
   echo "bin/${cmd}" >> "${PKG_DIR}/pkg-plist"
 done
 
+echo "==== Creating +MANIFEST"
 cat > "${PKG_DIR}/+MANIFEST" <<EOF
 {
   "name": "medic",
@@ -47,4 +55,5 @@ cat > "${PKG_DIR}/+MANIFEST" <<EOF
 }
 EOF
 
+echo "==== Creating package"
 pkg create -M "${PKG_DIR}/+MANIFEST" -r "${PKG_DIR}/stage" -p "${PKG_DIR}/pkg-list"

@@ -33,6 +33,7 @@ jobs:
             pkg update -f
 
             pkg install -y \
+              bash \
               rust-nightly
 
           run: |
@@ -43,9 +44,9 @@ jobs:
         run: |
           ssh freebsd << EOF
             pwd
-            cd $GITHUB_WORKSPACE;
+            cd $GITHUB_WORKSPACE
 
-            bin/freebsd/package
+            ./bin/freebsd/package
             tar czf "medic-$GITHUB_RUN_NUMBER.txz" medic-*.pkg
           EOF
 
