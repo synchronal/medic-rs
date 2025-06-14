@@ -56,4 +56,4 @@ cat > "${PKG_DIR}/+MANIFEST" <<EOF
 EOF
 
 echo "==== Creating package"
-pkg create -M "${PKG_DIR}/+MANIFEST" -r "${PKG_DIR}/stage" -p "${PKG_DIR}/pkg-list"
+pkg create -M "${PKG_DIR}/+MANIFEST" -r "${PKG_DIR}/stage" -p "${PKG_DIR}/pkg-plist"
