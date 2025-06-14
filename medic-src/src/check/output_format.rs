@@ -24,10 +24,10 @@ impl OutputFormat {
             if check_output.stderr.is_none() && !stderr.is_empty() {
               check_output.stderr = Some(stderr.trim().to_owned());
             }
-            if cd.is_some() && check_output.remedy.is_some() {
-              let directory = cd.unwrap();
-              let remedy = check_output.remedy.unwrap();
-              check_output.remedy = Some(format!("(cd {directory} && {remedy})"))
+            if let Some(directory) = cd {
+              if let Some(remedy) = check_output.remedy {
+                check_output.remedy = Some(format!("(cd {directory} && {remedy})"))
+              }
             }
             check_output
           }
@@ -47,8 +47,7 @@ impl OutputFormat {
           None
         } else {
           let remedy = std_to_string(result.stdout).trim().to_owned();
-          if cd.is_some() {
-            let dir = cd.unwrap();
+          if let Some(dir) = cd {
             Some(format!("(cd {dir} && {remedy})"))
           } else {
             Some(remedy)
