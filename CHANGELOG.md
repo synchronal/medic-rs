@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Checks and steps print more complete error messages when executables
+  are not found in PATH.
+
 ## 2.10.0
 
 - Set `MEDIC_APPLY_REMEDIES` when running remedies from interactive
