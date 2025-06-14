@@ -43,13 +43,13 @@ jobs:
         run: |
           ssh freebsd << EOF
             pwd
-            cd /home/runner/work/medic-rs/medic-rs
+            cd $GITHUB_WORKSPACE;
 
             bin/freebsd/package
             tar czf "medic-$GITHUB_RUN_NUMBER.txz" medic-*.pkg
           EOF
 
-          scp -r freebsd:/home/runner/work/fugu-*.txz .
+          scp -r freebsd:$GITHUB_WORKSPACE/medic-*.txz
       - name: Save pkg artifact
         uses: actions/upload-artifact@v4
         with:
