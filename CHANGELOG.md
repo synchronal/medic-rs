@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix spacing in interactive help.
+
 ## 2.11.0
 
 - *Slightly* better handling of errors in interactive mode.

@@ -78,14 +78,14 @@ fn ask(
     PromptResult::Help => {
       if remedy.is_some() {
         eprintln!(
-          r#" - a - all  - apply this and all future remedies.
+          r#"  - a - all  - apply this and all future remedies.
   - y - yes  - apply the remedy.
   - n - no   - do not run this remedy; if the check is optional continue, otherwise exit.
 "#
         );
       }
       eprintln!(
-        r#" - s - skip - skip this step, continuing with future checks and steps.
+        r#"  - s - skip - skip this step, continuing with future checks and steps.
   - q - quit - abort medic with a non-zero exit code.
   - ? - help - print this message.
 "#
