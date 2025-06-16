@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.12.0
+
 - Reduce noise when failures do not produce output.
 - Interactive mode allows steps to be rerun.
 - Tests without remedies are not recoverable in interactive mode.
