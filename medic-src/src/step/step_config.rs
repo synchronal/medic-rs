@@ -86,9 +86,10 @@ impl Runnable for StepConfig {
             } else {
               progress.failed(pb);
               println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
-              if !verbose {
+              let err = std_to_string(result.stderr);
+              if !verbose && err.trim() != "" {
                 eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
-                eprint!("{}", std_to_string(result.stderr));
+                eprint!("{err}");
               }
               if allow_failure {
                 eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");

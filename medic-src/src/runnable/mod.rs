@@ -112,7 +112,9 @@ fn ask(
 
 fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
   if let AppResult::Err(Some(err)) = result {
-    eprintln!("\n{} {:?}\n", style("Error").force_styling(true).red().bold(), err);
+    if err.to_string().trim() != "" {
+      eprintln!("\n{} {:?}\n", style("Error").force_styling(true).red().bold(), err);
+    }
   }
   let msg = if remedy.is_some() {
     "Apply this remedy"

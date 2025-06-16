@@ -118,9 +118,10 @@ impl Runnable for ShellConfig {
               Recoverable::Ok(())
             } else {
               progress.failed(pb);
-              if !verbose {
+              let err = std_to_string(result.stderr);
+              if !verbose && err.trim() != "" {
                 eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
-                eprint!("{}", std_to_string(result.stderr));
+                eprint!("{err}");
               }
               if allow_failure {
                 eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
