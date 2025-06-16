@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Interactive mode allows steps to be rerun.
 - Tests without remedies are not recoverable in interactive mode.
 - Fix spacing in interactive help.
 

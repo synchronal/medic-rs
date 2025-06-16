@@ -85,9 +85,10 @@ fn ask(
         );
       }
       eprintln!(
-        r#"  - s - skip - skip this step, continuing with future checks and steps.
-  - q - quit - abort medic with a non-zero exit code.
-  - ? - help - print this message.
+        r#"  - r - rerun - re-run the step.
+  - s - skip  - skip this step, continuing with future checks and steps.
+  - q - quit  - abort medic with a non-zero exit code.
+  - ? - help  - print this message.
 "#
       );
       ask(runnable, remedy, progress, default_exit, flags)
@@ -99,6 +100,7 @@ fn ask(
     }
     PromptResult::No => default_exit,
     PromptResult::Quit => AppResult::Err(Some("aborting".into())),
+    PromptResult::Rerun => run(runnable, progress, flags),
     PromptResult::Skip => AppResult::Ok(()),
     PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags),
     PromptResult::Yes => {
@@ -117,7 +119,11 @@ fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
   } else {
     "The last step encountered a problem"
   };
-  let options = if remedy.is_some() { "[y,n,a,s,q,?]" } else { "[s,q,?]" };
+  let options = if remedy.is_some() {
+    "[y,n,a,r,s,q,?]"
+  } else {
+    "[r,s,q,?]"
+  };
   let prompt = format!(
     "{} {}{}",
     style(msg).force_styling(true).cyan(),
@@ -186,6 +192,7 @@ enum PromptResult {
   Help,
   No,
   Quit,
+  Rerun,
   Skip,
   Unknown,
   Yes,
@@ -198,7 +205,8 @@ impl From<String> for PromptResult {
       "a" | "A" => Self::All,
       "n" | "N" => Self::No,
       "q" | "Q" => Self::Quit,
-      "s" | "S" => Self::Skip,
+      "r" | "R" => Self::Rerun,
+      "s" => Self::Skip,
       "y" | "Y" => Self::Yes,
       "?" => Self::Help,
       _ => Self::Unknown,
