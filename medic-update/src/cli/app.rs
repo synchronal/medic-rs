@@ -28,6 +28,7 @@ impl From<CliArgs> for Flags {
     Self {
       auto_apply_remedy: args.apply_remedies,
       interactive: args.interactive,
+      ..Self::default()
     }
   }
 }

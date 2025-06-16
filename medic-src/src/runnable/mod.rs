@@ -30,7 +30,7 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
   match runnable.clone().run(progress) {
     Recoverable::Ok(ok) => AppResult::Ok(ok),
     Recoverable::Err(err, None) => {
-      if flags.interactive {
+      if flags.interactive && flags.recoverable {
         eprintln!();
         ask(runnable, None, progress, AppResult::Err(err), flags)
       } else {

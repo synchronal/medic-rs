@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Tests without remedies are not recoverable in interactive mode.
 - Fix spacing in interactive help.
 
 ## 2.11.0

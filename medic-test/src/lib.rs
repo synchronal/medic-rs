@@ -7,9 +7,12 @@ use medic_src::config::Manifest;
 use medic_src::runnable::run;
 use medic_src::AppResult;
 
-pub fn run_steps(manifest: Manifest, progress: &mut retrogress::ProgressBar, mut flags: Flags) -> AppResult<()> {
+pub fn run_steps(manifest: Manifest, progress: &mut retrogress::ProgressBar, flags: Flags) -> AppResult<()> {
   match manifest.test {
     Some(test) => {
+      let mut flags = flags.clone();
+      flags.recoverable = false;
+
       for check in test.checks {
         run(check, progress, &mut flags)?;
       }
