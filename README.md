@@ -2,31 +2,52 @@
 
 > Workflow management with less hassle.
 
-The medic workflow is intended to quickly bootstrap development on a
-project. Steps and checks verify that all dependencies are satisfied,
-with suggested remedies. Quickly applying those remedies can get your
-workstation up and running... or you may meet the dependency requirement
-yourself.
+Medic is a workflow management tool whose intent is to make you faster.
+This is accomplished through simple checks and remedies.
+
+Is your system set up to work on a project? Here are some checks. If a
+check fail, here is a suggested remedy you can run to solve the problem.
+Want to solve the problem another way? No problem, just make sure the
+check verifies the outcome, rather than the method.
+
+- Run a check…
+- If the check passes, run the next check…
+- If the check fails, suggest a remedy…
+
+What about when other people make changes to the project?
+
+- Run some steps to get the updates…
+- Run some steps to automatically apply changes you know might happen;
+  - Pull down new dependencies…
+  - Run database migrations…
+- Run all the project setup checks, in case new ones were added…
+
+Are your changes ready to ship? Sure, you have CI to catch problems
+before they're deployed, but how about you run some tests and audits
+locally?
+
+- Run one or more linters…
+- Pull down any updates…
+- Run all the test suites…
+- Push updates upstream…
 
 Checks should be written (where possible) such that they only care about
 the dependency being met, rather than how—remedies might be applied
-as-is on a shared workstation, while an individual might choose
-alternate solutions on their personal hardware. New versions of
-operating systems and/or dependency management tools may make usual
-remedies temporarily unworkable, requiring manual workarounds for a day
-or a week until further upstream updates fix the problem... that's ok!
-Over time you can make your checks more resilient to alternatives.
+as-is on a shared workstation, whereas an individual may choose
+alternate solutions for personal hardware. New versions of operating
+systems and/or dependency management tools may make usual remedies
+temporarily unworkable, or require manual workarounds for a day or a
+week until upstream updates fix the problem... that's ok! Over time you
+can make your checks more resilient to alternatives.
 
-Medic should above all else assist its adopters, and only where
-necessary or on some teams should it proscribe a specific remedy.
+- Check that PostgreSQL is running, rather than how it was gotten
+  running. The remedy can suggest a tried-and-true path, but some people
+  really want to run Postgres their own way.
 
-- `doctor` - is everything set up on my project?
-- `test` - run all tests, for all test suites.
-- `audit` - do all my lints and security checks pass?
-- `outdated` - how do I update dependencies across multiple toolchains?
-- `update` - pull changes and apply steps such as db migrations or deps
-  updates.
-- `shipit` - run everything before pushing upstream.
+Medic should above all else aim to assist its users. On some teams that
+means that it should proscribe specific setup (for instance to meet
+compliance requirements). On other teams, people should be free to solve
+the checks their own way.
 
 ## Installation
 
