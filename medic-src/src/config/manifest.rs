@@ -35,6 +35,8 @@ impl Manifest {
     let path_expansion = envsubst::substitute(path.to_string_lossy(), &context)?;
     let expanded_path = std::path::Path::new(&path_expansion);
 
+    std::env::set_var("MEDIC_CONFIG", path);
+
     if expanded_path.exists() {
       match std::fs::read_to_string(expanded_path) {
         Ok(manifest_contents) => match toml::from_str(&manifest_contents) {

@@ -17,7 +17,20 @@ checks = [
   { check = "thing" }
 ]
 
+[audit]
+checks = [
+  { name = "always fails", shell = "false" },
+]
+
+[update]
+steps =  []
+
 [test]
 checks = [
   { name = "shell expansion", shell = "ls *", verbose = true },
+]
+
+[shipit]
+steps =  [
+  {audit = []},
 ]

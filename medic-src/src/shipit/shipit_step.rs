@@ -1,3 +1,4 @@
+use crate::extra;
 use crate::noop_config::NoopConfig;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
@@ -181,19 +182,19 @@ fn run_update(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
 }
 
 fn audit_cmd() -> Result<Command, Box<dyn std::error::Error>> {
-  let mut command = Command::new("medic");
+  let mut command = extra::command::new("medic", &None);
   command.arg("audit");
   Ok(command)
 }
 
 fn test_cmd() -> Result<Command, Box<dyn std::error::Error>> {
-  let mut command = Command::new("medic");
+  let mut command = extra::command::new("medic", &None);
   command.arg("test");
   Ok(command)
 }
 
 fn update_cmd() -> Result<Command, Box<dyn std::error::Error>> {
-  let mut command = Command::new("medic");
+  let mut command = extra::command::new("medic", &None);
   command.arg("update");
   Ok(command)
 }
