@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.14.0
+
 - Cascade config file to nested sub-commands.
 - Capture interactive quit from nested sub-commands.
 
