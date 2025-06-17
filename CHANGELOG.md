@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Cascade config file to nested sub-commands.
+- Capture interactive quit from nested sub-commands.
+
 ## 2.13.0
 
 - Add `platform` configuration option to steps, checks, and shell
