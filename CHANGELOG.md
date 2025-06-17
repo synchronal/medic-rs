@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.13.0
+
 - Add `platform` configuration option to steps, checks, and shell
   actions. When present, limits the actions to the given platforms.
 
