@@ -4,6 +4,7 @@ use std::ops::{ControlFlow, FromResidual, Try};
 pub enum AppResult<T> {
   Ok(T),
   Err(Option<Box<dyn std::error::Error>>),
+  UserQuit,
 }
 
 impl From<Result<std::process::Output, std::io::Error>> for AppResult<()> {
@@ -35,11 +36,14 @@ impl<T> std::process::Termination for AppResult<T> {
         }
         std::process::ExitCode::from(1)
       }
+      AppResult::UserQuit => std::process::ExitCode::from(crate::USER_QUIT as u8),
     }
   }
 }
 
-pub struct ResultCodeResidual(Option<Box<dyn std::error::Error>>);
+// Retain the original error, as well as whether medic should completely
+// quit. When false, recoverables may recover.
+pub struct ResultCodeResidual(Option<Box<dyn std::error::Error>>, bool);
 
 impl<T> Try for AppResult<T> {
   type Output = T;
@@ -47,7 +51,8 @@ impl<T> Try for AppResult<T> {
 
   fn branch(self) -> ControlFlow<Self::Residual, T> {
     match self {
-      AppResult::Err(err) => ControlFlow::Break(ResultCodeResidual(err)),
+      AppResult::Err(err) => ControlFlow::Break(ResultCodeResidual(err, false)),
+      AppResult::UserQuit => ControlFlow::Break(ResultCodeResidual(None, true)),
       AppResult::Ok(res) => ControlFlow::Continue(res),
     }
   }
@@ -58,7 +63,11 @@ impl<T> Try for AppResult<T> {
 
 impl<T> FromResidual for AppResult<T> {
   fn from_residual(r: ResultCodeResidual) -> Self {
-    Self::Err(r.0)
+    if r.1 {
+      Self::UserQuit
+    } else {
+      Self::Err(r.0)
+    }
   }
 }
 

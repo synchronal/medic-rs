@@ -120,7 +120,7 @@ fn ask(
       run(runnable, progress, flags, context)
     }
     PromptResult::No => default_exit,
-    PromptResult::Quit => AppResult::Err(Some("aborting".into())),
+    PromptResult::Quit => AppResult::UserQuit,
     PromptResult::Rerun => run(runnable, progress, flags, context),
     PromptResult::Skip => AppResult::Ok(()),
     PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags, context),
