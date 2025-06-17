@@ -25,6 +25,7 @@ fn deserialize_arg_string() {
       command: Some("subcommand".to_string()),
       env: BTreeMap::default(),
       output: OutputFormat::Json,
+      platform: None,
       verbose: false
     }
   )
@@ -50,6 +51,7 @@ fn deserialize_arg_list() {
       command: Some("subcommand".to_string()),
       env: BTreeMap::default(),
       output: OutputFormat::Json,
+      platform: None,
       verbose: false
     }
   )
@@ -72,6 +74,7 @@ fn deserialize_cd_string() {
       command: None,
       env: BTreeMap::default(),
       output: OutputFormat::Json,
+      platform: None,
       verbose: false
     }
   )
@@ -97,6 +100,7 @@ fn deserialize_env() {
         ("SECOND_VAR".to_string(), "second".to_string())
       ]),
       output: OutputFormat::Json,
+      platform: None,
       verbose: false
     }
   )
@@ -111,6 +115,7 @@ fn to_command() {
     command: None,
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -138,6 +143,7 @@ fn to_command_cd_relative() {
     command: None,
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -164,6 +170,7 @@ fn to_command_subcommand() {
     command: Some("sub-command".to_string()),
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -186,6 +193,7 @@ fn to_command_env() {
       ("OTHER".to_string(), "other".to_string()),
     ]),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -209,6 +217,7 @@ fn to_command_stdio() {
     command: None,
     env: BTreeMap::default(),
     output: OutputFormat::Stdio,
+    platform: None,
     verbose: false,
   };
 
@@ -232,6 +241,7 @@ fn to_command_args() {
     command: None,
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -254,6 +264,7 @@ fn to_command_args_list() {
     command: None,
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -278,6 +289,7 @@ fn to_command_missing_command() {
     command: None,
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -300,6 +312,7 @@ fn to_string_single_arg() {
     command: None,
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -321,6 +334,7 @@ fn to_string_subcommand_single_arg() {
     command: Some("subcommand".to_string()),
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -342,6 +356,7 @@ fn to_string_subcommand_multiple_args() {
     command: Some("subcommand".to_string()),
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -363,6 +378,7 @@ fn to_string_subcommand_multiple_arg_values() {
     command: Some("subcommand".to_string()),
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -387,6 +403,7 @@ fn to_string_subcommand_multiple_arg_values_and_args() {
     command: Some("subcommand".to_string()),
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 
@@ -405,6 +422,7 @@ fn to_string_cd() {
     command: None,
     env: BTreeMap::default(),
     output: OutputFormat::Json,
+    platform: None,
     verbose: false,
   };
 

@@ -47,6 +47,17 @@ impl Runnable for ShipitStep {
     }
   }
 
+  fn platform(&self) -> &Option<Vec<String>> {
+    match self {
+      ShipitStep::Check(config) => config.platform(),
+      ShipitStep::Shell(config) => config.platform(),
+      ShipitStep::Step(config) => config.platform(),
+      ShipitStep::Audit(_) => &None,
+      ShipitStep::Test(_) => &None,
+      ShipitStep::Update(_) => &None,
+    }
+  }
+
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     match self {
       ShipitStep::Check(config) => config.run(progress),

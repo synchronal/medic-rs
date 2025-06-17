@@ -1,5 +1,6 @@
 [doctor]
 checks = [
+  { name = "always fails", shell = "false", platform = ["None"] },
   { check = "asdf", command = "plugin-installed", args = { plugin = "rust" } },
   { check = "asdf", command = "package-installed", args = { plugin = "rust" } },
   { check = "printenv", command = "stdio", verbose = true, output = "stdio" },

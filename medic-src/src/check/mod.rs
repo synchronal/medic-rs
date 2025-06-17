@@ -33,11 +33,16 @@ pub struct Check {
   pub env: BTreeMap<String, String>,
   #[serde(default)]
   pub output: OutputFormat,
+  pub platform: Option<Vec<String>>,
   #[serde(default)]
   pub verbose: bool,
 }
 
 impl Runnable for Check {
+  fn platform(&self) -> &Option<Vec<String>> {
+    &self.platform
+  }
+
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());

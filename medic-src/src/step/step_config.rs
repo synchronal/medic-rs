@@ -24,12 +24,17 @@ pub struct StepConfig {
   #[serde(default)]
   pub env: BTreeMap<String, String>,
   pub name: Option<String>,
+  pub platform: Option<Vec<String>>,
   pub step: String,
   #[serde(default)]
   pub verbose: bool,
 }
 
 impl Runnable for StepConfig {
+  fn platform(&self) -> &Option<Vec<String>> {
+    &self.platform
+  }
+
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let allow_failure = self.allow_failure();
     let verbose = self.verbose();

@@ -25,6 +25,14 @@ impl Runnable for AuditStep {
     }
   }
 
+  fn platform(&self) -> &Option<Vec<String>> {
+    match self {
+      AuditStep::Check(config) => config.platform(),
+      AuditStep::Shell(config) => config.platform(),
+      AuditStep::Step(config) => config.platform(),
+    }
+  }
+
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     match self {
       AuditStep::Check(config) => config.run(progress),

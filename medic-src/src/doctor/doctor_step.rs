@@ -25,6 +25,14 @@ impl Runnable for DoctorStep {
     }
   }
 
+  fn platform(&self) -> &Option<Vec<String>> {
+    match self {
+      DoctorStep::Check(config) => config.platform(),
+      DoctorStep::Shell(config) => config.platform(),
+      DoctorStep::Step(config) => config.platform(),
+    }
+  }
+
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     match self {
       DoctorStep::Check(config) => config.run(progress),

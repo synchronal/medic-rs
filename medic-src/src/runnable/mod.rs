@@ -1,4 +1,5 @@
 use crate::cli::Flags;
+use crate::context::Context;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::AppResult;
 use console::{style, Term};
@@ -12,6 +13,10 @@ pub trait Runnable: std::fmt::Display + Clone {
     false
   }
 
+  fn platform(&self) -> &Option<Vec<String>> {
+    &None
+  }
+
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()>;
   fn to_command(&self) -> Result<std::process::Command, Box<dyn std::error::Error>>;
   fn verbose(&self) -> bool {
@@ -19,7 +24,22 @@ pub trait Runnable: std::fmt::Display + Clone {
   }
 }
 
-pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flags: &mut Flags) -> AppResult<()> {
+pub fn run(
+  runnable: impl Runnable,
+  progress: &mut retrogress::ProgressBar,
+  flags: &mut Flags,
+  context: &Context,
+) -> AppResult<()> {
+  if !context.matches_platform(runnable.platform()) {
+    let pb = progress.append(&format!(
+      "{} {}",
+      &runnable.to_string(),
+      style("(skipped)").force_styling(true).yellow()
+    ));
+    progress.succeeded(pb);
+    return AppResult::Ok(());
+  }
+
   if flags.auto_apply_remedy {
     std::env::set_var("MEDIC_APPLY_REMEDIES", "true");
   }
@@ -32,7 +52,7 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
     Recoverable::Err(err, None) => {
       if flags.interactive && flags.recoverable {
         eprintln!();
-        ask(runnable, None, progress, AppResult::Err(err), flags)
+        ask(runnable, None, progress, AppResult::Err(err), flags, context)
       } else {
         AppResult::Err(err)
       }
@@ -46,11 +66,11 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
             .yellow()
         );
         run_remedy(remedy, progress)?;
-        return run(runnable, progress, flags);
+        return run(runnable, progress, flags, context);
       }
       if flags.interactive {
         eprintln!();
-        ask(runnable, Some(remedy), progress, AppResult::Err(err), flags)
+        ask(runnable, Some(remedy), progress, AppResult::Err(err), flags, context)
       } else {
         AppResult::Err(err)
       }
@@ -59,7 +79,7 @@ pub fn run(runnable: impl Runnable, progress: &mut retrogress::ProgressBar, flag
     Recoverable::Optional(ok, Some(remedy)) => {
       if flags.interactive {
         eprintln!();
-        ask(runnable, Some(remedy), progress, AppResult::Ok(ok), flags)
+        ask(runnable, Some(remedy), progress, AppResult::Ok(ok), flags, context)
       } else {
         AppResult::Ok(ok)
       }
@@ -73,6 +93,7 @@ fn ask(
   progress: &mut retrogress::ProgressBar,
   default_exit: AppResult<()>,
   flags: &mut Flags,
+  context: &Context,
 ) -> AppResult<()> {
   match prompt(&remedy, &default_exit) {
     PromptResult::Help => {
@@ -91,21 +112,21 @@ fn ask(
   - ? - help  - print this message.
 "#
       );
-      ask(runnable, remedy, progress, default_exit, flags)
+      ask(runnable, remedy, progress, default_exit, flags, context)
     }
     PromptResult::All => {
       flags.auto_apply_remedy = true;
       run_remedy(remedy.unwrap(), progress)?;
-      run(runnable, progress, flags)
+      run(runnable, progress, flags, context)
     }
     PromptResult::No => default_exit,
     PromptResult::Quit => AppResult::Err(Some("aborting".into())),
-    PromptResult::Rerun => run(runnable, progress, flags),
+    PromptResult::Rerun => run(runnable, progress, flags, context),
     PromptResult::Skip => AppResult::Ok(()),
-    PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags),
+    PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags, context),
     PromptResult::Yes => {
       run_remedy(remedy.unwrap(), progress)?;
-      run(runnable, progress, flags)
+      run(runnable, progress, flags, context)
     }
   }
 }

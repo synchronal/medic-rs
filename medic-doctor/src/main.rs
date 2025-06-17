@@ -3,6 +3,7 @@
 use medic_doctor::cli::CliArgs;
 use medic_doctor::run_checks;
 use medic_src::config::Manifest;
+use medic_src::context::Context;
 use medic_src::AppResult;
 
 use clap::{CommandFactory, Parser};
@@ -12,6 +13,7 @@ use std::io::stdout;
 use std::panic;
 
 fn main() -> AppResult<()> {
+  let context = Context::new();
   let cli_args = CliArgs::parse();
 
   if let Some(completion) = cli_args.completion {
@@ -33,7 +35,7 @@ fn main() -> AppResult<()> {
 
   let result = panic::catch_unwind(|| {
     let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
-    run_checks(manifest, &mut progress, cli_args.into())
+    run_checks(manifest, &mut progress, cli_args.into(), &context)
   });
 
   reset_term();

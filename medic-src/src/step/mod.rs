@@ -40,6 +40,15 @@ impl Runnable for Step {
     }
   }
 
+  fn platform(&self) -> &Option<Vec<String>> {
+    match self {
+      Step::Check(config) => config.platform(),
+      Step::Doctor(_) => &None,
+      Step::Shell(config) => config.platform(),
+      Step::Step(config) => config.platform(),
+    }
+  }
+
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     match self {
       Step::Check(config) => config.run(progress),

@@ -36,6 +36,7 @@ fn deserialize_audit() {
           AuditStep::Shell(ShellConfig {
             allow_failure: false,
             cd: None,
+            platform: None,
             env: BTreeMap::default(),
             inline: false,
             name: "Shell check".to_string(),
@@ -51,6 +52,7 @@ fn deserialize_audit() {
             command: Some("format-check".to_string()),
             env: BTreeMap::default(),
             output: OutputFormat::Json,
+            platform: None,
           }),
           AuditStep::Step(StepConfig {
             args: None,
@@ -58,6 +60,7 @@ fn deserialize_audit() {
             command: Some("clippy".to_string()),
             env: BTreeMap::default(),
             name: None,
+            platform: None,
             step: "rust".to_string(),
             verbose: false,
           }),
@@ -92,6 +95,7 @@ fn deserialize_doctor() {
         checks: vec![
           DoctorStep::Shell(ShellConfig {
             allow_failure: false,
+            platform: None,
             cd: None,
             env: BTreeMap::default(),
             inline: false,
@@ -108,6 +112,7 @@ fn deserialize_doctor() {
             command: Some("format-check".to_string()),
             env: BTreeMap::default(),
             output: OutputFormat::Json,
+            platform: None,
           }),
           DoctorStep::Step(StepConfig {
             args: None,
@@ -115,6 +120,7 @@ fn deserialize_doctor() {
             command: Some("clippy".to_string()),
             env: BTreeMap::default(),
             name: None,
+            platform: None,
             step: "rust".to_string(),
             verbose: false,
           }),
@@ -151,6 +157,7 @@ fn deserialize_outdated() {
             cd: None,
             check: "rust".to_string(),
             name: None,
+            platform: None,
             remedy: None,
           },
           OutdatedCheck {
@@ -158,6 +165,7 @@ fn deserialize_outdated() {
             cd: Some("assets".to_string()),
             check: "node".to_string(),
             name: None,
+            platform: None,
             remedy: Some("npm update".to_string()),
           },
         ]
@@ -202,10 +210,12 @@ fn deserialize_shipit() {
             command: None,
             env: BTreeMap::default(),
             output: OutputFormat::Json,
+            platform: None,
             verbose: false
           }),
           ShipitStep::Shell(ShellConfig {
             allow_failure: false,
+            platform: None,
             cd: None,
             env: BTreeMap::default(),
             inline: false,
@@ -220,6 +230,7 @@ fn deserialize_shipit() {
             command: None,
             env: BTreeMap::default(),
             name: None,
+            platform: None,
             step: "rust".to_string(),
             verbose: false
           })
@@ -261,10 +272,12 @@ fn deserialize_test() {
             command: None,
             env: BTreeMap::default(),
             output: OutputFormat::Json,
+            platform: None,
             verbose: false
           }),
           Step::Shell(ShellConfig {
             allow_failure: false,
+            platform: None,
             cd: None,
             env: BTreeMap::default(),
             inline: false,
@@ -279,6 +292,7 @@ fn deserialize_test() {
             command: None,
             env: BTreeMap::default(),
             name: None,
+            platform: None,
             step: "rust".to_string(),
             verbose: false
           })
@@ -320,10 +334,12 @@ fn deserialize_update() {
             command: None,
             env: BTreeMap::default(),
             output: OutputFormat::Json,
+            platform: None,
             verbose: false
           }),
           Step::Shell(ShellConfig {
             allow_failure: false,
+            platform: None,
             cd: None,
             env: BTreeMap::default(),
             inline: false,
@@ -338,6 +354,7 @@ fn deserialize_update() {
             command: None,
             env: BTreeMap::default(),
             name: None,
+            platform: None,
             step: "rust".to_string(),
             verbose: false
           })

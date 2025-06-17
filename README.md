@@ -333,6 +333,9 @@ and are available in the PATH.
 - `env` - environment variables to set when running checks.
 - `output` - the output format used by the check, either
   [`json`](#json-default) or [`stdio`](#stdio)
+- `platform` - an optional list of platforms on which this check should
+  be run, for example `Darwin`, or `FreeBSD`. When missing or empty, the
+  check will be run on all platforms.
 - `verbose` - when `true`, STDERR of the check is redirected to STDERR
   of the current medic process.
 
@@ -346,6 +349,7 @@ and are available in the PATH.
   args = { with = "thing", and = ["first", "second"]},
   cd = "./subdir",
   env = { VAR = "value" },
+  platform = ["Darwin"],
   verbose = true
 }
 ```
@@ -384,15 +388,21 @@ and are available in the PATH. Steps must follow:
 
 - Informational output may be written to STDERR or STDOUT.
 - If the step fails, the process must exit with a non-zero exit status.
+
+Options:
+
 - `command` - an optional subcommand to pass as the first argument to
   the check.
 - `args` - a map of flag to value(s). When running the command, the flag
   name will be translated to `--flag <value>`. When the value is
   specified as a list, the flag will be output once per value.
+- `allow_failure` - continue medic even if the command fails.
 - `cd` - change directory before running checks.
 - `env` - environment variables to set when running steps.
+- `platform` - an optional list of platforms on which this check should
+  be run, for example `Darwin`, or `FreeBSD`. When missing or empty, the
+  check will be run on all platforms.
 - `verbose` - print all stdout/stderr to the terminal as it happens.
-- `allow_failure` - continue medic even if the command fails.
 
 ``` toml
 # runs: (cd ./subdir \
@@ -404,6 +414,7 @@ and are available in the PATH. Steps must follow:
   args = { with = "thing", and = ["first", "second"]},
   cd = "./subdir",
   env = { VAR = "value" },
+  platform = ["Darwin"],
   verbose = true
 }
 ```
@@ -418,6 +429,7 @@ commands may be better suited to be written into shell scripts.
 
 - `name` - the description to be shown to the user when run.
 - `shell` - the command to run
+- `allow_failure` - allow medic to continue even when the process fails.
 - `cd` - change directory before running commands.
 - `env` - environment variables to set when running commands.
 - `inline` - when `true`, disables running progress bars and prints all
@@ -425,11 +437,13 @@ commands may be better suited to be written into shell scripts.
   `verbose`, and is useful when running commands that handle their own
   progress indicators, for example when using `medic run` from shell
   scripts.
-- `verbose`- when `true`, STDOUT and STDERR of the action are printed as
-  to the console alongside running progress.
-- `allow_failure` - allow medic to continue even when the process fails.
+- `platform` - an optional list of platforms on which this check should
+  be run, for example `Darwin`, or `FreeBSD`. When missing or empty, the
+  check will be run on all platforms.
 - `remedy` - an optional command to print out on failure to suggest as a
   remediation.
+- `verbose`- when `true`, STDOUT and STDERR of the action are printed as
+  to the console alongside running progress.
 
 ``` toml
 # runs: (cd ./subdir \
@@ -441,6 +455,7 @@ commands may be better suited to be written into shell scripts.
   remedy = "mkdir -p ./some/dir",
   cd = "./subdir",
   env = { VAR = "value" },
+  platform = ["Darwin"],
   verbose = true
 }
 ```

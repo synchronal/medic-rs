@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add `platform` configuration option to steps, checks, and shell
+  actions. When present, limits the actions to the given platforms.
+
 ## 2.12.0
 
 - Reduce noise when failures do not produce output.

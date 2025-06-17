@@ -22,10 +22,15 @@ pub struct OutdatedCheck {
   pub cd: Option<String>,
   pub check: String,
   pub name: Option<String>,
+  pub platform: Option<Vec<String>>,
   pub remedy: Option<String>,
 }
 
 impl Runnable for OutdatedCheck {
+  fn platform(&self) -> &Option<Vec<String>> {
+    &self.platform
+  }
+
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
     let command_name = self.to_string();
     let pb = progress.append(&command_name);

@@ -6,6 +6,7 @@ pub mod audit;
 pub mod check;
 pub mod cli;
 pub mod config;
+pub mod context;
 pub mod doctor;
 pub mod extra;
 pub mod noop_config;

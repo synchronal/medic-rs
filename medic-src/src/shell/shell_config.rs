@@ -25,6 +25,7 @@ pub struct ShellConfig {
   #[serde(default)]
   pub inline: bool,
   pub name: String,
+  pub platform: Option<Vec<String>>,
   pub remedy: Option<String>,
   pub shell: String,
   #[serde(default)]
@@ -37,6 +38,7 @@ impl ShellConfig {
       cd,
       env: BTreeMap::default(),
       name,
+      platform: None,
       shell,
       remedy,
       verbose,
@@ -49,6 +51,10 @@ impl ShellConfig {
 impl Runnable for ShellConfig {
   fn allow_failure(&self) -> bool {
     self.allow_failure
+  }
+
+  fn platform(&self) -> &Option<Vec<String>> {
+    &self.platform
   }
 
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {

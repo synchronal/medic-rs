@@ -20,6 +20,7 @@ fn deserialize_string() {
       cd: None,
       check: "outdated-name".to_string(),
       name: None,
+      platform: None,
       remedy: None,
     }
   )
@@ -43,6 +44,7 @@ fn deserialize_args_string() {
       cd: None,
       check: "outdated-name".to_string(),
       name: None,
+      platform: None,
       remedy: None,
     }
   )
@@ -66,6 +68,7 @@ fn deserialize_args_value_list_string() {
       cd: None,
       check: "outdated-name".to_string(),
       name: None,
+      platform: None,
       remedy: None,
     }
   )
@@ -86,6 +89,7 @@ fn deserialize_cd_string() {
       cd: Some("./subdirectory".to_string()),
       check: "outdated-name".to_string(),
       name: None,
+      platform: None,
       remedy: None,
     }
   )
@@ -106,6 +110,7 @@ fn deserialize_name_string() {
       cd: None,
       check: "outdated-name".to_string(),
       name: Some("Check for outdated things".to_string()),
+      platform: None,
       remedy: None,
     }
   )
@@ -118,6 +123,7 @@ fn to_command() {
     cd: None,
     check: "thing".to_string(),
     name: None,
+    platform: None,
     remedy: None,
   };
 
@@ -133,6 +139,7 @@ fn to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
     cd: Some("../fixtures/bin".to_string()),
     check: "thing".to_string(),
     name: None,
+    platform: None,
     remedy: None,
   };
 
@@ -159,6 +166,7 @@ fn to_command_cd_absolute() -> Result<(), Box<dyn std::error::Error>> {
     cd: Some("/tmp".to_string()),
     check: "thing".to_string(),
     name: None,
+    platform: None,
     remedy: None,
   };
 
@@ -180,6 +188,7 @@ fn to_command_cd_bad_directory() {
     cd: Some("does-not-exist".to_string()),
     check: "thing".to_string(),
     name: None,
+    platform: None,
     remedy: None,
   };
 
@@ -194,6 +203,7 @@ fn to_command_missing_command() {
     cd: None,
     check: "missing".to_string(),
     name: None,
+    platform: None,
     remedy: None,
   };
 
@@ -211,6 +221,7 @@ fn to_string() {
     cd: None,
     check: "thing".to_string(),
     name: None,
+    platform: None,
     remedy: None,
   };
 
@@ -227,6 +238,7 @@ fn to_string_name() {
     cd: None,
     check: "thing".to_string(),
     name: Some("do things".to_string()),
+    platform: None,
     remedy: None,
   };
 
@@ -240,6 +252,7 @@ fn to_string_cd() {
     cd: Some("../subdirectory".to_string()),
     check: "thing".to_string(),
     name: None,
+    platform: None,
     remedy: None,
   };
 
