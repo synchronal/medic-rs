@@ -9,7 +9,7 @@ static INIT: Once = Once::new();
 pub fn initialize() {
   INIT.call_once(|| {
     if crate::theme::THEME.get().is_none() {
-      let theme = crate::theme::detect_colortheme().unwrap();
+      let theme = crate::theme::dark_theme();
       crate::theme::set_theme(theme);
     }
   });
