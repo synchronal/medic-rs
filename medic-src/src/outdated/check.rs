@@ -5,8 +5,9 @@ use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
 use crate::std_to_string;
+use crate::theme::current_theme;
 use crate::util::StringOrList;
-use console::{style, Style};
+use console::style;
 use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -163,11 +164,9 @@ impl Runnable for OutdatedCheck {
 impl fmt::Display for OutdatedCheck {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     if let Some(name) = &self.name {
-      write!(f, "{}", style(name).force_styling(true).cyan())
+      write!(f, "{}", OptionalStyled::new(name, current_theme().text_style.clone()))
     } else {
-      let cmd_str = self.check.clone();
-
-      let mut cd_str = OptionalStyled::with_style(Style::new().force_styling(true).green()).prefixed(" ");
+      let mut cd_str = OptionalStyled::with_style(current_theme().cd_style.clone()).prefixed(" ");
 
       if let Some(dir) = &self.cd {
         cd_str.push('(');
@@ -175,7 +174,7 @@ impl fmt::Display for OutdatedCheck {
         cd_str.push(')');
       }
 
-      let mut args_str = OptionalStyled::with_style(Style::new().force_styling(true).yellow()).prefixed(" ");
+      let mut args_str = OptionalStyled::with_style(current_theme().args_style.clone()).prefixed(" ");
 
       if let Some(args) = &self.args {
         args_str.push('(');
@@ -198,8 +197,8 @@ impl fmt::Display for OutdatedCheck {
       write!(
         f,
         "{} {}{}{}",
-        style("outdated:").force_styling(true).cyan(),
-        style(cmd_str).force_styling(true).cyan().bright().bold(),
+        OptionalStyled::new("outdated:", current_theme().text_style.clone()),
+        OptionalStyled::new(&self.check, current_theme().highlight_style.clone()),
         cd_str,
         args_str,
       )

@@ -1,10 +1,10 @@
-use std::path::PathBuf;
-
 use clap::Args;
 use clap::Parser;
 use clap::Subcommand;
 use medic_run::cli::CliArgs as RunArgs;
 use medic_src::cli::Flags;
+use medic_src::theme::Theme;
+use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -51,6 +51,10 @@ pub struct ManifestArgs {
   /// Provide interactive prompts when possible instead of failing
   #[arg(short, long, env = "MEDIC_INTERACTIVE", action)]
   pub interactive: bool,
+
+  /// Color theme
+  #[arg(short, long, env = "MEDIC_THEME", default_value = "auto")]
+  pub theme: Theme,
 }
 
 #[derive(Args, Debug)]

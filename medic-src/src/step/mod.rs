@@ -6,9 +6,11 @@ pub use step_config::StepConfig;
 
 use crate::extra;
 use crate::noop_config::NoopConfig;
+use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
+use crate::theme::current_theme;
 use crate::Check;
 use console::style;
 use retrogress::Progress;
@@ -81,7 +83,11 @@ impl fmt::Display for Step {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     match self {
       Step::Check(config) => config.fmt(f),
-      Step::Doctor(_) => write!(f, "\x1b[36m== Doctor ===\x1b[0m"),
+      Step::Doctor(_) => write!(
+        f,
+        "{}",
+        OptionalStyled::new("== Doctor ==", current_theme().text_style.clone())
+      ),
       Step::Shell(config) => config.fmt(f),
       Step::Step(config) => config.fmt(f),
     }
@@ -92,7 +98,11 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   let pb = progress.append("doctor");
   progress.println(
     pb,
-    &format!("{} {}", style("!").bright().green(), style("==== Doctor ====").cyan()),
+    &format!(
+      "{} {}",
+      style("!").bright().green(),
+      OptionalStyled::new("== Doctor ==", current_theme().text_style.clone())
+    ),
   );
   progress.hide(pb);
   if let Ok(result) = doctor_command()

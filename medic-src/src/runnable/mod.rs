@@ -1,8 +1,10 @@
 use crate::cli::Flags;
 use crate::context::Context;
+use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
+use crate::theme::current_theme;
 use crate::AppResult;
-use console::{style, Term};
+use console::Term;
 use retrogress::Progress;
 use std::io::{BufRead, BufReader};
 use std::process::Stdio;
@@ -34,7 +36,7 @@ pub fn run(
     let pb = progress.append(&format!(
       "{} {}",
       &runnable.to_string(),
-      style("(skipped)").force_styling(true).yellow()
+      OptionalStyled::new("(skipped)", current_theme().warning_style.clone())
     ));
     progress.succeeded(pb);
     return AppResult::Ok(());
@@ -61,9 +63,7 @@ pub fn run(
       if flags.auto_apply_remedy {
         eprintln!(
           "— {} —",
-          style("Automatically applying remedy")
-            .force_styling(true)
-            .yellow()
+          OptionalStyled::new("Automatically applying remedy", current_theme().warning_style.clone())
         );
         run_remedy(remedy, progress)?;
         return run(runnable, progress, flags, context);
@@ -134,7 +134,11 @@ fn ask(
 fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
   if let AppResult::Err(Some(err)) = result {
     if err.to_string().trim() != "" {
-      eprintln!("\n{} {:?}\n", style("Error").force_styling(true).red().bold(), err);
+      eprintln!(
+        "\n{} {:?}\n",
+        OptionalStyled::new("Error", current_theme().error_style.clone()),
+        err
+      );
     }
   }
   let msg = if remedy.is_some() {
@@ -149,9 +153,9 @@ fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
   };
   let prompt = format!(
     "{} {}{}",
-    style(msg).force_styling(true).cyan(),
-    style(options).force_styling(true).cyan().bold(),
-    style("?").cyan()
+    OptionalStyled::new(msg, current_theme().text_style.clone()),
+    OptionalStyled::new(options, current_theme().highlight_style.clone()),
+    OptionalStyled::new("?", current_theme().text_style.clone()),
   );
   eprint!("— {prompt} ");
   Term::stdout().read_line().unwrap().into()

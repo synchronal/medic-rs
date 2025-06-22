@@ -16,6 +16,7 @@ pub mod runnable;
 pub mod shell;
 pub mod shipit;
 pub mod step;
+pub mod theme;
 pub mod util;
 
 mod optional_styled;

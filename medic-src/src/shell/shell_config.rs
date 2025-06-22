@@ -4,9 +4,9 @@ use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
 use crate::std_to_string;
+use crate::theme::current_theme;
 
 use arboard::Clipboard;
-use console::{style, Style};
 use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -192,7 +192,7 @@ impl Runnable for ShellConfig {
 }
 impl fmt::Display for ShellConfig {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    let mut cd_str = OptionalStyled::with_style(Style::new().force_styling(true).green()).prefixed(" ");
+    let mut cd_str = OptionalStyled::with_style(current_theme().cd_style.clone()).prefixed(" ");
 
     if let Some(dir) = &self.cd {
       cd_str.push('(');
@@ -200,13 +200,15 @@ impl fmt::Display for ShellConfig {
       cd_str.push(')');
     }
 
-    write!(f, "{}", style(&self.name).force_styling(true).cyan())?;
+    write!(
+      f,
+      "{}",
+      OptionalStyled::new(&self.name, current_theme().text_style.clone())
+    )?;
     write!(
       f,
       " {}{}",
-      style(format!("({})", self.shell))
-        .force_styling(true)
-        .yellow(),
+      OptionalStyled::new(format!("({})", self.shell), current_theme().args_style.clone()),
       cd_str
     )
   }

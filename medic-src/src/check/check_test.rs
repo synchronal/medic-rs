@@ -1,8 +1,19 @@
 // @related [subject](medic-src/src/check/mod.rs)
 
 use std::ffi::OsStr;
+use std::sync::Once;
 
 use super::*;
+
+static INIT: Once = Once::new();
+pub fn initialize() {
+  INIT.call_once(|| {
+    if crate::theme::THEME.get().is_none() {
+      let theme = crate::theme::detect_colortheme().unwrap();
+      crate::theme::set_theme(theme);
+    }
+  });
+}
 
 #[test]
 fn deserialize_arg_string() {
@@ -302,6 +313,7 @@ fn to_command_missing_command() {
 
 #[test]
 fn to_string_single_arg() {
+  initialize();
   let check = Check {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -324,6 +336,7 @@ fn to_string_single_arg() {
 
 #[test]
 fn to_string_subcommand_single_arg() {
+  initialize();
   let check = Check {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -346,6 +359,7 @@ fn to_string_subcommand_single_arg() {
 
 #[test]
 fn to_string_subcommand_multiple_args() {
+  initialize();
   let check = Check {
     args: Some(BTreeMap::from([
       ("name".to_string(), StringOrList(vec!["first".to_string()])),
@@ -368,6 +382,7 @@ fn to_string_subcommand_multiple_args() {
 
 #[test]
 fn to_string_subcommand_multiple_arg_values() {
+  initialize();
   let check = Check {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -390,6 +405,7 @@ fn to_string_subcommand_multiple_arg_values() {
 
 #[test]
 fn to_string_subcommand_multiple_arg_values_and_args() {
+  initialize();
   let check = Check {
     args: Some(BTreeMap::from([
       (
@@ -415,6 +431,7 @@ fn to_string_subcommand_multiple_arg_values_and_args() {
 
 #[test]
 fn to_string_cd() {
+  initialize();
   let check = Check {
     args: None,
     cd: Some("../subdirectory".to_string()),

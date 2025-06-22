@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add light, dark, and auto color themes.
+
 ## 2.14.0
 
 - Cascade config file to nested sub-commands.

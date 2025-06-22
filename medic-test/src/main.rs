@@ -1,6 +1,6 @@
 use medic_src::config::Manifest;
 use medic_src::context::Context;
-use medic_src::AppResult;
+use medic_src::{theme, AppResult};
 use medic_test::cli::CliArgs;
 use medic_test::run_steps;
 
@@ -13,6 +13,7 @@ use std::panic;
 fn main() -> AppResult<()> {
   let context = Context::new();
   let cli_args = CliArgs::parse();
+  theme::set_theme((&cli_args.theme).into());
 
   if let Some(completion) = cli_args.completion {
     let mut cmd = CliArgs::command();

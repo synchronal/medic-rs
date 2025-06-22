@@ -1,6 +1,7 @@
 use clap::Parser;
 use clap_complete::Shell;
 use medic_src::cli::Flags;
+use medic_src::theme::Theme;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -21,6 +22,10 @@ pub struct CliArgs {
   /// Provide interactive prompts when possible instead of failing
   #[arg(short, long, env = "MEDIC_INTERACTIVE", action)]
   pub interactive: bool,
+
+  /// Color theme
+  #[arg(short, long, env = "MEDIC_THEME", default_value = "auto")]
+  pub theme: Theme,
 }
 
 impl From<CliArgs> for Flags {

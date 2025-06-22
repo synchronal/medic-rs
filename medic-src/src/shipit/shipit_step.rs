@@ -1,9 +1,11 @@
 use crate::extra;
 use crate::noop_config::NoopConfig;
+use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::step::StepConfig;
+use crate::theme::current_theme;
 use crate::Check;
 use console::style;
 use retrogress::Progress;
@@ -99,9 +101,21 @@ impl fmt::Display for ShipitStep {
       ShipitStep::Check(config) => config.fmt(f),
       ShipitStep::Shell(config) => config.fmt(f),
       ShipitStep::Step(config) => config.fmt(f),
-      ShipitStep::Audit(_) => write!(f, "\x1b[36m== Audit ===\x1b[0m"),
-      ShipitStep::Test(_) => write!(f, "\x1b[36m== Test ===\x1b[0m"),
-      ShipitStep::Update(_) => write!(f, "\x1b[36m== Update ===\x1b[0m"),
+      ShipitStep::Audit(_) => write!(
+        f,
+        "{}",
+        OptionalStyled::new("== Audit ==", current_theme().text_style.clone())
+      ),
+      ShipitStep::Test(_) => write!(
+        f,
+        "{}",
+        OptionalStyled::new("== Test ==", current_theme().text_style.clone())
+      ),
+      ShipitStep::Update(_) => write!(
+        f,
+        "{}",
+        OptionalStyled::new("== Update ==", current_theme().text_style.clone())
+      ),
     }
   }
 }
@@ -110,7 +124,11 @@ fn run_audit(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   let pb = progress.append("doctor");
   progress.println(
     pb,
-    &format!("{} {}", style("!").bright().green(), style("==== Audit ====").cyan()),
+    &format!(
+      "{} {}",
+      style("!").bright().green(),
+      OptionalStyled::new("== Audit ==", current_theme().text_style.clone())
+    ),
   );
   progress.hide(pb);
   if let Ok(result) = audit_cmd()
@@ -135,7 +153,11 @@ fn run_test(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   let pb = progress.append("doctor");
   progress.println(
     pb,
-    &format!("{} {}", style("!").bright().green(), style("==== Test ====").cyan()),
+    &format!(
+      "{} {}",
+      style("!").bright().green(),
+      OptionalStyled::new("== Test ==", current_theme().text_style.clone())
+    ),
   );
   progress.hide(pb);
   if let Ok(result) = test_cmd()
@@ -160,7 +182,11 @@ fn run_update(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   let pb = progress.append("doctor");
   progress.println(
     pb,
-    &format!("{} {}", style("!").bright().green(), style("==== Update ====").cyan()),
+    &format!(
+      "{} {}",
+      style("!").bright().green(),
+      OptionalStyled::new("== Update ==", current_theme().text_style.clone())
+    ),
   );
   progress.hide(pb);
   if let Ok(result) = update_cmd()

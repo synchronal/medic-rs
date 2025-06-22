@@ -17,6 +17,15 @@ impl OptionalStyled {
     }
   }
 
+  pub fn new(content: impl Into<String>, style: Style) -> Self {
+    Self {
+      content: content.into(),
+      prefix: "".into(),
+      some: true,
+      style,
+    }
+  }
+
   pub fn prefixed(mut self, prefix: &str) -> Self {
     self.prefix = prefix.into();
     self

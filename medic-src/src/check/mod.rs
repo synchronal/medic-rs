@@ -11,10 +11,10 @@ use crate::extra;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
+use crate::theme::current_theme;
 use crate::util::StringOrList;
 
 use arboard::Clipboard;
-use console::{style, Style};
 use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -140,7 +140,7 @@ impl Runnable for Check {
 
 impl fmt::Display for Check {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    let mut cmd_str = "".to_owned();
+    let mut cmd_str = OptionalStyled::with_style(current_theme().text_style.clone());
     cmd_str.push_str(&self.check);
 
     if let Some(command) = &self.command {
@@ -149,7 +149,7 @@ impl fmt::Display for Check {
       cmd_str.push('?');
     }
 
-    let mut cd_str = OptionalStyled::with_style(Style::new().force_styling(true).green()).prefixed(" ");
+    let mut cd_str = OptionalStyled::with_style(current_theme().cd_style.clone()).prefixed(" ");
 
     if let Some(dir) = &self.cd {
       cd_str.push('(');
@@ -157,7 +157,7 @@ impl fmt::Display for Check {
       cd_str.push(')');
     }
 
-    let mut args_str = OptionalStyled::with_style(Style::new().force_styling(true).yellow()).prefixed(" ");
+    let mut args_str = OptionalStyled::with_style(current_theme().args_style.clone()).prefixed(" ");
     if let Some(args) = &self.args {
       args_str.push('(');
 
@@ -175,6 +175,6 @@ impl fmt::Display for Check {
       args_str.push(')');
     }
 
-    write!(f, "{}{}{}", style(cmd_str).force_styling(true).cyan(), args_str, cd_str,)
+    write!(f, "{cmd_str}{args_str}{cd_str}")
   }
 }

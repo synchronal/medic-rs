@@ -5,6 +5,17 @@ use crate::util::StringOrList;
 use super::*;
 use crate::runnable::Runnable;
 use std::collections::BTreeMap;
+use std::sync::Once;
+
+static INIT: Once = Once::new();
+pub fn initialize() {
+  INIT.call_once(|| {
+    if crate::theme::THEME.get().is_none() {
+      let theme = crate::theme::detect_colortheme().unwrap();
+      crate::theme::set_theme(theme);
+    }
+  });
+}
 
 #[test]
 fn deserialize_string() {
@@ -216,6 +227,7 @@ fn to_command_missing_command() {
 
 #[test]
 fn to_string() {
+  initialize();
   let check = OutdatedCheck {
     args: None,
     cd: None,
@@ -233,6 +245,7 @@ fn to_string() {
 
 #[test]
 fn to_string_name() {
+  initialize();
   let check = OutdatedCheck {
     args: None,
     cd: None,
@@ -247,6 +260,7 @@ fn to_string_name() {
 
 #[test]
 fn to_string_cd() {
+  initialize();
   let check = OutdatedCheck {
     args: None,
     cd: Some("../subdirectory".to_string()),

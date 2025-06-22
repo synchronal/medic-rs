@@ -3,6 +3,17 @@
 use super::*;
 use crate::runnable::Runnable;
 use std::collections::BTreeMap;
+use std::sync::Once;
+
+static INIT: Once = Once::new();
+pub fn initialize() {
+  INIT.call_once(|| {
+    if crate::theme::THEME.get().is_none() {
+      let theme = crate::theme::detect_colortheme().unwrap();
+      crate::theme::set_theme(theme);
+    }
+  });
+}
 
 #[test]
 fn test_deserialize() {
@@ -232,6 +243,7 @@ fn test_deserialize_remedy() {
 
 #[test]
 fn test_to_string() {
+  initialize();
   let shell = ShellConfig {
     allow_failure: false,
     cd: None,
@@ -252,6 +264,7 @@ fn test_to_string() {
 
 #[test]
 fn test_to_string_cd() {
+  initialize();
   let shell = ShellConfig {
     allow_failure: false,
     cd: Some("../fixtures/bin".to_string()),

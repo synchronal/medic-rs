@@ -2,12 +2,13 @@ use clap::{CommandFactory, Parser};
 use clap_complete::generate;
 use console::Term;
 use medic_run::cli::CliArgs;
-use medic_src::AppResult;
+use medic_src::{theme, AppResult};
 use std::io::stdout;
 use std::panic;
 
 fn main() -> AppResult<()> {
   let cli_args = CliArgs::parse();
+  theme::set_theme((&cli_args.theme).into());
 
   if let Some(completion) = cli_args.completion {
     let mut cmd = CliArgs::command();
