@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.15.0
+
 - Add light, dark, and auto color themes.
 
 ## 2.14.0
