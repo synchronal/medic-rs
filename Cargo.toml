@@ -31,7 +31,7 @@ medic-update = { path = "./medic-update" }
 arboard = "3.3"
 clap = { version = "4.1.8", features = ["derive", "cargo", "wrap_help", "env", "unicode" ] }
 clap_complete = "4.1.4"
-console = "0.15"
+console = "0.16"
 ctrlc = "3.4"
 envsubst = "0.2"
 indoc = "2.0.1"
