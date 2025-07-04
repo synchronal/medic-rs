@@ -47,7 +47,7 @@ jobs:
             cd $GITHUB_WORKSPACE
 
             ./bin/freebsd/package
-            mv medic-*.pkg medic-freebsd-14.3-amd64
+            mv medic-*.pkg medic-freebsd-14.3-amd64.pkg
           EOF
 
           scp -r freebsd:$GITHUB_WORKSPACE/medic-*.pkg .
