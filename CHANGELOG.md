@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.16.0
+
 - Failure to interact with the clipboard does not cause medic to fail.
 - Consolidate clipboard interations & printing of remedies to runnable.
 
