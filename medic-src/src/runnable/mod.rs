@@ -75,13 +75,15 @@ pub fn run(
         OptionalStyled::new("Suggested remedy:", current_theme().text_style.clone()),
         OptionalStyled::new(remedy.to_string(), current_theme().warning_style.clone()),
       );
-      eprintln!(
-        "  {}",
-        OptionalStyled::new("(it's in the clipboard)", current_theme().dim_style.clone()),
-      );
 
-      let mut clipboard = Clipboard::new()?;
-      clipboard.set_text(format!("{remedy}"))?;
+      let _ = Clipboard::new()
+        .and_then(|mut clipboard| clipboard.set_text(remedy.to_string()))
+        .map(|_| {
+          eprintln!(
+            "  {}",
+            OptionalStyled::new("(it's in the clipboard)", current_theme().dim_style.clone()),
+          );
+        });
 
       if flags.interactive {
         eprintln!();
