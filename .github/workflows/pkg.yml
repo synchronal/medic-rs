@@ -9,7 +9,7 @@ on:
 concurrency: pkg
 
 env:
-  FREEBSD_VERSION: "14.2"
+  FREEBSD_VERSION: "14.3"
   CARGO_TERM_COLOR: always
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
     name: Build FreeBSD 14 package
     runs-on: ubuntu-latest
     env:
-      FREEBSD_VERSION: "14.2"
+      FREEBSD_VERSION: "14.3"
     steps:
       - uses: actions/checkout@v4
       - name: Build in FreeBSD
@@ -47,13 +47,13 @@ jobs:
             cd $GITHUB_WORKSPACE
 
             ./bin/freebsd/package
-            tar czf "medic-$GITHUB_RUN_NUMBER.txz" medic-*.pkg
+            mv medic-*.pkg medic-freebsd-14.3-amd64
           EOF
 
-          scp -r freebsd:$GITHUB_WORKSPACE/medic-*.txz .
+          scp -r freebsd:$GITHUB_WORKSPACE/medic-*.pkg .
       - name: Save pkg artifact
         uses: actions/upload-artifact@v4
         with:
-          name: package
-          path: medic-*.txz
+          name: medic-freebsd-14.3-amd64
+          path: medic-*.pkg
 
