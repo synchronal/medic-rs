@@ -42,8 +42,10 @@ pub fn detect_colortheme() -> Result<ColorTheme, Box<dyn std::error::Error>> {
 pub struct ColorTheme {
   pub args_style: Style,
   pub cd_style: Style,
+  pub dim_style: Style,
   pub error_style: Style,
   pub highlight_style: Style,
+  pub success_style: Style,
   pub text_style: Style,
   pub warning_style: Style,
 }
@@ -52,8 +54,10 @@ pub fn dark_theme() -> ColorTheme {
   ColorTheme {
     args_style: Style::new().force_styling(true).yellow(),
     cd_style: Style::new().force_styling(true).green(),
+    dim_style: Style::new().force_styling(true).cyan().green().bold(),
     error_style: Style::new().force_styling(true).red().bold(),
     highlight_style: Style::new().force_styling(true).cyan().bright().bold(),
+    success_style: Style::new().force_styling(true).green(),
     text_style: Style::new().force_styling(true).cyan(),
     warning_style: Style::new().force_styling(true).yellow(),
   }
@@ -63,8 +67,10 @@ pub fn light_theme() -> ColorTheme {
   ColorTheme {
     args_style: Style::new().force_styling(true).magenta(),
     cd_style: Style::new().force_styling(true).green(),
+    dim_style: Style::new().force_styling(true).cyan().green().bold(),
     error_style: Style::new().force_styling(true).red().bold(),
     highlight_style: Style::new().force_styling(true).black().bold(),
+    success_style: Style::new().force_styling(true).green(),
     text_style: Style::new().force_styling(true).blue(),
     warning_style: Style::new().force_styling(true).yellow(),
   }

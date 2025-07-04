@@ -14,7 +14,6 @@ use crate::runnable::Runnable;
 use crate::theme::current_theme;
 use crate::util::StringOrList;
 
-use arboard::Clipboard;
 use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -81,9 +80,7 @@ impl Runnable for Check {
               let mut remedy: Option<Remedy> = None;
 
               if let Some(remedy_str) = output.remedy {
-                remedy = Some(Remedy::new(remedy_str.clone(), None));
-                let mut clipboard = Clipboard::new()?;
-                clipboard.set_text(remedy_str)?;
+                remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
               }
               Recoverable::Err(None, remedy)
             }

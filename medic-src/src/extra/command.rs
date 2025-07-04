@@ -1,14 +1,13 @@
 pub fn to_string(command: &String, dir: &Option<String>) -> String {
   match dir {
     Some(dir) => format!("(cd {dir} && {command})"),
-    None => format!("({command})"),
+    None => command.to_string(),
   }
 }
 
 pub fn from_string(cmd: &str, dir: &Option<String>) -> std::process::Command {
   let mut command = new("sh", dir);
   command.arg("-c").arg(cmd);
-
   command
 }
 

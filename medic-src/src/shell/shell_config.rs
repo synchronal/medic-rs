@@ -6,7 +6,6 @@ use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::theme::current_theme;
 
-use arboard::Clipboard;
 use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -129,26 +128,15 @@ impl Runnable for ShellConfig {
                 eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
                 eprint!("{err}");
               }
+              let mut remedy: Option<Remedy> = None;
+
+              if let Some(remedy_str) = self.remedy {
+                remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
+              }
+
               if allow_failure {
-                eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
-                Recoverable::Ok(())
+                Recoverable::Optional((), remedy)
               } else {
-                let mut remedy: Option<Remedy> = None;
-
-                if let Some(mut remedy_str) = self.remedy {
-                  remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
-
-                  if self.cd.is_some() {
-                    let dir = self.cd.unwrap();
-                    remedy_str = format!("(cd {dir} && {remedy_str})");
-                  }
-
-                  eprint!("\x1b[36mPossible remedy: \x1b[0;33m{remedy_str}\x1b[0m");
-                  eprintln!("  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n");
-
-                  let mut clipboard = Clipboard::new()?;
-                  clipboard.set_text(remedy_str)?;
-                }
                 Recoverable::Err(None, remedy)
               }
             }

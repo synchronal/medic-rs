@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Consolidate clipboard interations & printing of remedies to runnable.
+
 ## 2.15.0
 
 - Add light, dark, and auto color themes.

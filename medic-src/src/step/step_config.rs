@@ -97,8 +97,7 @@ impl Runnable for StepConfig {
                 eprint!("{err}");
               }
               if allow_failure {
-                eprintln!("\r\n\x1b[32m(continuing)\x1b[0m");
-                Recoverable::Ok(())
+                Recoverable::Optional((), None)
               } else {
                 Recoverable::Err(None, None)
               }

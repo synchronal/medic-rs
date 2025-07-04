@@ -4,6 +4,7 @@ use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::theme::current_theme;
 use crate::AppResult;
+use arboard::Clipboard;
 use console::Term;
 use retrogress::Progress;
 use std::io::{BufRead, BufReader};
@@ -68,6 +69,20 @@ pub fn run(
         run_remedy(remedy, progress)?;
         return run(runnable, progress, flags, context);
       }
+
+      eprint!(
+        "{} {}",
+        OptionalStyled::new("Suggested remedy:", current_theme().text_style.clone()),
+        OptionalStyled::new(remedy.to_string(), current_theme().warning_style.clone()),
+      );
+      eprintln!(
+        "  {}",
+        OptionalStyled::new("(it's in the clipboard)", current_theme().dim_style.clone()),
+      );
+
+      let mut clipboard = Clipboard::new()?;
+      clipboard.set_text(format!("{remedy}"))?;
+
       if flags.interactive {
         eprintln!();
         ask(runnable, Some(remedy), progress, AppResult::Err(err), flags, context)
@@ -75,7 +90,13 @@ pub fn run(
         AppResult::Err(err)
       }
     }
-    Recoverable::Optional(ok, None) => AppResult::Ok(ok),
+    Recoverable::Optional(ok, None) => {
+      eprintln!(
+        "\r\n{}",
+        OptionalStyled::new("(continuing)", current_theme().success_style.clone()),
+      );
+      AppResult::Ok(ok)
+    }
     Recoverable::Optional(ok, Some(remedy)) => {
       if flags.interactive {
         eprintln!();

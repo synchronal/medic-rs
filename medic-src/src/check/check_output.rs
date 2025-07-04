@@ -22,7 +22,6 @@ impl fmt::Display for CheckOutput {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     let stdout = self.stdout.clone();
     let stderr = self.stderr.clone();
-    let remedy = self.remedy.clone();
 
     if let Some(stdout) = stdout {
       writeln!(f, "\x1b[0;31m== Check output ==\x1b[0m\r\n")?;
@@ -33,14 +32,6 @@ impl fmt::Display for CheckOutput {
       writeln!(f, "\x1b[0;31m== Check error ==\x1b[0m\r\n")?;
       write!(f, "{stderr}\r\n\r\n")?;
     }
-
-    if let Some(remedy) = remedy {
-      write!(f, "\x1b[36mPossible remedy: \x1b[0;33m{remedy}\x1b[0m")?;
-      write!(f, "  \x1b[32;1m(it's in the clipboard)\x1b[0m\r\n")?;
-    } else {
-      writeln!(f, "\x1b[0;33mNo remedy suggested.\x1b[0m")?;
-    }
-
     write!(f, "")
   }
 }
