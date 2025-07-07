@@ -55,7 +55,7 @@ pub fn dark_theme() -> ColorTheme {
     args_style: Style::new().force_styling(true).yellow(),
     cd_style: Style::new().force_styling(true).green(),
     dim_style: Style::new().force_styling(true).cyan().green().bold(),
-    error_style: Style::new().force_styling(true).red().bold(),
+    error_style: Style::new().force_styling(true).red(),
     highlight_style: Style::new().force_styling(true).cyan().bright().bold(),
     success_style: Style::new().force_styling(true).green(),
     text_style: Style::new().force_styling(true).cyan(),
