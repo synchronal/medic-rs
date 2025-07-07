@@ -1,4 +1,6 @@
 use crate::extra;
+use crate::optional_styled::OptionalStyled;
+use crate::theme::current_theme;
 use std::ops::{ControlFlow, FromResidual, Try};
 use std::process::Command;
 
@@ -36,7 +38,11 @@ impl<T> std::process::Termination for Recoverable<T> {
       Recoverable::Ok(_) => std::process::ExitCode::from(0),
       Recoverable::Err(err, _remedy) => {
         if let Some(error) = err {
-          eprintln!("\x1b[31;1mERROR: {error}\x1b[0m");
+          eprintln!(
+            "{} {}",
+            OptionalStyled::new("ERROR:", current_theme().error_style.clone()),
+            OptionalStyled::new(error.to_string(), current_theme().error_style.clone())
+          );
         }
         std::process::ExitCode::from(1)
       }

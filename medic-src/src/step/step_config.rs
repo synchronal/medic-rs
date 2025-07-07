@@ -3,6 +3,7 @@
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
+use crate::theme::current_theme;
 use crate::util::StringOrList;
 use crate::{extra, std_to_string};
 
@@ -90,10 +91,18 @@ impl Runnable for StepConfig {
               Recoverable::Ok(())
             } else {
               progress.failed(pb);
-              println!("{}\x1b[31;1mFAILED\x1b[0m", (8u8 as char));
+              eprintln!(
+                "{}{}",
+                (8u8 as char),
+                OptionalStyled::new("FAILED", current_theme().error_style.clone())
+              );
               let err = std_to_string(result.stderr);
               if !verbose && err.trim() != "" {
-                eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
+                eprintln!(
+                  "{}",
+                  OptionalStyled::new("== Step output ==", current_theme().error_style.clone())
+                );
+                eprintln!();
                 eprint!("{err}");
               }
               if allow_failure {

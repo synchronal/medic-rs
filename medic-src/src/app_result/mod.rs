@@ -1,4 +1,6 @@
+use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
+use crate::theme::current_theme;
 use std::ops::{ControlFlow, FromResidual, Try};
 
 pub enum AppResult<T> {
@@ -32,7 +34,11 @@ impl<T> std::process::Termination for AppResult<T> {
       AppResult::Ok(_) => std::process::ExitCode::from(0),
       AppResult::Err(err) => {
         if let Some(error) = err {
-          eprintln!("\x1b[31;1mERROR: {error}\x1b[0m");
+          eprintln!(
+            "{} {}",
+            OptionalStyled::new("ERROR:", current_theme().error_style.clone()),
+            OptionalStyled::new(error.to_string(), current_theme().error_style.clone()),
+          );
         }
         std::process::ExitCode::from(1)
       }

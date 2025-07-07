@@ -115,8 +115,9 @@ pub fn run(
       }
     }
     Recoverable::Optional(ok, None) => {
+      eprintln!();
       eprintln!(
-        "\r\n{}",
+        "{}",
         OptionalStyled::new("(continuing)", current_theme().success_style.clone()),
       );
       let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
@@ -191,10 +192,11 @@ fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
   if let AppResult::Err(Some(err)) = result {
     if err.to_string().trim() != "" {
       eprintln!(
-        "\n{} {:?}\n",
-        OptionalStyled::new("Error", current_theme().error_style.clone()),
+        "{} {}",
+        OptionalStyled::new("Error:", current_theme().error_style.clone()),
         err
       );
+      eprintln!();
     }
   }
   let msg = if remedy.is_some() {

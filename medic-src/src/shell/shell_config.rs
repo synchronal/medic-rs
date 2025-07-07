@@ -125,7 +125,11 @@ impl Runnable for ShellConfig {
               progress.failed(pb);
               let err = std_to_string(result.stderr);
               if !verbose && err.trim() != "" {
-                eprintln!("\x1b[0;31m== Step output ==\x1b[0m\r\n");
+                eprintln!(
+                  "{}",
+                  OptionalStyled::new("== Step output ==", current_theme().error_style.clone()),
+                );
+                eprintln!();
                 eprint!("{err}");
               }
               let mut remedy: Option<Remedy> = None;

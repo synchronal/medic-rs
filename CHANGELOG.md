@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Use color themes more consistently throughout the project.
 - Update dark-theme error color.
 - Fix infinite recursion when auto-apply is set and the suggested remedy
   does not solve the problem.

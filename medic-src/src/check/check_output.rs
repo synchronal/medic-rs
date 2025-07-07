@@ -1,3 +1,5 @@
+use crate::optional_styled::OptionalStyled;
+use crate::theme::current_theme;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -24,12 +26,20 @@ impl fmt::Display for CheckOutput {
     let stderr = self.stderr.clone();
 
     if let Some(stdout) = stdout {
-      writeln!(f, "\x1b[0;31m== Check output ==\x1b[0m\r\n")?;
+      writeln!(
+        f,
+        "{}\r\n",
+        OptionalStyled::new("== Check output ==", current_theme().error_style.clone())
+      )?;
       write!(f, "{stdout}\r\n\r\n")?;
     }
 
     if let Some(stderr) = stderr {
-      writeln!(f, "\x1b[0;31m== Check error ==\x1b[0m\r\n")?;
+      writeln!(
+        f,
+        "{}\r\n",
+        OptionalStyled::new("== Check error ==", current_theme().error_style.clone())
+      )?;
       write!(f, "{stderr}\r\n\r\n")?;
     }
     write!(f, "")
