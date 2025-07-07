@@ -9,7 +9,12 @@ use console::Term;
 use retrogress::Progress;
 use std::io::{BufRead, BufReader};
 use std::process::Stdio;
+use std::sync::{LazyLock, Mutex};
 use std::thread;
+
+// In auto-apply mode, medic should exit when a check fails after the remedy
+// has been applied.
+static RERUN: LazyLock<Mutex<bool>> = LazyLock::new(|| Mutex::new(false));
 
 pub trait Runnable: std::fmt::Display + Clone {
   fn allow_failure(&self) -> bool {
@@ -51,7 +56,11 @@ pub fn run(
   }
 
   match runnable.clone().run(progress) {
-    Recoverable::Ok(ok) => AppResult::Ok(ok),
+    Recoverable::Ok(ok) => {
+      let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
+      *rerun = false;
+      AppResult::Ok(ok)
+    }
     Recoverable::Err(err, None) => {
       if flags.interactive && flags.recoverable {
         eprintln!();
@@ -62,11 +71,24 @@ pub fn run(
     }
     Recoverable::Err(err, Some(remedy)) => {
       if flags.auto_apply_remedy {
+        let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
+        if *rerun {
+          eprintln!(
+            "{}",
+            OptionalStyled::new(
+              "! Check failed again after remedy was applied",
+              current_theme().error_style.clone()
+            )
+          );
+          return AppResult::Err(err);
+        }
         eprintln!(
           "— {} —",
           OptionalStyled::new("Automatically applying remedy", current_theme().warning_style.clone())
         );
         run_remedy(remedy, progress)?;
+        *rerun = true;
+        drop(rerun);
         return run(runnable, progress, flags, context);
       }
 
@@ -97,6 +119,8 @@ pub fn run(
         "\r\n{}",
         OptionalStyled::new("(continuing)", current_theme().success_style.clone()),
       );
+      let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
+      *rerun = false;
       AppResult::Ok(ok)
     }
     Recoverable::Optional(ok, Some(remedy)) => {
@@ -104,6 +128,8 @@ pub fn run(
         eprintln!();
         ask(runnable, Some(remedy), progress, AppResult::Ok(ok), flags, context)
       } else {
+        let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
+        *rerun = false;
         AppResult::Ok(ok)
       }
     }
@@ -145,10 +171,17 @@ fn ask(
     PromptResult::No => default_exit,
     PromptResult::Quit => AppResult::UserQuit,
     PromptResult::Rerun => run(runnable, progress, flags, context),
-    PromptResult::Skip => AppResult::Ok(()),
+    PromptResult::Skip => {
+      let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
+      *rerun = false;
+      AppResult::Ok(())
+    }
     PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags, context),
     PromptResult::Yes => {
       run_remedy(remedy.unwrap(), progress)?;
+      let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
+      *rerun = true;
+      drop(rerun);
       run(runnable, progress, flags, context)
     }
   }

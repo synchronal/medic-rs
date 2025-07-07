@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fix infinite recursion when auto-apply is set and the suggested remedy
+  does not solve the problem.
+
 ## 2.16.0
 
 - Failure to interact with the clipboard does not cause medic to fail.
