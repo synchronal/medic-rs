@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Exit 1 on interrupt.
+
 ## 2.17.0
 
 - Use color themes more consistently throughout the project.

@@ -25,7 +25,7 @@ fn main() -> AppResult<()> {
 
   let manifest = Manifest::new(&cli_args.config)?;
 
-  ctrlc::set_handler(reset_term).expect("Unable to set Ctrl-C handler");
+  ctrlc::set_handler(interrupt).expect("Unable to set Ctrl-C handler");
 
   console::set_colors_enabled(true);
   console::set_colors_enabled_stderr(true);
@@ -43,6 +43,11 @@ fn main() -> AppResult<()> {
     Ok(inner) => inner,
     Err(_) => std::process::exit(1),
   }
+}
+
+fn interrupt() {
+  reset_term();
+  std::process::exit(1);
 }
 
 fn reset_term() {
