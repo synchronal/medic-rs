@@ -216,7 +216,7 @@ fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
     OptionalStyled::new("?", current_theme().text_style.clone()),
   );
   eprint!("— {prompt} ");
-  Term::stdout().read_line().unwrap().into()
+  Term::stdout().read_line().unwrap_or("".into()).into()
 }
 
 fn run_remedy(remedy: Remedy, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
