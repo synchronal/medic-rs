@@ -23,6 +23,8 @@ pub struct ShellConfig {
   pub env: BTreeMap<String, String>,
   #[serde(default)]
   pub inline: bool,
+  #[serde(default)]
+  pub manual: bool,
   pub name: String,
   pub platform: Option<Vec<String>>,
   pub remedy: Option<String>,
@@ -36,6 +38,7 @@ impl ShellConfig {
     Self {
       cd,
       env: BTreeMap::default(),
+      manual: false,
       name,
       platform: None,
       shell,

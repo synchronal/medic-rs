@@ -30,6 +30,7 @@ fn test_deserialize() {
       cd: None,
       env: BTreeMap::default(),
       inline: false,
+      manual: false,
       platform: None,
       name: "Run some command".to_string(),
       remedy: None,
@@ -55,6 +56,7 @@ fn test_deserialize_cd() {
       cd: Some("./subdirectory".to_string()),
       env: BTreeMap::default(),
       inline: false,
+      manual: false,
       platform: None,
       name: "Run some command".to_string(),
       remedy: None,
@@ -83,6 +85,7 @@ fn test_deserialize_env() {
         ("SECOND_VAR".to_string(), "second".to_string())
       ]),
       inline: false,
+      manual: false,
       platform: None,
       name: "Run some command".to_string(),
       remedy: None,
@@ -108,6 +111,7 @@ fn test_deserialize_verbose() {
       cd: None,
       env: BTreeMap::default(),
       inline: false,
+      manual: false,
       platform: None,
       name: "Run some command".to_string(),
       remedy: None,
@@ -133,6 +137,7 @@ fn test_deserialize_allow_failure() {
       cd: None,
       env: BTreeMap::default(),
       inline: false,
+      manual: false,
       platform: None,
       name: "Run some command".to_string(),
       remedy: None,
@@ -149,6 +154,7 @@ fn test_to_command() {
     cd: None,
     env: BTreeMap::default(),
     inline: false,
+    manual: false,
     platform: None,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),
@@ -169,6 +175,7 @@ fn test_to_command_cd() {
     cd: Some("../fixtures/bin".to_string()),
     env: BTreeMap::default(),
     inline: false,
+    manual: false,
     platform: None,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),
@@ -202,6 +209,7 @@ fn test_to_command_env() {
       ("OTHER".to_string(), "other".to_string()),
     ]),
     inline: false,
+    manual: false,
     platform: None,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),
@@ -216,6 +224,31 @@ fn test_to_command_env() {
   assert_eq!(cmd_str, expected_cmd_str)
 }
 
+#[test]
+fn test_deserialize_manual() {
+  let toml = r#"
+        shell = "some command"
+        name = "Run some command"
+        manual = true
+        "#;
+
+  let result: ShellConfig = toml::from_str(toml).unwrap();
+  assert_eq!(
+    result,
+    ShellConfig {
+      allow_failure: false,
+      cd: None,
+      env: BTreeMap::default(),
+      inline: false,
+      manual: true,
+      platform: None,
+      name: "Run some command".to_string(),
+      remedy: None,
+      shell: "some command".to_string(),
+      verbose: false,
+    }
+  );
+}
 #[test]
 fn test_deserialize_remedy() {
   let toml = r#"
@@ -232,6 +265,7 @@ fn test_deserialize_remedy() {
       cd: None,
       env: BTreeMap::default(),
       inline: false,
+      manual: false,
       platform: None,
       name: "Run some command".to_string(),
       remedy: Some("do something".to_string()),
@@ -249,6 +283,7 @@ fn test_to_string() {
     cd: None,
     env: BTreeMap::default(),
     inline: false,
+    manual: false,
     platform: None,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),
@@ -270,6 +305,7 @@ fn test_to_string_cd() {
     cd: Some("../fixtures/bin".to_string()),
     env: BTreeMap::default(),
     inline: false,
+    manual: false,
     platform: None,
     name: "Run some command".to_string(),
     remedy: Some("do something".to_string()),

@@ -39,6 +39,7 @@ fn deserialize_audit() {
             platform: None,
             env: BTreeMap::default(),
             inline: false,
+            manual: false,
             name: "Shell check".to_string(),
             remedy: None,
             shell: "do something".to_string(),
@@ -95,17 +96,17 @@ fn deserialize_doctor() {
         checks: vec![
           DoctorStep::Shell(ShellConfig {
             allow_failure: false,
-            platform: None,
             cd: None,
             env: BTreeMap::default(),
             inline: false,
+            manual: false,
             name: "Shell check".to_string(),
+            platform: None,
             remedy: None,
             shell: "do something".to_string(),
             verbose: false,
           }),
           DoctorStep::Check(Check {
-            verbose: false,
             args: None,
             cd: None,
             check: "rust".to_string(),
@@ -113,6 +114,7 @@ fn deserialize_doctor() {
             env: BTreeMap::default(),
             output: OutputFormat::Json,
             platform: None,
+            verbose: false,
           }),
           DoctorStep::Step(StepConfig {
             args: None,
@@ -215,14 +217,15 @@ fn deserialize_shipit() {
           }),
           ShipitStep::Shell(ShellConfig {
             allow_failure: false,
-            platform: None,
             cd: None,
             env: BTreeMap::default(),
             inline: false,
+            manual: false,
             name: "Do stuff".to_string(),
+            platform: None,
             remedy: None,
             shell: "do something".to_string(),
-            verbose: false
+            verbose: false,
           }),
           ShipitStep::Step(StepConfig {
             args: None,
@@ -277,11 +280,12 @@ fn deserialize_test() {
           }),
           Step::Shell(ShellConfig {
             allow_failure: false,
-            platform: None,
             cd: None,
             env: BTreeMap::default(),
             inline: false,
+            manual: false,
             name: "Do stuff".to_string(),
+            platform: None,
             remedy: None,
             shell: "do something".to_string(),
             verbose: false
@@ -339,11 +343,12 @@ fn deserialize_update() {
           }),
           Step::Shell(ShellConfig {
             allow_failure: false,
-            platform: None,
             cd: None,
             env: BTreeMap::default(),
             inline: false,
+            manual: false,
             name: "Do stuff".to_string(),
+            platform: None,
             remedy: None,
             shell: "do something".to_string(),
             verbose: false
