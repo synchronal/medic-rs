@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Default to dark theme when auto does not work.
 - Exit 1 on interrupt.
 
 ## 2.17.0

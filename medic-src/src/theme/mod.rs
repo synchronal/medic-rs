@@ -23,7 +23,7 @@ pub enum Theme {
 impl From<&Theme> for ColorTheme {
   fn from(theme: &Theme) -> Self {
     match theme {
-      Theme::Auto => detect_colortheme().unwrap(),
+      Theme::Auto => detect_colortheme().unwrap_or(dark_theme()),
       Theme::Dark => dark_theme(),
       Theme::Light => light_theme(),
     }
