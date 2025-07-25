@@ -141,10 +141,10 @@ impl Runnable for ShellConfig {
                 remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
               }
 
-              if allow_failure {
-                Recoverable::Optional((), remedy)
-              } else {
-                Recoverable::Err(None, remedy)
+              match (self.manual, allow_failure) {
+                (true, _) => Recoverable::Manual(Some(err.into()), remedy),
+                (false, true) => Recoverable::Optional((), remedy),
+                (false, false) => Recoverable::Err(None, remedy),
               }
             }
           }

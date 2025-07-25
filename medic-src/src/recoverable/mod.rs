@@ -27,6 +27,7 @@ impl std::fmt::Display for Remedy {
 // // //
 
 pub enum Recoverable<T> {
+  Manual(Option<Box<dyn std::error::Error>>, Option<Remedy>),
   Ok(T),
   Optional(T, Option<Remedy>),
   Err(Option<Box<dyn std::error::Error>>, Option<Remedy>),
@@ -46,6 +47,7 @@ impl<T> std::process::Termination for Recoverable<T> {
         }
         std::process::ExitCode::from(1)
       }
+      Recoverable::Manual(_, _) => std::process::ExitCode::from(1),
       Recoverable::Optional(_, _) => std::process::ExitCode::from(0),
     }
   }
@@ -62,6 +64,7 @@ impl<T> Try for Recoverable<T> {
       Recoverable::Err(err, _remedy) => ControlFlow::Break(ResultCodeResidual(err)),
       Recoverable::Ok(res) => ControlFlow::Continue(res),
       Recoverable::Optional(res, _remedy) => ControlFlow::Continue(res),
+      Recoverable::Manual(res, _remedy) => ControlFlow::Break(ResultCodeResidual(res)),
     }
   }
   fn from_output(t: T) -> Self {

@@ -114,8 +114,8 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   {
     if result.status.success() {
       Recoverable::Ok(())
-    } else if result.status.code() == Some(crate::USER_QUIT) {
-      std::process::exit(crate::USER_QUIT);
+    } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
+      std::process::exit(crate::QUIT_STATUS_CODE);
     } else {
       Recoverable::Err(None, None)
     }

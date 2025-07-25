@@ -139,8 +139,8 @@ fn run_audit(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   {
     if result.status.success() {
       Recoverable::Ok(())
-    } else if result.status.code() == Some(crate::USER_QUIT) {
-      std::process::exit(crate::USER_QUIT);
+    } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
+      std::process::exit(crate::QUIT_STATUS_CODE);
     } else {
       Recoverable::Err(Some("Audit failure".into()), None)
     }
@@ -168,8 +168,8 @@ fn run_test(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   {
     if result.status.success() {
       Recoverable::Ok(())
-    } else if result.status.code() == Some(crate::USER_QUIT) {
-      std::process::exit(crate::USER_QUIT);
+    } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
+      std::process::exit(crate::QUIT_STATUS_CODE);
     } else {
       Recoverable::Err(Some("Test failure".into()), None)
     }
@@ -197,8 +197,8 @@ fn run_update(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   {
     if result.status.success() {
       Recoverable::Ok(())
-    } else if result.status.code() == Some(crate::USER_QUIT) {
-      std::process::exit(crate::USER_QUIT);
+    } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
+      std::process::exit(crate::QUIT_STATUS_CODE);
     } else {
       Recoverable::Err(Some("Unable to update project".into()), None)
     }

@@ -89,6 +89,9 @@ fail with suggested remedies, medic will prompt the user for action.
 Remedies may be automatically applied, skipped, or medic may be entirely
 quit.
 
+When run with `-a` / `--apply-remedies`, medic will attempt to
+automatically apply and then re-verify remedies.
+
 ## Subcommands
 
 #### init
@@ -437,6 +440,8 @@ commands may be better suited to be written into shell scripts.
   `verbose`, and is useful when running commands that handle their own
   progress indicators, for example when using `medic run` from shell
   scripts.
+- `manual` - when `true`, the remedy will be printed and medic will
+  quit, even when running in interactive of auto-apply mode.
 - `platform` - an optional list of platforms on which this check should
   be run, for example `Darwin`, or `FreeBSD`. When missing or empty, the
   check will be run on all platforms.

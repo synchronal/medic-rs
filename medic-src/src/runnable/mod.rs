@@ -114,6 +114,23 @@ pub fn run(
         AppResult::Err(err)
       }
     }
+    Recoverable::Manual(_err, remedy) => {
+      let remedy = remedy.unwrap().to_string();
+      eprint!(
+        "{} {}",
+        OptionalStyled::new("Manual remedy:", current_theme().text_style.clone()),
+        OptionalStyled::new(&remedy, current_theme().warning_style.clone()),
+      );
+      let _ = Clipboard::new()
+        .and_then(|mut clipboard| clipboard.set_text(&remedy))
+        .map(|_| {
+          eprintln!(
+            "  {}",
+            OptionalStyled::new("(it's in the clipboard)", current_theme().dim_style.clone()),
+          );
+        });
+      AppResult::Quit
+    }
     Recoverable::Optional(ok, None) => {
       eprintln!();
       eprintln!(
@@ -170,7 +187,7 @@ fn ask(
       run(runnable, progress, flags, context)
     }
     PromptResult::No => default_exit,
-    PromptResult::Quit => AppResult::UserQuit,
+    PromptResult::Quit => AppResult::Quit,
     PromptResult::Rerun => run(runnable, progress, flags, context),
     PromptResult::Skip => {
       let mut rerun = LazyLock::force(&RERUN).lock().unwrap();

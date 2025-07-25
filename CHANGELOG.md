@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Shell checks may force remedies to be run manually with
+  `manual = true`.
 - Default to dark theme when auto does not work.
 - Exit 1 on interrupt.
 
