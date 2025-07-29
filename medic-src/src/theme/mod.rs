@@ -1,7 +1,7 @@
 use console::Style;
 use once_cell::sync::OnceCell;
 use serde::Deserialize;
-use terminal_colorsaurus::{color_palette, ThemeMode, QueryOptions};
+use terminal_colorsaurus::{color_palette, QueryOptions, ThemeMode};
 
 pub static THEME: OnceCell<ColorTheme> = OnceCell::new();
 pub fn current_theme() -> &'static ColorTheme {
