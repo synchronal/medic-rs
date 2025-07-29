@@ -1,7 +1,7 @@
 use console::Style;
 use once_cell::sync::OnceCell;
 use serde::Deserialize;
-use terminal_colorsaurus::{color_palette, ColorScheme, QueryOptions};
+use terminal_colorsaurus::{color_palette, ThemeMode, QueryOptions};
 
 pub static THEME: OnceCell<ColorTheme> = OnceCell::new();
 pub fn current_theme() -> &'static ColorTheme {
@@ -32,9 +32,9 @@ impl From<&Theme> for ColorTheme {
 
 pub fn detect_colortheme() -> Result<ColorTheme, Box<dyn std::error::Error>> {
   let colors = color_palette(QueryOptions::default())?;
-  match colors.color_scheme() {
-    ColorScheme::Dark => Ok(dark_theme()),
-    ColorScheme::Light => Ok(light_theme()),
+  match colors.theme_mode() {
+    ThemeMode::Dark => Ok(dark_theme()),
+    ThemeMode::Light => Ok(light_theme()),
   }
 }
 
