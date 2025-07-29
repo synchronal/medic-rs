@@ -25,6 +25,7 @@ pub enum Step {
   Shell(ShellConfig),
   Step(StepConfig),
   Doctor(DoctorConfig),
+  Steps(Vec<Step>),
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
@@ -39,6 +40,7 @@ impl Runnable for Step {
       Step::Doctor(_) => false,
       Step::Shell(config) => config.allow_failure(),
       Step::Step(config) => config.allow_failure(),
+      Step::Steps(_) => false,
     }
   }
 
@@ -48,6 +50,7 @@ impl Runnable for Step {
       Step::Doctor(_) => &None,
       Step::Shell(config) => config.platform(),
       Step::Step(config) => config.platform(),
+      Step::Steps(_) => &None,
     }
   }
 
@@ -57,6 +60,12 @@ impl Runnable for Step {
       Step::Doctor(_) => run_doctor(progress),
       Step::Shell(config) => config.run(progress),
       Step::Step(config) => config.run(progress),
+      Step::Steps(steps) => {
+        for step in steps {
+          step.run(progress)?;
+        }
+        Recoverable::Ok(())
+      }
     }
   }
 
@@ -66,6 +75,7 @@ impl Runnable for Step {
       Step::Doctor(_) => doctor_command(),
       Step::Shell(config) => config.to_command(),
       Step::Step(config) => config.to_command(),
+      Step::Steps(_) => Err("Steps cannot be converted to a single command".into()),
     }
   }
 
@@ -75,6 +85,7 @@ impl Runnable for Step {
       Step::Doctor(_) => true,
       Step::Shell(config) => config.verbose,
       Step::Step(config) => config.verbose,
+      Step::Steps(_) => false,
     }
   }
 }
@@ -90,6 +101,11 @@ impl fmt::Display for Step {
       ),
       Step::Shell(config) => config.fmt(f),
       Step::Step(config) => config.fmt(f),
+      Step::Steps(_) => write!(
+        f,
+        "{}",
+        OptionalStyled::new("== Nested Steps ==", current_theme().text_style.clone())
+      ),
     }
   }
 }

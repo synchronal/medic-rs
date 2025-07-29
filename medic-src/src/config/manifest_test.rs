@@ -368,3 +368,84 @@ fn deserialize_update() {
     }
   );
 }
+
+#[test]
+fn deserialize_nested_steps() {
+  let toml = indoc! {r#"
+    [test]
+    checks = [
+      { name = "First step", shell = "echo 'Step 1'" },
+      [
+        { name = "Nested step 1", shell = "echo 'Nested 1'" },
+        { name = "Nested step 2", shell = "echo 'Nested 2'" },
+      ],
+      { name = "Last step", shell = "echo 'Step 3'" },
+    ]
+    "#};
+
+  let manifest: Manifest = toml::from_str(toml).expect("Unable to parse Manifest from toml");
+  assert_eq!(
+    manifest,
+    Manifest {
+      audit: None,
+      doctor: None,
+      outdated: None,
+      shipit: None,
+      test: Some(TestConfig {
+        checks: vec![
+          Step::Shell(ShellConfig {
+            allow_failure: false,
+            platform: None,
+            cd: None,
+            env: BTreeMap::default(),
+            inline: false,
+            manual: false,
+            name: "First step".to_string(),
+            remedy: None,
+            shell: "echo 'Step 1'".to_string(),
+            verbose: false
+          }),
+          Step::Steps(vec![
+            Step::Shell(ShellConfig {
+              allow_failure: false,
+              platform: None,
+              cd: None,
+              env: BTreeMap::default(),
+              inline: false,
+              manual: false,
+              name: "Nested step 1".to_string(),
+              remedy: None,
+              shell: "echo 'Nested 1'".to_string(),
+              verbose: false
+            }),
+            Step::Shell(ShellConfig {
+              allow_failure: false,
+              platform: None,
+              cd: None,
+              env: BTreeMap::default(),
+              inline: false,
+              manual: false,
+              name: "Nested step 2".to_string(),
+              remedy: None,
+              shell: "echo 'Nested 2'".to_string(),
+              verbose: false
+            }),
+          ]),
+          Step::Shell(ShellConfig {
+            allow_failure: false,
+            platform: None,
+            cd: None,
+            env: BTreeMap::default(),
+            inline: false,
+            manual: false,
+            name: "Last step".to_string(),
+            remedy: None,
+            shell: "echo 'Step 3'".to_string(),
+            verbose: false
+          }),
+        ]
+      }),
+      update: None,
+    }
+  );
+}
