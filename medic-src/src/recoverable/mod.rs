@@ -1,3 +1,4 @@
+use crate::error::MedicError;
 use crate::extra;
 use crate::optional_styled::OptionalStyled;
 use crate::theme::current_theme;
@@ -27,10 +28,10 @@ impl std::fmt::Display for Remedy {
 // // //
 
 pub enum Recoverable<T> {
-  Manual(Option<Box<dyn std::error::Error>>, Option<Remedy>),
+  Manual(Option<MedicError>, Option<Remedy>),
   Ok(T),
   Optional(T, Option<Remedy>),
-  Err(Option<Box<dyn std::error::Error>>, Option<Remedy>),
+  Err(Option<MedicError>, Option<Remedy>),
 }
 
 impl<T> std::process::Termination for Recoverable<T> {
@@ -53,7 +54,7 @@ impl<T> std::process::Termination for Recoverable<T> {
   }
 }
 
-pub struct ResultCodeResidual(Option<Box<dyn std::error::Error>>);
+pub struct ResultCodeResidual(Option<MedicError>);
 
 impl<T> Try for Recoverable<T> {
   type Output = T;
@@ -98,13 +99,12 @@ impl<T> FromResidual<Result<std::convert::Infallible, envsubst::Error>> for Reco
 
 impl<T> FromResidual<Result<std::convert::Infallible, std::io::Error>> for Recoverable<T> {
   fn from_residual(r: Result<std::convert::Infallible, std::io::Error>) -> Self {
-    Self::Err(Some(Box::new(r.unwrap_err())), None)
+    Self::Err(Some(r.unwrap_err().into()), None)
   }
 }
 
 impl<T> FromResidual<Result<std::convert::Infallible, std::ffi::OsString>> for Recoverable<T> {
   fn from_residual(r: Result<std::convert::Infallible, std::ffi::OsString>) -> Self {
-    let err = r.unwrap_err();
-    Self::Err(Some(err.into_string()?.into()), None)
+    Self::Err(Some(r.unwrap_err().into()), None)
   }
 }

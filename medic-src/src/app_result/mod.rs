@@ -1,3 +1,4 @@
+use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
 use crate::theme::current_theme;
@@ -5,7 +6,7 @@ use std::ops::{ControlFlow, FromResidual, Try};
 
 pub enum AppResult<T> {
   Ok(T),
-  Err(Option<Box<dyn std::error::Error>>),
+  Err(Option<MedicError>),
   Quit,
 }
 
@@ -50,7 +51,7 @@ impl<T> std::process::Termination for AppResult<T> {
 
 // Retain the original error, as well as whether medic should completely
 // quit. When false, recoverables may recover.
-pub struct ResultCodeResidual(Option<Box<dyn std::error::Error>>, bool);
+pub struct ResultCodeResidual(Option<MedicError>, bool);
 
 impl<T> Try for AppResult<T> {
   type Output = T;
@@ -98,20 +99,19 @@ impl<T> FromResidual<Result<std::convert::Infallible, envsubst::Error>> for AppR
 
 impl<T> FromResidual<Result<std::convert::Infallible, std::io::Error>> for AppResult<T> {
   fn from_residual(r: Result<std::convert::Infallible, std::io::Error>) -> Self {
-    Self::Err(Some(Box::new(r.unwrap_err())))
+    Self::Err(Some(r.unwrap_err().into()))
   }
 }
 
 impl<T> FromResidual<Result<std::convert::Infallible, std::ffi::OsString>> for AppResult<T> {
   fn from_residual(r: Result<std::convert::Infallible, std::ffi::OsString>) -> Self {
-    let err = r.unwrap_err();
-    Self::Err(Some(err.into_string()?.into()))
+    Self::Err(Some(r.unwrap_err().into()))
   }
 }
 
 impl<T> FromResidual<Result<std::convert::Infallible, Box<dyn std::error::Error>>> for AppResult<T> {
   fn from_residual(r: Result<std::convert::Infallible, Box<dyn std::error::Error>>) -> Self {
     let err = r.unwrap_err();
-    Self::Err(Some(err))
+    Self::Err(Some(err.into()))
   }
 }

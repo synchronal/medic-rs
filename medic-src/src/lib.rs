@@ -8,6 +8,7 @@ pub mod cli;
 pub mod config;
 pub mod context;
 pub mod doctor;
+pub mod error;
 pub mod extra;
 pub mod noop_config;
 pub mod outdated;
