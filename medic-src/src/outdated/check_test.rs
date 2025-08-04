@@ -1,5 +1,6 @@
 // @related [subject](medic-src/src/outdated/check.rs)
 
+use crate::extra;
 use crate::util::StringOrList;
 
 use super::*;
@@ -154,14 +155,7 @@ fn to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
     remedy: None,
   };
 
-  let mut context = std::collections::HashMap::new();
-  for (key, value) in std::env::vars() {
-    if value.contains(['{', '}']) {
-      continue;
-    };
-    context.insert(key, value);
-  }
-  let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
+  let path_expansion = extra::env::subst("${PWD}/fixtures/bin").unwrap();
   let expected_cmd_str = format!("cd \"{path_expansion}\" && \"medic-outdated-thing\"");
 
   let cmd = check.to_command()?;

@@ -108,3 +108,10 @@ impl<T> FromResidual<Result<std::convert::Infallible, std::ffi::OsString>> for A
     Self::Err(Some(err.into_string()?.into()))
   }
 }
+
+impl<T> FromResidual<Result<std::convert::Infallible, Box<dyn std::error::Error>>> for AppResult<T> {
+  fn from_residual(r: Result<std::convert::Infallible, Box<dyn std::error::Error>>) -> Self {
+    let err = r.unwrap_err();
+    Self::Err(Some(err))
+  }
+}

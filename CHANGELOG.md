@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Environment substitution skips any variable where the value includes
+  `$` characters.
+
 ## 2.18.0
 
 - Shell checks may force remedies to be run manually with

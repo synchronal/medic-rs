@@ -157,15 +157,8 @@ fn to_command_cd_relative() {
     platform: None,
     verbose: false,
   };
+  let path_expansion = extra::env::subst("${PWD}/fixtures/bin").unwrap();
 
-  let mut context = std::collections::HashMap::new();
-  for (key, value) in std::env::vars() {
-    if value.contains(['{', '}']) {
-      continue;
-    };
-    context.insert(key, value);
-  }
-  let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
   let path: std::path::PathBuf = path_expansion.into();
   let cmd = check.to_command().unwrap();
 

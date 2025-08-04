@@ -1,6 +1,7 @@
 // @related [subject](medic-src/src/shell/shell_config.rs)
 
 use super::*;
+use crate::extra;
 use crate::runnable::Runnable;
 use std::collections::BTreeMap;
 use std::sync::Once;
@@ -183,14 +184,7 @@ fn test_to_command_cd() {
     verbose: false,
   };
 
-  let mut context = std::collections::HashMap::new();
-  for (key, value) in std::env::vars() {
-    if value.contains(['{', '}']) {
-      continue;
-    };
-    context.insert(key, value);
-  }
-  let path_expansion = envsubst::substitute("${PWD}/fixtures/bin", &context).unwrap();
+  let path_expansion = extra::env::subst("${PWD}/fixtures/bin").unwrap();
   let expected_cmd_str = format!("cd \"{path_expansion}\" && \"sh\" \"-c\" \"some command\"");
 
   let cmd = shell.to_command().unwrap();

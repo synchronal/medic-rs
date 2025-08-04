@@ -2,18 +2,11 @@
 
 pub mod cli;
 
-use medic_src::AppResult;
+use medic_src::{extra, AppResult};
 use std::io::Write;
 
 pub fn create_config_file(path: std::path::PathBuf, force: bool) -> AppResult<()> {
-  let cwd = std::env::current_dir()?.into_os_string().into_string()?;
-  let mut context = std::collections::HashMap::new();
-  context.insert("CWD".to_string(), cwd);
-  for (key, value) in std::env::vars() {
-    context.insert(key, value);
-  }
-
-  let path_expansion = envsubst::substitute(path.to_string_lossy(), &context).unwrap();
+  let path_expansion = extra::env::subst(path.to_str().unwrap()).unwrap();
   let expanded_path = std::path::Path::new(&path_expansion);
   let config_dir = expanded_path.parent().unwrap();
 

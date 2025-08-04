@@ -1,5 +1,6 @@
 // @related [tests](medic-src/src/config/manifest_test.rs)
 
+use crate::extra;
 use crate::AppResult;
 use crate::AuditStep;
 use crate::DoctorStep;
@@ -22,17 +23,7 @@ pub struct Manifest {
 
 impl Manifest {
   pub fn new(path: &Path) -> AppResult<Manifest> {
-    let cwd = std::env::current_dir()?.into_os_string().into_string()?;
-    let mut context = std::collections::HashMap::new();
-    context.insert("CWD".to_string(), cwd);
-    for (key, value) in std::env::vars() {
-      if value.contains(['{', '}']) {
-        continue;
-      };
-      context.insert(key, value);
-    }
-
-    let path_expansion = envsubst::substitute(path.to_string_lossy(), &context)?;
+    let path_expansion = extra::env::subst(path.to_str().unwrap())?;
     let expanded_path = std::path::Path::new(&path_expansion);
 
     std::env::set_var("MEDIC_CONFIG", path);
