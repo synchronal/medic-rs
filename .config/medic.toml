@@ -12,17 +12,18 @@ checks = [
   { name = "Check for warnings", shell = "cargo build --workspace --features strict --color always", verbose = true },
   { name = "Build for tests", shell = "cargo test --color always --no-run", verbose = true },
   [
-    { name = "medic: tests", shell = "cargo test --color always --package medic", verbose = true },
+    { name = "medic-audit: tests", shell = "cargo test --color always --package medic-audit", verbose = true },
     { name = "medic-audit: tests", shell = "cargo test --color always --package medic-audit", verbose = true },
     { name = "medic-doctor: tests", shell = "cargo test --color always --package medic-doctor", verbose = true },
     { name = "medic-init: tests", shell = "cargo test --color always --package medic-init", verbose = true },
     { name = "medic-lib: tests", shell = "cargo test --color always --package medic-lib", verbose = true },
     { name = "medic-outdated: tests", shell = "cargo test --color always --package medic-outdated", verbose = true },
     { name = "medic-run: tests", shell = "cargo test --color always --package medic-run", verbose = true },
+    { name = "medic-src: tests", shell = "cargo test --color always --package medic-src", verbose = true },
     { name = "medic-shipit: tests", shell = "cargo test --color always --package medic-shipit", verbose = true },
-    { name = "medic-audit: tests", shell = "cargo test --color always --package medic-audit", verbose = true },
     { name = "medic-test: tests", shell = "cargo test --color always --package medic-test", verbose = true },
     { name = "medic-update: tests", shell = "cargo test --color always --package medic-update", verbose = true },
+    { name = "medic: tests", shell = "cargo test --color always --package medic", verbose = true },
 
   ],
 ]
