@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.18.1
+
 - Environment substitution skips any variable where the value includes
   `$` characters.
 
