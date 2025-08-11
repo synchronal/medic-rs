@@ -77,3 +77,9 @@ impl From<Box<dyn std::error::Error>> for MedicError {
     MedicError::Other(err)
   }
 }
+
+impl From<terminal_colorsaurus::Error> for MedicError {
+  fn from(err: terminal_colorsaurus::Error) -> Self {
+    MedicError::Other(Box::new(err))
+  }
+}

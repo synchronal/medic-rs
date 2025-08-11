@@ -1,6 +1,7 @@
+use crate::error::MedicError;
 use std::collections::HashMap;
 
-pub fn subst(string: &str) -> Result<String, Box<dyn std::error::Error>> {
+pub fn subst(string: &str) -> Result<String, MedicError> {
   let cwd = std::env::current_dir()?
     .into_os_string()
     .into_string()

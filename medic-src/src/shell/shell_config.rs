@@ -1,5 +1,6 @@
 // @related [test](medic-src/src/shell/shell_config_test.rs)
 
+use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
@@ -157,9 +158,9 @@ impl Runnable for ShellConfig {
       Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
     }
   }
-  fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
+  fn to_command(&self) -> Result<Command, MedicError> {
     if self.shell.is_empty() {
-      Err("No shell command specified".into())
+      Err(MedicError::Message("No shell command specified".to_string()))
     } else {
       let mut command = Command::new("sh");
       command.arg("-c").arg(&self.shell);
@@ -168,8 +169,7 @@ impl Runnable for ShellConfig {
         if let Ok(expanded) = std::fs::canonicalize(directory) {
           command.current_dir(&expanded);
         } else {
-          let msg: Box<dyn std::error::Error> = format!("directory {directory} does not exist").into();
-          return Err(msg);
+          return Err(MedicError::Message(format!("directory {directory} does not exist")));
         }
       }
 

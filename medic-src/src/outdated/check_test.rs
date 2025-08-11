@@ -1,5 +1,6 @@
 // @related [subject](medic-src/src/outdated/check.rs)
 
+use crate::error::MedicError;
 use crate::extra;
 use crate::util::StringOrList;
 
@@ -145,7 +146,7 @@ fn to_command() {
 }
 
 #[test]
-fn to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
+fn to_command_cd_relative() -> Result<(), MedicError> {
   let check = OutdatedCheck {
     args: None,
     cd: Some("../fixtures/bin".to_string()),
@@ -165,7 +166,7 @@ fn to_command_cd_relative() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[test]
-fn to_command_cd_absolute() -> Result<(), Box<dyn std::error::Error>> {
+fn to_command_cd_absolute() -> Result<(), MedicError> {
   let check = OutdatedCheck {
     args: None,
     cd: Some("/tmp".to_string()),

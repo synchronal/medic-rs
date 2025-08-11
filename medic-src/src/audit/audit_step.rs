@@ -1,3 +1,4 @@
+use crate::error::MedicError;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
@@ -41,7 +42,7 @@ impl Runnable for AuditStep {
     }
   }
 
-  fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
+  fn to_command(&self) -> Result<Command, MedicError> {
     match self {
       AuditStep::Check(config) => config.to_command(),
       AuditStep::Shell(config) => config.to_command(),

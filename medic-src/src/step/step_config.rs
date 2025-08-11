@@ -1,5 +1,6 @@
 // @related [tests](medic-src/src/step/step_config_test.rs)
 
+use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
@@ -125,12 +126,11 @@ impl Runnable for StepConfig {
     }
   }
 
-  fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
+  fn to_command(&self) -> Result<Command, MedicError> {
     let mut step_cmd: String = "medic-step-".to_owned();
     step_cmd.push_str(&self.step);
     if let Err(_err) = which(&step_cmd) {
-      let msg: Box<dyn std::error::Error> = format!("executable {step_cmd} not found in PATH").into();
-      return Err(msg);
+      return Err(MedicError::Message(format!("executable {step_cmd} not found in PATH")));
     };
     let mut command = extra::command::new(&step_cmd, &self.cd);
 

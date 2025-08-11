@@ -1,5 +1,6 @@
 use crate::cli::Flags;
 use crate::context::Context;
+use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::theme::current_theme;
@@ -26,7 +27,7 @@ pub trait Runnable: std::fmt::Display + Clone {
   }
 
   fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()>;
-  fn to_command(&self) -> Result<std::process::Command, Box<dyn std::error::Error>>;
+  fn to_command(&self) -> Result<std::process::Command, MedicError>;
   fn verbose(&self) -> bool {
     false
   }

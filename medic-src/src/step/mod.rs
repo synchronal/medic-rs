@@ -4,6 +4,7 @@ mod step_config_test;
 pub mod step_config;
 pub use step_config::StepConfig;
 
+use crate::error::MedicError;
 use crate::extra;
 use crate::noop_config::NoopConfig;
 use crate::optional_styled::OptionalStyled;
@@ -69,13 +70,15 @@ impl Runnable for Step {
     }
   }
 
-  fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
+  fn to_command(&self) -> Result<Command, MedicError> {
     match self {
       Step::Check(config) => config.to_command(),
       Step::Doctor(_) => doctor_command(),
       Step::Shell(config) => config.to_command(),
       Step::Step(config) => config.to_command(),
-      Step::Steps(_) => Err("Steps cannot be converted to a single command".into()),
+      Step::Steps(_) => Err(MedicError::Message(
+        "Steps cannot be converted to a single command".to_string(),
+      )),
     }
   }
 
@@ -140,7 +143,7 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   }
 }
 
-fn doctor_command() -> Result<Command, Box<dyn std::error::Error>> {
+fn doctor_command() -> Result<Command, MedicError> {
   let command = extra::command::from_string("medic doctor", &None);
   Ok(command)
 }

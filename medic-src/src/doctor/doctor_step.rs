@@ -1,3 +1,4 @@
+use crate::error::MedicError;
 use crate::recoverable::Recoverable;
 pub use crate::shell::ShellConfig;
 pub use crate::step::step_config::StepConfig;
@@ -41,7 +42,7 @@ impl Runnable for DoctorStep {
     }
   }
 
-  fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
+  fn to_command(&self) -> Result<Command, MedicError> {
     match self {
       DoctorStep::Check(config) => config.to_command(),
       DoctorStep::Shell(config) => config.to_command(),

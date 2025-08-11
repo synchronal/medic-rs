@@ -1,3 +1,4 @@
+use crate::error::MedicError;
 use console::Style;
 use once_cell::sync::OnceCell;
 use serde::Deserialize;
@@ -30,7 +31,7 @@ impl From<&Theme> for ColorTheme {
   }
 }
 
-pub fn detect_colortheme() -> Result<ColorTheme, Box<dyn std::error::Error>> {
+pub fn detect_colortheme() -> Result<ColorTheme, MedicError> {
   let colors = color_palette(QueryOptions::default())?;
   match colors.theme_mode() {
     ThemeMode::Dark => Ok(dark_theme()),

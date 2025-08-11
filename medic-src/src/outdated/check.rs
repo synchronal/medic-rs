@@ -1,6 +1,7 @@
 // @related [tests](medic-src/src/outdated/check_test.rs)
 
 use super::summary::OutdatedSummary;
+use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
@@ -125,12 +126,11 @@ impl Runnable for OutdatedCheck {
       Err(err) => Recoverable::Err(Some(format!("Failed to parse command: {err}").into()), None),
     }
   }
-  fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
+  fn to_command(&self) -> Result<Command, MedicError> {
     let mut check_cmd: String = "medic-outdated-".to_owned();
     check_cmd.push_str(&self.check);
     if let Err(_err) = which(&check_cmd) {
-      let msg: Box<dyn std::error::Error> = format!("executable {check_cmd} not found in PATH").into();
-      return Err(msg);
+      return Err(MedicError::Message(format!("executable {check_cmd} not found in PATH")));
     };
     let mut command = Command::new(check_cmd);
 
@@ -138,8 +138,7 @@ impl Runnable for OutdatedCheck {
       if let Ok(expanded) = std::fs::canonicalize(directory) {
         command.current_dir(&expanded);
       } else {
-        let msg: Box<dyn std::error::Error> = format!("directory {directory} does not exist").into();
-        return Err(msg);
+        return Err(MedicError::Message(format!("directory {directory} does not exist")));
       }
     }
 

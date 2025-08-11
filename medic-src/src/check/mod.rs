@@ -7,6 +7,7 @@ mod check_output;
 mod output_format;
 
 pub use self::output_format::OutputFormat;
+use crate::error::MedicError;
 use crate::extra;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
@@ -98,13 +99,12 @@ impl Runnable for Check {
     }
   }
 
-  fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
+  fn to_command(&self) -> Result<Command, MedicError> {
     let mut check_cmd: String = "medic-check-".to_owned();
     check_cmd.push_str(&self.check);
 
     if let Err(_err) = which(&check_cmd) {
-      let msg: Box<dyn std::error::Error> = format!("executable {check_cmd} not found in PATH").into();
-      return Err(msg);
+      return Err(MedicError::Message(format!("executable {check_cmd} not found in PATH")));
     };
 
     let mut command = extra::command::new(&check_cmd, &self.cd);

@@ -1,3 +1,4 @@
+use crate::error::MedicError;
 use crate::extra;
 use crate::noop_config::NoopConfig;
 use crate::optional_styled::OptionalStyled;
@@ -72,7 +73,7 @@ impl Runnable for ShipitStep {
     }
   }
 
-  fn to_command(&self) -> Result<Command, Box<dyn std::error::Error>> {
+  fn to_command(&self) -> Result<Command, MedicError> {
     match self {
       ShipitStep::Check(config) => config.to_command(),
       ShipitStep::Shell(config) => config.to_command(),
@@ -207,19 +208,19 @@ fn run_update(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
   }
 }
 
-fn audit_cmd() -> Result<Command, Box<dyn std::error::Error>> {
+fn audit_cmd() -> Result<Command, MedicError> {
   let mut command = extra::command::new("medic", &None);
   command.arg("audit");
   Ok(command)
 }
 
-fn test_cmd() -> Result<Command, Box<dyn std::error::Error>> {
+fn test_cmd() -> Result<Command, MedicError> {
   let mut command = extra::command::new("medic", &None);
   command.arg("test");
   Ok(command)
 }
 
-fn update_cmd() -> Result<Command, Box<dyn std::error::Error>> {
+fn update_cmd() -> Result<Command, MedicError> {
   let mut command = extra::command::new("medic", &None);
   command.arg("update");
   Ok(command)
