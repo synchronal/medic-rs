@@ -15,7 +15,6 @@ use crate::runnable::Runnable;
 use crate::theme::current_theme;
 use crate::util::StringOrList;
 
-use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;

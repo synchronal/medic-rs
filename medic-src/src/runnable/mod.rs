@@ -7,7 +7,7 @@ use crate::theme::current_theme;
 use crate::AppResult;
 use arboard::Clipboard;
 use console::Term;
-use retrogress::Progress;
+use retrogress::ProgressBar;
 use std::io::{BufRead, BufReader};
 use std::process::Stdio;
 use std::sync::{LazyLock, Mutex};
@@ -26,19 +26,14 @@ pub trait Runnable: std::fmt::Display + Clone {
     &None
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()>;
+  fn run(self, progress: &mut ProgressBar) -> Recoverable<()>;
   fn to_command(&self) -> Result<std::process::Command, MedicError>;
   fn verbose(&self) -> bool {
     false
   }
 }
 
-pub fn run(
-  runnable: impl Runnable,
-  progress: &mut retrogress::ProgressBar,
-  flags: &mut Flags,
-  context: &Context,
-) -> AppResult<()> {
+pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flags, context: &Context) -> AppResult<()> {
   if !context.matches_platform(runnable.platform()) {
     let pb = progress.append(&format!(
       "{} {}",
@@ -158,28 +153,26 @@ pub fn run(
 fn ask(
   runnable: impl Runnable,
   remedy: Option<Remedy>,
-  progress: &mut retrogress::ProgressBar,
+  progress: &mut ProgressBar,
   default_exit: AppResult<()>,
   flags: &mut Flags,
   context: &Context,
 ) -> AppResult<()> {
-  match prompt(&remedy, &default_exit) {
+  match prompt(&remedy, &default_exit, progress) {
     PromptResult::Help => {
+      let mut msg = vec![];
       if remedy.is_some() {
-        eprintln!(
-          r#"  - a - all  - apply this and all future remedies.
-  - y - yes  - apply the remedy.
-  - n - no   - do not run this remedy; if the check is optional continue, otherwise exit.
-"#
-        );
+        msg.push("  - a - all   - apply this and all future remedies.");
+        msg.push("  - y - yes   - apply the remedy.");
+        msg.push("  - n - no    - do not run this remedy; if the check is optional continue, otherwise exit.");
       }
-      eprintln!(
-        r#"  - r - rerun - re-run the step.
-  - s - skip  - skip this step, continuing with future checks and steps.
-  - q - quit  - abort medic with a non-zero exit code.
-  - ? - help  - print this message.
-"#
-      );
+      msg.push("  - r - rerun - re-run the step.");
+      msg.push("  - s - skip  - skip this step, continuing with future checks and steps.");
+      msg.push("  - q - quit  - abort medic with a non-zero exit code.");
+      msg.push("  - ? - help  - print this message.");
+
+      msg.sort();
+      eprintln!("\n{}", msg.join("\n"));
       ask(runnable, remedy, progress, default_exit, flags, context)
     }
     PromptResult::All => {
@@ -206,15 +199,16 @@ fn ask(
   }
 }
 
-fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
+fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>, progress: &mut ProgressBar) -> PromptResult {
+  let mut prompt = String::new();
+
   if let AppResult::Err(Some(err)) = result {
     if err.to_string().trim() != "" {
-      eprintln!(
-        "{} {}",
+      prompt.push_str(&format!(
+        "{} {}\n",
         OptionalStyled::new("Error:", current_theme().error_style.clone()),
         err
-      );
-      eprintln!();
+      ));
     }
   }
   let msg = if remedy.is_some() {
@@ -227,17 +221,17 @@ fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>) -> PromptResult {
   } else {
     "[r,s,q,?]"
   };
-  let prompt = format!(
-    "{} {}{}",
+  prompt.push_str(&format!(
+    "{} {}{} ",
     OptionalStyled::new(msg, current_theme().text_style.clone()),
     OptionalStyled::new(options, current_theme().highlight_style.clone()),
     OptionalStyled::new("?", current_theme().text_style.clone()),
-  );
-  eprint!("— {prompt} ");
-  Term::stdout().read_line().unwrap_or("".into()).into()
+  ));
+
+  progress.prompt(&prompt).into()
 }
 
-fn run_remedy(remedy: Remedy, progress: &mut retrogress::ProgressBar) -> AppResult<()> {
+fn run_remedy(remedy: Remedy, progress: &mut ProgressBar) -> AppResult<()> {
   console::set_colors_enabled(true);
   console::set_colors_enabled_stderr(true);
   Term::stderr().clear_line().unwrap();

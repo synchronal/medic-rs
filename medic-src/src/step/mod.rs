@@ -14,10 +14,11 @@ use crate::shell::ShellConfig;
 use crate::theme::current_theme;
 use crate::Check;
 use console::style;
-use retrogress::Progress;
 use serde::Deserialize;
 use std::fmt;
 use std::process::{Command, Stdio};
+use std::sync::mpsc;
+use std::thread;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(untagged)]
@@ -61,12 +62,7 @@ impl Runnable for Step {
       Step::Doctor(_) => run_doctor(progress),
       Step::Shell(config) => config.run(progress),
       Step::Step(config) => config.run(progress),
-      Step::Steps(steps) => {
-        for step in steps {
-          step.run(progress)?;
-        }
-        Recoverable::Ok(())
-      }
+      Step::Steps(steps) => run_parallel_steps(steps, progress),
     }
   }
 
@@ -146,4 +142,51 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
 fn doctor_command() -> Result<Command, MedicError> {
   let command = extra::command::from_string("medic doctor", &None);
   Ok(command)
+}
+
+fn run_parallel_steps(steps: Vec<Step>, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
+  let (tx, rx) = mpsc::channel();
+  let mut handles = vec![];
+
+  for step in steps {
+    let mut progress = progress.clone();
+    let tx = tx.clone();
+
+    let handle = thread::spawn(move || {
+      let result = step.run(&mut progress);
+      let _ = tx.send(result);
+    });
+
+    handles.push(handle);
+  }
+
+  drop(tx);
+
+  for handle in handles {
+    handle.join().expect("Unable to wait for internal thread");
+  }
+
+  let mut failure = None;
+  let mut manual = None;
+  let mut optional = None;
+
+  while let Ok(result) = rx.recv() {
+    match result {
+      Recoverable::Manual(_, _) => manual = Some(result),
+      Recoverable::Ok(_) => {}
+      Recoverable::Optional(_, _) => optional = Some(result),
+      Recoverable::Err(_, _) => failure = Some(result),
+    }
+  }
+
+  if let Some(failure) = failure {
+    return failure;
+  }
+  if let Some(manual) = manual {
+    return manual;
+  }
+  if let Some(optional) = optional {
+    return optional;
+  }
+  Recoverable::Ok(())
 }

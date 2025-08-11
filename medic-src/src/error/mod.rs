@@ -7,7 +7,7 @@ pub enum MedicError {
   Envsubst(envsubst::Error),
   OsString(std::ffi::OsString),
   Message(String),
-  Other(Box<dyn std::error::Error>),
+  Other(Box<dyn std::error::Error + Send + Sync>),
 }
 
 impl fmt::Display for MedicError {
@@ -72,8 +72,8 @@ impl From<String> for MedicError {
   }
 }
 
-impl From<Box<dyn std::error::Error>> for MedicError {
-  fn from(err: Box<dyn std::error::Error>) -> Self {
+impl From<Box<dyn std::error::Error + Send + Sync>> for MedicError {
+  fn from(err: Box<dyn std::error::Error + Send + Sync>) -> Self {
     MedicError::Other(err)
   }
 }

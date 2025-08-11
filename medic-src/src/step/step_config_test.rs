@@ -55,6 +55,7 @@ fn deserialize_arg_string() {
 }
 #[test]
 fn deserialize_arg_list() {
+  assert!(false);
   let toml = r#"
         step = "step-name"
         command = "subcommand"

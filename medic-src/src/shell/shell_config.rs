@@ -7,7 +7,6 @@ use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::theme::current_theme;
 
-use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;

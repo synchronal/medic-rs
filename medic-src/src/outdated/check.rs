@@ -9,7 +9,6 @@ use crate::std_to_string;
 use crate::theme::current_theme;
 use crate::util::StringOrList;
 use console::style;
-use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;

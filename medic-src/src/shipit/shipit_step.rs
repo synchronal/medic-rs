@@ -9,7 +9,6 @@ use crate::step::StepConfig;
 use crate::theme::current_theme;
 use crate::Check;
 use console::style;
-use retrogress::Progress;
 use serde::Deserialize;
 
 use std::fmt;
