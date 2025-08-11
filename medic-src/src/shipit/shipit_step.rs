@@ -1,3 +1,4 @@
+use crate::cli::Flags;
 use crate::error::MedicError;
 use crate::extra;
 use crate::noop_config::NoopConfig;
@@ -9,7 +10,6 @@ use crate::step::StepConfig;
 use crate::theme::current_theme;
 use crate::Check;
 use console::style;
-use retrogress::Progress;
 use serde::Deserialize;
 
 use std::fmt;
@@ -62,11 +62,11 @@ impl Runnable for ShipitStep {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, flags: &Flags) -> Recoverable<()> {
     match self {
-      ShipitStep::Check(config) => config.run(progress),
-      ShipitStep::Shell(config) => config.run(progress),
-      ShipitStep::Step(config) => config.run(progress),
+      ShipitStep::Check(config) => config.run(progress, flags),
+      ShipitStep::Shell(config) => config.run(progress, flags),
+      ShipitStep::Step(config) => config.run(progress, flags),
       ShipitStep::Audit(_) => run_audit(progress),
       ShipitStep::Test(_) => run_test(progress),
       ShipitStep::Update(_) => run_update(progress),

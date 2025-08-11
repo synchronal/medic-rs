@@ -1,5 +1,6 @@
 // @related [tests](medic-src/src/step/step_config_test.rs)
 
+use crate::cli::Flags;
 use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
@@ -9,7 +10,6 @@ use crate::util::StringOrList;
 use crate::{extra, std_to_string};
 
 use console::{style, Style};
-use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;
@@ -37,7 +37,7 @@ impl Runnable for StepConfig {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &Flags) -> Recoverable<()> {
     let allow_failure = self.allow_failure();
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());

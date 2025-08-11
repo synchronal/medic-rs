@@ -3,6 +3,7 @@
 
 pub mod cli;
 
+use medic_src::cli::Flags;
 use medic_src::runnable::Runnable;
 use medic_src::shell::ShellConfig;
 use medic_src::AppResult;
@@ -17,5 +18,6 @@ pub fn run_shell(
 ) -> AppResult<()> {
   let shell = ShellConfig::new(name, cmd, cd, remedy, verbose);
   eprintln!();
-  shell.run(progress).into()
+  let flags = Flags::default();
+  shell.run(progress, &flags).into()
 }

@@ -6,7 +6,6 @@ use medic_update::run_steps;
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;
-use console::Term;
 use std::io::stdout;
 use std::panic;
 
@@ -29,15 +28,11 @@ fn main() -> AppResult<()> {
 
   console::set_colors_enabled(true);
   console::set_colors_enabled_stderr(true);
-  let _ = Term::stderr().hide_cursor();
-  let _ = Term::stdout().hide_cursor();
 
   let result = panic::catch_unwind(|| {
     let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
     run_steps(manifest, &mut progress, cli_args.into(), &context)
   });
-
-  reset_term();
 
   match result {
     Ok(inner) => inner,
@@ -46,11 +41,5 @@ fn main() -> AppResult<()> {
 }
 
 fn interrupt() {
-  reset_term();
   std::process::exit(1);
-}
-
-fn reset_term() {
-  let _ = Term::stderr().show_cursor();
-  let _ = Term::stdout().show_cursor();
 }

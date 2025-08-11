@@ -23,6 +23,10 @@ pub struct CliArgs {
   #[arg(short, long, env = "MEDIC_INTERACTIVE", action)]
   pub interactive: bool,
 
+  /// Run sub-lists of steps in parallel (experimental)
+  #[arg(short, long, env = "MEDIC_PARALLEL", action)]
+  pub parallel: bool,
+
   /// Color theme
   #[arg(short, long, env = "MEDIC_THEME", default_value = "auto")]
   pub theme: Theme,
@@ -33,6 +37,7 @@ impl From<CliArgs> for Flags {
     Self {
       auto_apply_remedy: args.apply_remedies,
       interactive: args.interactive,
+      parallel: args.parallel,
       ..Self::default()
     }
   }

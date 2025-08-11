@@ -7,6 +7,7 @@ mod check_output;
 mod output_format;
 
 pub use self::output_format::OutputFormat;
+use crate::cli::Flags;
 use crate::error::MedicError;
 use crate::extra;
 use crate::optional_styled::OptionalStyled;
@@ -15,7 +16,6 @@ use crate::runnable::Runnable;
 use crate::theme::current_theme;
 use crate::util::StringOrList;
 
-use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;
@@ -43,7 +43,7 @@ impl Runnable for Check {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &Flags) -> Recoverable<()> {
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
 

@@ -1,6 +1,7 @@
 // @related [tests](medic-src/src/outdated/check_test.rs)
 
 use super::summary::OutdatedSummary;
+use crate::cli::Flags;
 use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
@@ -9,7 +10,6 @@ use crate::std_to_string;
 use crate::theme::current_theme;
 use crate::util::StringOrList;
 use console::style;
-use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;
@@ -33,7 +33,7 @@ impl Runnable for OutdatedCheck {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &Flags) -> Recoverable<()> {
     let command_name = self.to_string();
     let pb = progress.append(&command_name);
 

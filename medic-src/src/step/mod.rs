@@ -4,6 +4,7 @@ mod step_config_test;
 pub mod step_config;
 pub use step_config::StepConfig;
 
+use crate::cli::Flags;
 use crate::error::MedicError;
 use crate::extra;
 use crate::noop_config::NoopConfig;
@@ -14,10 +15,11 @@ use crate::shell::ShellConfig;
 use crate::theme::current_theme;
 use crate::Check;
 use console::style;
-use retrogress::Progress;
 use serde::Deserialize;
 use std::fmt;
 use std::process::{Command, Stdio};
+use std::sync::mpsc;
+use std::thread;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(untagged)]
@@ -55,17 +57,18 @@ impl Runnable for Step {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, flags: &Flags) -> Recoverable<()> {
     match self {
-      Step::Check(config) => config.run(progress),
+      Step::Check(config) => config.run(progress, flags),
       Step::Doctor(_) => run_doctor(progress),
-      Step::Shell(config) => config.run(progress),
-      Step::Step(config) => config.run(progress),
+      Step::Shell(config) => config.run(progress, flags),
+      Step::Step(config) => config.run(progress, flags),
       Step::Steps(steps) => {
-        for step in steps {
-          step.run(progress)?;
+        if flags.parallel {
+          run_parallel_steps(steps, progress, flags)
+        } else {
+          run_serial_steps(steps, progress, flags)
         }
-        Recoverable::Ok(())
       }
     }
   }
@@ -146,4 +149,53 @@ fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
 fn doctor_command() -> Result<Command, MedicError> {
   let command = extra::command::from_string("medic doctor", &None);
   Ok(command)
+}
+
+fn run_parallel_steps(steps: Vec<Step>, progress: &mut retrogress::ProgressBar, flags: &Flags) -> Recoverable<()> {
+  let (tx, rx) = mpsc::channel();
+
+  thread::scope(|s| {
+    for step in steps {
+      let mut progress = progress.clone();
+      let tx = tx.clone();
+
+      s.spawn(move || {
+        let result = step.run(&mut progress, flags);
+        let _ = tx.send(result);
+      });
+    }
+
+    drop(tx);
+  });
+
+  let mut failure = None;
+  let mut manual = None;
+  let mut optional = None;
+
+  while let Ok(result) = rx.recv() {
+    match result {
+      Recoverable::Manual(_, _) => manual = Some(result),
+      Recoverable::Ok(_) => {}
+      Recoverable::Optional(_, _) => optional = Some(result),
+      Recoverable::Err(_, _) => failure = Some(result),
+    }
+  }
+
+  if let Some(failure) = failure {
+    return failure;
+  }
+  if let Some(manual) = manual {
+    return manual;
+  }
+  if let Some(optional) = optional {
+    return optional;
+  }
+  Recoverable::Ok(())
+}
+
+fn run_serial_steps(steps: Vec<Step>, progress: &mut retrogress::ProgressBar, flags: &Flags) -> Recoverable<()> {
+  for step in steps {
+    step.run(progress, flags)?;
+  }
+  Recoverable::Ok(())
 }

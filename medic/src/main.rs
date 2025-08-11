@@ -1,7 +1,6 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 
 use clap::Parser;
-use console::Term;
 use medic::cli::app::{CliArgs, Command};
 use medic_src::config::Manifest;
 use medic_src::context::Context;
@@ -17,11 +16,9 @@ fn main() -> AppResult<()> {
 
   console::set_colors_enabled(true);
   console::set_colors_enabled_stderr(true);
-  let _ = Term::stderr().hide_cursor();
-  let _ = Term::stdout().hide_cursor();
 
   let result = panic::catch_unwind(|| {
-    let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
+    let mut progress = retrogress::ProgressBar::new(retrogress::Parallel::boxed());
     match cli.command {
       Command::Audit(args) => {
         theme::set_theme((&args.theme).into());
@@ -61,8 +58,6 @@ fn main() -> AppResult<()> {
     }
   });
 
-  reset_term();
-
   match result {
     Ok(inner) => inner,
     Err(_) => std::process::exit(1),
@@ -70,11 +65,5 @@ fn main() -> AppResult<()> {
 }
 
 fn interrupt() {
-  reset_term();
   std::process::exit(1);
-}
-
-fn reset_term() {
-  let _ = Term::stderr().show_cursor();
-  let _ = Term::stdout().show_cursor();
 }

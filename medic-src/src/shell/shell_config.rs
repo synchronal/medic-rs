@@ -1,5 +1,6 @@
 // @related [test](medic-src/src/shell/shell_config_test.rs)
 
+use crate::cli::Flags;
 use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
@@ -7,7 +8,6 @@ use crate::runnable::Runnable;
 use crate::std_to_string;
 use crate::theme::current_theme;
 
-use retrogress::Progress;
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;
@@ -60,7 +60,7 @@ impl Runnable for ShellConfig {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &Flags) -> Recoverable<()> {
     let allow_failure = self.allow_failure();
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
