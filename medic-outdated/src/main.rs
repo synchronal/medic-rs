@@ -2,7 +2,7 @@ use medic_outdated::cli::CliArgs;
 use medic_outdated::run_checks;
 use medic_src::config::Manifest;
 use medic_src::context::Context;
-use medic_src::{theme, AppResult};
+use medic_src::{progress, theme, AppResult};
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;
@@ -30,8 +30,9 @@ fn main() -> AppResult<()> {
   console::set_colors_enabled_stderr(true);
 
   let result = panic::catch_unwind(|| {
-    let mut progress = retrogress::ProgressBar::new(retrogress::Sync::boxed());
-    run_checks(manifest, &mut progress, cli_args.into(), &context)
+    let flags = cli_args.into();
+    let mut progress = progress::new(&flags);
+    run_checks(manifest, &mut progress, flags, &context)
   });
 
   match result {
