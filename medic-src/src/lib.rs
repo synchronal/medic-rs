@@ -12,6 +12,7 @@ pub mod error;
 pub mod extra;
 pub mod noop_config;
 pub mod outdated;
+pub mod progress;
 pub mod recoverable;
 pub mod runnable;
 pub mod shell;
