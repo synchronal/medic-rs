@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Introduce experimental `--parallel` flag which runs nested steps in
+  parallel. Very very experimental!
+- Update `retrogress` to v1, including very experimental refactorings.
+
 ## 2.18.1
 
 - Environment substitution skips any variable where the value includes
