@@ -1,4 +1,5 @@
 use crate::cli::Flags;
+use crate::context::Context;
 use crate::error::MedicError;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
@@ -35,11 +36,11 @@ impl Runnable for AuditStep {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &Flags) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, ctx: &Context) -> Recoverable<()> {
     match self {
-      AuditStep::Check(config) => config.run(progress, flags),
-      AuditStep::Shell(config) => config.run(progress, flags),
-      AuditStep::Step(config) => config.run(progress, flags),
+      AuditStep::Check(config) => config.run(progress, flags, ctx),
+      AuditStep::Shell(config) => config.run(progress, flags, ctx),
+      AuditStep::Step(config) => config.run(progress, flags, ctx),
     }
   }
 

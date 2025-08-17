@@ -1,6 +1,7 @@
 use crate::cli::Flags;
+use crate::config;
+use crate::context::Context;
 use crate::error::MedicError;
-use crate::extra;
 use crate::noop_config::NoopConfig;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
@@ -8,12 +9,11 @@ use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::step::StepConfig;
 use crate::theme::current_theme;
-use crate::Check;
-use console::style;
+use crate::{AppResult, Check};
 use serde::Deserialize;
 
 use std::fmt;
-use std::process::{Command, Stdio};
+use std::process::Command;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(untagged)]
@@ -62,14 +62,14 @@ impl Runnable for ShipitStep {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &Flags) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, ctx: &Context) -> Recoverable<()> {
     match self {
-      ShipitStep::Check(config) => config.run(progress, flags),
-      ShipitStep::Shell(config) => config.run(progress, flags),
-      ShipitStep::Step(config) => config.run(progress, flags),
-      ShipitStep::Audit(_) => run_audit(progress),
-      ShipitStep::Test(_) => run_test(progress),
-      ShipitStep::Update(_) => run_update(progress),
+      ShipitStep::Check(config) => config.run(progress, flags, ctx),
+      ShipitStep::Shell(config) => config.run(progress, flags, ctx),
+      ShipitStep::Step(config) => config.run(progress, flags, ctx),
+      ShipitStep::Audit(config) => config.run(progress, flags, ctx),
+      ShipitStep::Test(config) => config.run(progress, flags, ctx),
+      ShipitStep::Update(config) => config.run(progress, flags, ctx),
     }
   }
 
@@ -78,9 +78,9 @@ impl Runnable for ShipitStep {
       ShipitStep::Check(config) => config.to_command(),
       ShipitStep::Shell(config) => config.to_command(),
       ShipitStep::Step(config) => config.to_command(),
-      ShipitStep::Audit(_) => audit_cmd(),
-      ShipitStep::Test(_) => test_cmd(),
-      ShipitStep::Update(_) => update_cmd(),
+      ShipitStep::Audit(config) => config.to_command(),
+      ShipitStep::Test(config) => config.to_command(),
+      ShipitStep::Update(config) => config.to_command(),
     }
   }
 
@@ -121,107 +121,101 @@ impl fmt::Display for ShipitStep {
   }
 }
 
-fn run_audit(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
-  let pb = progress.append("doctor");
-  progress.println(
-    pb,
-    &format!(
-      "{} {}",
-      style("!").bright().green(),
+impl Runnable for AuditConfig {
+  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
+    progress.print_inline(&format!("{} {self}", console::style("!").bright().green(),));
+
+    match config::Manifest::new(&flags.config_path) {
+      AppResult::Ok(manifest) => {
+        if let Some(config) = manifest.audit {
+          for check in config.checks {
+            crate::runnable::run(check, progress, flags, context);
+          }
+        }
+        Recoverable::Ok(())
+      }
+      AppResult::Err(err) => Recoverable::Nonrecoverable(err.unwrap()),
+      AppResult::Quit => Recoverable::Nonrecoverable("Unable to read manifest".into()),
+    }
+  }
+
+  fn to_command(&self) -> Result<std::process::Command, MedicError> {
+    panic!("AuditConfig not be converted to a Command");
+  }
+}
+
+impl fmt::Display for AuditConfig {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(
+      f,
+      "{}",
       OptionalStyled::new("== Audit ==", current_theme().text_style.clone())
-    ),
-  );
-  progress.hide(pb);
-  if let Ok(result) = audit_cmd()
-    .unwrap()
-    .stdout(Stdio::inherit())
-    .stderr(Stdio::inherit())
-    .output()
-  {
-    if result.status.success() {
-      Recoverable::Ok(())
-    } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
-      std::process::exit(crate::QUIT_STATUS_CODE);
-    } else {
-      Recoverable::Err(Some("Audit failure".into()), None)
-    }
-  } else {
-    Recoverable::Err(Some("Unable to run medic audit".into()), None)
+    )
   }
 }
 
-fn run_test(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
-  let pb = progress.append("doctor");
-  progress.println(
-    pb,
-    &format!(
-      "{} {}",
-      style("!").bright().green(),
+impl Runnable for TestConfig {
+  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
+    progress.print_inline(&format!("{} {self}", console::style("!").bright().green(),));
+
+    match config::Manifest::new(&flags.config_path) {
+      AppResult::Ok(manifest) => {
+        if let Some(config) = manifest.test {
+          for check in config.checks {
+            crate::runnable::run(check, progress, flags, context);
+          }
+        }
+        Recoverable::Ok(())
+      }
+      AppResult::Err(err) => Recoverable::Nonrecoverable(err.unwrap()),
+      AppResult::Quit => Recoverable::Nonrecoverable("Unable to read manifest".into()),
+    }
+  }
+
+  fn to_command(&self) -> Result<std::process::Command, MedicError> {
+    panic!("TestConfig not be converted to a Command");
+  }
+}
+
+impl fmt::Display for TestConfig {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(
+      f,
+      "{}",
       OptionalStyled::new("== Test ==", current_theme().text_style.clone())
-    ),
-  );
-  progress.hide(pb);
-  if let Ok(result) = test_cmd()
-    .unwrap()
-    .stdout(Stdio::inherit())
-    .stderr(Stdio::inherit())
-    .output()
-  {
-    if result.status.success() {
-      Recoverable::Ok(())
-    } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
-      std::process::exit(crate::QUIT_STATUS_CODE);
-    } else {
-      Recoverable::Err(Some("Test failure".into()), None)
-    }
-  } else {
-    Recoverable::Err(Some("Unable to run medic test".into()), None)
+    )
   }
 }
 
-fn run_update(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
-  let pb = progress.append("doctor");
-  progress.println(
-    pb,
-    &format!(
-      "{} {}",
-      style("!").bright().green(),
+impl Runnable for UpdateConfig {
+  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
+    progress.print_inline(&format!("{} {self}", console::style("!").bright().green(),));
+
+    match config::Manifest::new(&flags.config_path) {
+      AppResult::Ok(manifest) => {
+        if let Some(config) = manifest.update {
+          for check in config.steps {
+            crate::runnable::run(check, progress, flags, context);
+          }
+        }
+        Recoverable::Ok(())
+      }
+      AppResult::Err(err) => Recoverable::Nonrecoverable(err.unwrap()),
+      AppResult::Quit => Recoverable::Nonrecoverable("Unable to read manifest".into()),
+    }
+  }
+
+  fn to_command(&self) -> Result<std::process::Command, MedicError> {
+    panic!("UpdateConfig not be converted to a Command");
+  }
+}
+
+impl fmt::Display for UpdateConfig {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(
+      f,
+      "{}",
       OptionalStyled::new("== Update ==", current_theme().text_style.clone())
-    ),
-  );
-  progress.hide(pb);
-  if let Ok(result) = update_cmd()
-    .unwrap()
-    .stdout(Stdio::inherit())
-    .stderr(Stdio::inherit())
-    .output()
-  {
-    if result.status.success() {
-      Recoverable::Ok(())
-    } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
-      std::process::exit(crate::QUIT_STATUS_CODE);
-    } else {
-      Recoverable::Err(Some("Unable to update project".into()), None)
-    }
-  } else {
-    Recoverable::Err(Some("Unable to run medic update".into()), None)
+    )
   }
-}
-
-fn audit_cmd() -> Result<Command, MedicError> {
-  let mut command = extra::command::new("medic", &None);
-  command.arg("audit");
-  Ok(command)
-}
-
-fn test_cmd() -> Result<Command, MedicError> {
-  let mut command = extra::command::new("medic", &None);
-  command.arg("test");
-  Ok(command)
-}
-
-fn update_cmd() -> Result<Command, MedicError> {
-  let mut command = extra::command::new("medic", &None);
-  command.arg("update");
-  Ok(command)
 }

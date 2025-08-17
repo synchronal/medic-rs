@@ -36,6 +36,7 @@ impl From<CliArgs> for Flags {
   fn from(args: CliArgs) -> Self {
     Self {
       auto_apply_remedy: args.apply_remedies,
+      config_path: args.config,
       interactive: args.interactive,
       parallel: args.parallel,
       ..Self::default()

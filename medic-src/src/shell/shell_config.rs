@@ -1,6 +1,7 @@
 // @related [test](medic-src/src/shell/shell_config_test.rs)
 
 use crate::cli::Flags;
+use crate::context::Context;
 use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
@@ -60,7 +61,7 @@ impl Runnable for ShellConfig {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &Flags) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &mut Flags, _ctx: &Context) -> Recoverable<()> {
     let allow_failure = self.allow_failure();
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());

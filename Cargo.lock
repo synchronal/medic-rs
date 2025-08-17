@@ -719,9 +719,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.98"
+version = "1.0.101"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e7442a916bc70e3bf71a5305a899d53301649d2838345fa309420318b5ffafe8"
+checksum = "89ae43fd86e4158d6db51ad8e2b80f313af9cc74f5c0e03ccb87de09998732de"
 dependencies = [
  "unicode-ident",
 ]
@@ -746,9 +746,9 @@ dependencies = [
 
 [[package]]
 name = "retrogress"
-version = "1.0.0"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "edd55f8ca86d81002a092ccaefcb4fb74ddda9fa2742d26e4c00829e5cdb55f6"
+checksum = "f66058c244aa765e15c2e0b834e5e07cdb8c312cf83c0d6c637f46f1a2cfff74"
 dependencies = [
  "console",
 ]

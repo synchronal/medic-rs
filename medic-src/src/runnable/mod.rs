@@ -26,7 +26,7 @@ pub trait Runnable: std::fmt::Display + Clone {
     &None
   }
 
-  fn run(self, progress: &mut ProgressBar, flags: &Flags) -> Recoverable<()>;
+  fn run(self, progress: &mut ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()>;
   fn to_command(&self) -> Result<std::process::Command, MedicError>;
   fn verbose(&self) -> bool {
     false
@@ -35,12 +35,12 @@ pub trait Runnable: std::fmt::Display + Clone {
 
 pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flags, context: &Context) -> AppResult<()> {
   if !context.matches_platform(runnable.platform()) {
-    let pb = progress.append(&format!(
-      "{} {}",
+    progress.print_inline(&format!(
+      "{} {} {}",
+      OptionalStyled::new("…", current_theme().warning_style.clone()),
       &runnable.to_string(),
       OptionalStyled::new("(skipped)", current_theme().warning_style.clone())
     ));
-    progress.succeeded(pb);
     return AppResult::Ok(());
   }
 
@@ -51,7 +51,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
     std::env::set_var("MEDIC_INTERACTIVE", "true");
   }
 
-  match runnable.clone().run(progress, flags) {
+  match runnable.clone().run(progress, flags, context) {
     Recoverable::Ok(ok) => {
       let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
       *rerun = false;
@@ -127,6 +127,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
         });
       AppResult::Quit
     }
+    Recoverable::Nonrecoverable(err) => AppResult::Err(Some(err)),
     Recoverable::Optional(ok, None) => {
       eprintln!();
       eprintln!(

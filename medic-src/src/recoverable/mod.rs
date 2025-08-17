@@ -28,16 +28,16 @@ impl std::fmt::Display for Remedy {
 // // //
 
 pub enum Recoverable<T> {
+  Err(Option<MedicError>, Option<Remedy>),
   Manual(Option<MedicError>, Option<Remedy>),
+  Nonrecoverable(MedicError),
   Ok(T),
   Optional(T, Option<Remedy>),
-  Err(Option<MedicError>, Option<Remedy>),
 }
 
 impl<T> std::process::Termination for Recoverable<T> {
   fn report(self) -> std::process::ExitCode {
     match self {
-      Recoverable::Ok(_) => std::process::ExitCode::from(0),
       Recoverable::Err(err, _remedy) => {
         if let Some(error) = err {
           eprintln!(
@@ -49,6 +49,15 @@ impl<T> std::process::Termination for Recoverable<T> {
         std::process::ExitCode::from(1)
       }
       Recoverable::Manual(_, _) => std::process::ExitCode::from(1),
+      Recoverable::Nonrecoverable(err) => {
+        eprintln!(
+          "{} {}",
+          OptionalStyled::new("ERROR:", current_theme().error_style.clone()),
+          OptionalStyled::new(err.to_string(), current_theme().error_style.clone())
+        );
+        std::process::ExitCode::from(crate::QUIT_STATUS_CODE as u8)
+      }
+      Recoverable::Ok(_) => std::process::ExitCode::from(0),
       Recoverable::Optional(_, _) => std::process::ExitCode::from(0),
     }
   }
@@ -63,9 +72,10 @@ impl<T> Try for Recoverable<T> {
   fn branch(self) -> ControlFlow<Self::Residual, T> {
     match self {
       Recoverable::Err(err, _remedy) => ControlFlow::Break(ResultCodeResidual(err)),
+      Recoverable::Manual(res, _remedy) => ControlFlow::Break(ResultCodeResidual(res)),
+      Recoverable::Nonrecoverable(err) => ControlFlow::Break(ResultCodeResidual(Some(err))),
       Recoverable::Ok(res) => ControlFlow::Continue(res),
       Recoverable::Optional(res, _remedy) => ControlFlow::Continue(res),
-      Recoverable::Manual(res, _remedy) => ControlFlow::Break(ResultCodeResidual(res)),
     }
   }
   fn from_output(t: T) -> Self {

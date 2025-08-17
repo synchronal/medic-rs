@@ -87,6 +87,7 @@ impl From<ManifestArgs> for Flags {
   fn from(args: ManifestArgs) -> Self {
     Self {
       auto_apply_remedy: args.apply_remedies,
+      config_path: args.config,
       interactive: args.interactive,
       parallel: args.parallel,
       ..Self::default()

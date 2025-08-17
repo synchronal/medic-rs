@@ -8,6 +8,7 @@ mod output_format;
 
 pub use self::output_format::OutputFormat;
 use crate::cli::Flags;
+use crate::context::Context;
 use crate::error::MedicError;
 use crate::extra;
 use crate::optional_styled::OptionalStyled;
@@ -43,7 +44,7 @@ impl Runnable for Check {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &Flags) -> Recoverable<()> {
+  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &mut Flags, _ctx: &Context) -> Recoverable<()> {
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
 
