@@ -31,11 +31,6 @@ pub enum Step {
   Steps(Vec<Step>),
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
-pub struct DoctorConfig {
-  pub doctor: NoopConfig,
-}
-
 impl Runnable for Step {
   fn allow_failure(&self) -> bool {
     match self {
@@ -60,7 +55,7 @@ impl Runnable for Step {
   fn run(self, progress: &mut retrogress::ProgressBar, flags: &Flags) -> Recoverable<()> {
     match self {
       Step::Check(config) => config.run(progress, flags),
-      Step::Doctor(_) => run_doctor(progress),
+      Step::Doctor(config) => config.run(progress, flags),
       Step::Shell(config) => config.run(progress, flags),
       Step::Step(config) => config.run(progress, flags),
       Step::Steps(steps) => {
@@ -76,7 +71,7 @@ impl Runnable for Step {
   fn to_command(&self) -> Result<Command, MedicError> {
     match self {
       Step::Check(config) => config.to_command(),
-      Step::Doctor(_) => doctor_command(),
+      Step::Doctor(config) => config.to_command(),
       Step::Shell(config) => config.to_command(),
       Step::Step(config) => config.to_command(),
       Step::Steps(_) => Err(MedicError::Message(
@@ -100,11 +95,7 @@ impl fmt::Display for Step {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     match self {
       Step::Check(config) => config.fmt(f),
-      Step::Doctor(_) => write!(
-        f,
-        "{}",
-        OptionalStyled::new("== Doctor ==", current_theme().text_style.clone())
-      ),
+      Step::Doctor(config) => config.fmt(f),
       Step::Shell(config) => config.fmt(f),
       Step::Step(config) => config.fmt(f),
       Step::Steps(_) => write!(
@@ -116,39 +107,57 @@ impl fmt::Display for Step {
   }
 }
 
-fn run_doctor(progress: &mut retrogress::ProgressBar) -> Recoverable<()> {
-  let pb = progress.append("doctor");
-  progress.println(
-    pb,
-    &format!(
-      "{} {}",
-      style("!").bright().green(),
-      OptionalStyled::new("== Doctor ==", current_theme().text_style.clone())
-    ),
-  );
-  progress.hide(pb);
-  if let Ok(result) = doctor_command()
-    .unwrap()
-    .stdout(Stdio::inherit())
-    .stderr(Stdio::inherit())
-    .stdin(Stdio::inherit())
-    .output()
-  {
-    if result.status.success() {
-      Recoverable::Ok(())
-    } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
-      std::process::exit(crate::QUIT_STATUS_CODE);
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
+pub struct DoctorConfig {
+  pub doctor: NoopConfig,
+}
+
+impl Runnable for DoctorConfig {
+  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &Flags) -> Recoverable<()> {
+    let pb = progress.append("doctor");
+    progress.println(
+      pb,
+      &format!(
+        "{} {}",
+        style("!").bright().green(),
+        OptionalStyled::new("== Doctor ==", current_theme().text_style.clone())
+      ),
+    );
+    progress.hide(pb);
+    if let Ok(result) = self
+      .to_command()
+      .unwrap()
+      .stdout(Stdio::inherit())
+      .stderr(Stdio::inherit())
+      .stdin(Stdio::inherit())
+      .output()
+    {
+      if result.status.success() {
+        Recoverable::Ok(())
+      } else if result.status.code() == Some(crate::QUIT_STATUS_CODE) {
+        std::process::exit(crate::QUIT_STATUS_CODE);
+      } else {
+        Recoverable::Err(None, None)
+      }
     } else {
-      Recoverable::Err(None, None)
+      Recoverable::Err(Some("Unable to run doctor".into()), None)
     }
-  } else {
-    Recoverable::Err(Some("Unable to run doctor".into()), None)
+  }
+
+  fn to_command(&self) -> Result<std::process::Command, MedicError> {
+    let command = extra::command::from_string("medic doctor", &None);
+    Ok(command)
   }
 }
 
-fn doctor_command() -> Result<Command, MedicError> {
-  let command = extra::command::from_string("medic doctor", &None);
-  Ok(command)
+impl std::fmt::Display for DoctorConfig {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(
+      f,
+      "{}",
+      OptionalStyled::new("== Doctor ==", current_theme().text_style.clone())
+    )
+  }
 }
 
 fn run_parallel_steps(steps: Vec<Step>, progress: &mut retrogress::ProgressBar, flags: &Flags) -> Recoverable<()> {
