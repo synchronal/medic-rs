@@ -14,7 +14,7 @@ fn main() -> AppResult<()> {
   let context = Context::new();
   let cli = CliArgs::parse();
 
-  ctrlc::set_handler(interrupt).expect("Unable to set Ctrl-C handler");
+  ctrlc::set_handler(cleanup).expect("Unable to set Ctrl-C handler");
 
   console::set_colors_enabled(true);
   console::set_colors_enabled_stderr(true);
@@ -77,6 +77,8 @@ fn main() -> AppResult<()> {
   }
 }
 
-fn interrupt() {
+fn cleanup() {
+  let _ = console::Term::stdout().show_cursor();
+  let _ = console::Term::stderr().show_cursor();
   std::process::exit(1);
 }
