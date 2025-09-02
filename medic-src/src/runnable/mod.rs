@@ -201,17 +201,20 @@ fn ask(
 }
 
 fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>, progress: &mut ProgressBar) -> PromptResult {
-  let mut prompt = String::new();
-
-  if let AppResult::Err(Some(err)) = result {
+  let error_part = if let AppResult::Err(Some(err)) = result {
     if err.to_string().trim() != "" {
-      prompt.push_str(&format!(
+      format!(
         "{} {}\n",
         OptionalStyled::new("Error:", current_theme().error_style.clone()),
         err
-      ));
+      )
+    } else {
+      String::new()
     }
-  }
+  } else {
+    String::new()
+  };
+
   let msg = if remedy.is_some() {
     "Apply this remedy"
   } else {
@@ -222,12 +225,14 @@ fn prompt(remedy: &Option<Remedy>, result: &AppResult<()>, progress: &mut Progre
   } else {
     "[r,s,q,?]"
   };
-  prompt.push_str(&format!(
-    "{} {}{} ",
+
+  let prompt = format!(
+    "{}{} {}{} ",
+    error_part,
     OptionalStyled::new(msg, current_theme().text_style.clone()),
     OptionalStyled::new(options, current_theme().highlight_style.clone()),
     OptionalStyled::new("?", current_theme().text_style.clone()),
-  ));
+  );
 
   progress.prompt(&prompt).into()
 }

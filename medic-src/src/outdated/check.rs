@@ -128,8 +128,7 @@ impl Runnable for OutdatedCheck {
     }
   }
   fn to_command(&self) -> Result<Command, MedicError> {
-    let mut check_cmd: String = "medic-outdated-".to_owned();
-    check_cmd.push_str(&self.check);
+    let check_cmd = format!("medic-outdated-{}", self.check);
     if let Err(_err) = which(&check_cmd) {
       return Err(MedicError::Message(format!("executable {check_cmd} not found in PATH")));
     };
@@ -146,8 +145,7 @@ impl Runnable for OutdatedCheck {
     if let Some(args) = &self.args {
       for (flag, values) in args {
         for value in values {
-          let mut flag_arg = "--".to_owned();
-          flag_arg.push_str(flag);
+          let flag_arg = format!("--{}", flag);
           command.arg(flag_arg).arg(value);
         }
       }

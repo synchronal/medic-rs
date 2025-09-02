@@ -128,8 +128,7 @@ impl Runnable for StepConfig {
   }
 
   fn to_command(&self) -> Result<Command, MedicError> {
-    let mut step_cmd: String = "medic-step-".to_owned();
-    step_cmd.push_str(&self.step);
+    let step_cmd = format!("medic-step-{}", self.step);
     if let Err(_err) = which(&step_cmd) {
       return Err(MedicError::Message(format!("executable {step_cmd} not found in PATH")));
     };
@@ -141,8 +140,7 @@ impl Runnable for StepConfig {
     if let Some(args) = &self.args {
       for (flag, values) in args {
         for value in values {
-          let mut flag_arg = "--".to_owned();
-          flag_arg.push_str(flag);
+          let flag_arg = format!("--{}", flag);
           command.arg(flag_arg).arg(value);
         }
       }
