@@ -52,7 +52,7 @@ impl Runnable for Step {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
     match self {
       Step::Check(config) => config.run(progress, flags, context),
       Step::Doctor(config) => config.run(progress, flags, context),
@@ -113,7 +113,7 @@ pub struct DoctorConfig {
 }
 
 impl Runnable for DoctorConfig {
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
     progress.print_inline(&format!("{} {self}", console::style("!").bright().green(),));
 
     match config::Manifest::new(&flags.config_path) {
@@ -146,7 +146,7 @@ impl std::fmt::Display for DoctorConfig {
 }
 
 fn run_parallel_steps(
-  steps: Vec<Step>,
+  steps: &Vec<Step>,
   progress: &mut retrogress::ProgressBar,
   flags: &mut Flags,
   context: &Context,
@@ -199,7 +199,7 @@ fn run_parallel_steps(
 }
 
 fn run_serial_steps(
-  steps: Vec<Step>,
+  steps: &Vec<Step>,
   progress: &mut retrogress::ProgressBar,
   flags: &mut Flags,
   context: &Context,

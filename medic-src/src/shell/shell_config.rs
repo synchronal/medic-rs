@@ -61,7 +61,7 @@ impl Runnable for ShellConfig {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &mut Flags, _ctx: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, _flags: &mut Flags, _ctx: &Context) -> Recoverable<()> {
     let allow_failure = self.allow_failure();
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
@@ -139,7 +139,7 @@ impl Runnable for ShellConfig {
               }
               let mut remedy: Option<Remedy> = None;
 
-              if let Some(remedy_str) = self.remedy {
+              if let Some(remedy_str) = &self.remedy {
                 remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
               }
 

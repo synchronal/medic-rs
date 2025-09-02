@@ -44,7 +44,7 @@ impl Runnable for Check {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &mut Flags, _ctx: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, _flags: &mut Flags, _ctx: &Context) -> Recoverable<()> {
     let verbose = self.verbose();
     let pb = progress.append(&self.to_string());
 
@@ -75,7 +75,7 @@ impl Runnable for Check {
               Recoverable::Ok(())
             } else {
               progress.failed(pb);
-              let mut output = self.output.parse(result, self.cd.clone());
+              let mut output = self.output.clone().parse(result, self.cd.clone());
               output.verbose(verbose);
               eprint!("{output}");
 

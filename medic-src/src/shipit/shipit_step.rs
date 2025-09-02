@@ -62,7 +62,7 @@ impl Runnable for ShipitStep {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, ctx: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, ctx: &Context) -> Recoverable<()> {
     match self {
       ShipitStep::Check(config) => config.run(progress, flags, ctx),
       ShipitStep::Shell(config) => config.run(progress, flags, ctx),
@@ -122,7 +122,7 @@ impl fmt::Display for ShipitStep {
 }
 
 impl Runnable for AuditConfig {
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
     progress.print_inline(&format!("{} {self}", console::style("!").bright().green(),));
 
     match config::Manifest::new(&flags.config_path) {
@@ -155,7 +155,7 @@ impl fmt::Display for AuditConfig {
 }
 
 impl Runnable for TestConfig {
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
     progress.print_inline(&format!("{} {self}", console::style("!").bright().green(),));
 
     match config::Manifest::new(&flags.config_path) {
@@ -188,7 +188,7 @@ impl fmt::Display for TestConfig {
 }
 
 impl Runnable for UpdateConfig {
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()> {
     progress.print_inline(&format!("{} {self}", console::style("!").bright().green(),));
 
     match config::Manifest::new(&flags.config_path) {

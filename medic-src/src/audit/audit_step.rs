@@ -36,7 +36,7 @@ impl Runnable for AuditStep {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, ctx: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, ctx: &Context) -> Recoverable<()> {
     match self {
       AuditStep::Check(config) => config.run(progress, flags, ctx),
       AuditStep::Shell(config) => config.run(progress, flags, ctx),

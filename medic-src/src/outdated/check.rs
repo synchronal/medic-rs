@@ -34,7 +34,7 @@ impl Runnable for OutdatedCheck {
     &self.platform
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, _flags: &mut Flags, _ctx: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, _flags: &mut Flags, _ctx: &Context) -> Recoverable<()> {
     let command_name = self.to_string();
     let pb = progress.append(&command_name);
 

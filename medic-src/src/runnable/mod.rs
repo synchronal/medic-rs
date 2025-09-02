@@ -26,7 +26,7 @@ pub trait Runnable: std::fmt::Display + Clone {
     &None
   }
 
-  fn run(self, progress: &mut ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()>;
+  fn run(&self, progress: &mut ProgressBar, flags: &mut Flags, context: &Context) -> Recoverable<()>;
   fn to_command(&self) -> Result<std::process::Command, MedicError>;
   fn verbose(&self) -> bool {
     false
@@ -51,7 +51,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
     std::env::set_var("MEDIC_INTERACTIVE", "true");
   }
 
-  match runnable.clone().run(progress, flags, context) {
+  match runnable.run(progress, flags, context) {
     Recoverable::Ok(ok) => {
       let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
       *rerun = false;
@@ -60,7 +60,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
     Recoverable::Err(err, None) => {
       if flags.interactive && flags.recoverable {
         eprintln!();
-        ask(runnable, None, progress, AppResult::Err(err), flags, context)
+        ask(&runnable, None, progress, AppResult::Err(err), flags, context)
       } else {
         AppResult::Err(err)
       }
@@ -85,7 +85,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
         run_remedy(remedy, progress)?;
         *rerun = true;
         drop(rerun);
-        return run(runnable, progress, flags, context);
+        return run(runnable.clone(), progress, flags, context);
       }
 
       eprint!(
@@ -105,7 +105,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
 
       if flags.interactive {
         eprintln!();
-        ask(runnable, Some(remedy), progress, AppResult::Err(err), flags, context)
+        ask(&runnable, Some(remedy), progress, AppResult::Err(err), flags, context)
       } else {
         AppResult::Err(err)
       }
@@ -141,7 +141,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
     Recoverable::Optional(ok, Some(remedy)) => {
       if flags.interactive {
         eprintln!();
-        ask(runnable, Some(remedy), progress, AppResult::Ok(ok), flags, context)
+        ask(&runnable, Some(remedy), progress, AppResult::Ok(ok), flags, context)
       } else {
         let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
         *rerun = false;
@@ -151,8 +151,8 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
   }
 }
 
-fn ask(
-  runnable: impl Runnable,
+fn ask<R: Runnable>(
+  runnable: &R,
   remedy: Option<Remedy>,
   progress: &mut ProgressBar,
   default_exit: AppResult<()>,
@@ -179,11 +179,11 @@ fn ask(
     PromptResult::All => {
       flags.auto_apply_remedy = true;
       run_remedy(remedy.unwrap(), progress)?;
-      run(runnable, progress, flags, context)
+      run(runnable.clone(), progress, flags, context)
     }
     PromptResult::No => default_exit,
     PromptResult::Quit => AppResult::Quit,
-    PromptResult::Rerun => run(runnable, progress, flags, context),
+    PromptResult::Rerun => run(runnable.clone(), progress, flags, context),
     PromptResult::Skip => {
       let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
       *rerun = false;
@@ -195,7 +195,7 @@ fn ask(
       let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
       *rerun = true;
       drop(rerun);
-      run(runnable, progress, flags, context)
+      run(runnable.clone(), progress, flags, context)
     }
   }
 }

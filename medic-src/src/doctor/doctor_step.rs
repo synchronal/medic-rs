@@ -37,7 +37,7 @@ impl Runnable for DoctorStep {
     }
   }
 
-  fn run(self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, ctx: &Context) -> Recoverable<()> {
+  fn run(&self, progress: &mut retrogress::ProgressBar, flags: &mut Flags, ctx: &Context) -> Recoverable<()> {
     match self {
       DoctorStep::Check(config) => config.run(progress, flags, ctx),
       DoctorStep::Shell(config) => config.run(progress, flags, ctx),
