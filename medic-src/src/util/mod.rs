@@ -14,12 +14,12 @@ impl IntoIterator for StringOrList {
   }
 }
 
-impl IntoIterator for &StringOrList {
-  type Item = String;
-  type IntoIter = std::vec::IntoIter<Self::Item>;
+impl<'a> IntoIterator for &'a StringOrList {
+  type Item = &'a String;
+  type IntoIter = std::slice::Iter<'a, String>;
 
   fn into_iter(self) -> Self::IntoIter {
-    self.0.clone().into_iter()
+    self.0.iter()
   }
 }
 
@@ -52,4 +52,30 @@ where
   }
 
   deserializer.deserialize_any(StringOrVec)
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn iterator_yields_string_references_not_clones() {
+    let string_or_list = StringOrList(vec!["first".to_string(), "second".to_string()]);
+    let mut iter = (&string_or_list).into_iter();
+
+    let first_item = iter.next().unwrap();
+    let second_item = iter.next().unwrap();
+
+    assert_eq!(
+      first_item.as_str() as *const str,
+      string_or_list.0[0].as_str() as *const str
+    );
+    assert_eq!(
+      second_item.as_str() as *const str,
+      string_or_list.0[1].as_str() as *const str
+    );
+
+    assert_eq!(first_item, "first");
+    assert_eq!(second_item, "second");
+  }
 }
