@@ -95,20 +95,20 @@ impl Runnable for OutdatedCheck {
             progress.println(pb, "");
 
             let mut remedy: Option<Remedy> = None;
-            let mut remedy_str: Option<String> = None;
+            let mut remedy_opt: Option<String> = None;
 
             if let Some(remedy_cmd) = summary.remedy {
               remedy = Some(Remedy::new(remedy_cmd.clone(), self.cd.clone()));
-              remedy_str = Some(crate::extra::command::to_string(&remedy_cmd, &self.cd));
+              remedy_opt = Some(crate::extra::command::to_string(&remedy_cmd, &self.cd));
             }
 
-            if remedy_str.is_some() {
+            if let Some(remedy_str) = &remedy_opt {
               progress.println(
                 pb,
                 &format!(
                   "    {} {}",
                   style("Remedy:").bold().underlined(),
-                  style(remedy_str.as_ref().unwrap()).yellow(),
+                  style(remedy_str).yellow(),
                 ),
               );
 
