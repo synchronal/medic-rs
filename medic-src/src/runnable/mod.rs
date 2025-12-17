@@ -148,6 +148,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
         AppResult::Ok(ok)
       }
     }
+    Recoverable::Quit => AppResult::Quit,
   }
 }
 

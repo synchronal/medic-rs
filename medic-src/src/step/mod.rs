@@ -120,7 +120,9 @@ impl Runnable for DoctorConfig {
       AppResult::Ok(manifest) => {
         if let Some(doctor) = manifest.doctor {
           for check in doctor.checks {
-            crate::runnable::run(check, progress, flags, context);
+            if let AppResult::Quit = crate::runnable::run(check, progress, flags, context) {
+              return Recoverable::Quit;
+            }
           }
         }
         Recoverable::Ok(())
@@ -168,6 +170,7 @@ fn run_parallel_steps(
     drop(tx);
   });
 
+  let mut quit = None;
   let mut failure = None;
   let mut manual = None;
   let mut nonrecoverable = None;
@@ -180,9 +183,13 @@ fn run_parallel_steps(
       Recoverable::Nonrecoverable(_) => nonrecoverable = Some(result),
       Recoverable::Ok(_) => {}
       Recoverable::Optional(_, _) => optional = Some(result),
+      Recoverable::Quit => quit = Some(()),
     }
   }
 
+  if let Some(()) = quit {
+    return Recoverable::Quit;
+  }
   if let Some(failure) = nonrecoverable {
     return failure;
   }

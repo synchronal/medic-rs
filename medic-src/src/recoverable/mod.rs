@@ -33,6 +33,7 @@ pub enum Recoverable<T> {
   Nonrecoverable(MedicError),
   Ok(T),
   Optional(T, Option<Remedy>),
+  Quit,
 }
 
 impl<T> std::process::Termination for Recoverable<T> {
@@ -59,6 +60,7 @@ impl<T> std::process::Termination for Recoverable<T> {
       }
       Recoverable::Ok(_) => std::process::ExitCode::from(0),
       Recoverable::Optional(_, _) => std::process::ExitCode::from(0),
+      Recoverable::Quit => std::process::ExitCode::from(crate::QUIT_STATUS_CODE as u8),
     }
   }
 }
@@ -76,6 +78,7 @@ impl<T> Try for Recoverable<T> {
       Recoverable::Nonrecoverable(err) => ControlFlow::Break(ResultCodeResidual(Some(err))),
       Recoverable::Ok(res) => ControlFlow::Continue(res),
       Recoverable::Optional(res, _remedy) => ControlFlow::Continue(res),
+      Recoverable::Quit => ControlFlow::Break(ResultCodeResidual(None)),
     }
   }
   fn from_output(t: T) -> Self {

@@ -129,7 +129,9 @@ impl Runnable for AuditConfig {
       AppResult::Ok(manifest) => {
         if let Some(config) = manifest.audit {
           for check in config.checks {
-            crate::runnable::run(check, progress, flags, context);
+            if let AppResult::Quit = crate::runnable::run(check, progress, flags, context) {
+              return Recoverable::Quit;
+            }
           }
         }
         Recoverable::Ok(())
@@ -162,7 +164,9 @@ impl Runnable for TestConfig {
       AppResult::Ok(manifest) => {
         if let Some(config) = manifest.test {
           for check in config.checks {
-            crate::runnable::run(check, progress, flags, context);
+            if let AppResult::Quit = crate::runnable::run(check, progress, flags, context) {
+              return Recoverable::Quit;
+            }
           }
         }
         Recoverable::Ok(())
@@ -195,7 +199,9 @@ impl Runnable for UpdateConfig {
       AppResult::Ok(manifest) => {
         if let Some(config) = manifest.update {
           for check in config.steps {
-            crate::runnable::run(check, progress, flags, context);
+            if let AppResult::Quit = crate::runnable::run(check, progress, flags, context) {
+              return Recoverable::Quit;
+            }
           }
         }
         Recoverable::Ok(())

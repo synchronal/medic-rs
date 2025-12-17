@@ -27,6 +27,7 @@ impl<T> From<Recoverable<T>> for AppResult<T> {
       Recoverable::Manual(e, _) => Self::Err(e),
       Recoverable::Nonrecoverable(e) => Self::Err(Some(e)),
       Recoverable::Optional(val, _) => Self::Ok(val),
+      Recoverable::Quit => Self::Quit,
     }
   }
 }

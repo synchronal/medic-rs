@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Quitting from nested commands really really quits medic.
+  - When running `update` in interactive mode and encountering a problem
+    in a `doctor` check, attempting to quit would just continue on to
+    the next check.
 - Check remedies with `cd` option only apply the `cd` once.
 - Introduce experimental `--parallel` flag which runs nested steps in
   parallel. Very very experimental!
