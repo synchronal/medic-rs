@@ -75,7 +75,7 @@ impl Runnable for Check {
               Recoverable::Ok(())
             } else {
               progress.failed(pb);
-              let mut output = self.output.clone().parse(result, self.cd.clone());
+              let mut output = self.output.clone().parse(result, None);
               output.verbose(verbose);
               eprint!("{output}");
 

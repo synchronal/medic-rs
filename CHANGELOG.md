@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Check remedies with `cd` option only apply the `cd` once.
 - Introduce experimental `--parallel` flag which runs nested steps in
   parallel. Very very experimental!
 - Update `retrogress` to v1, including very experimental refactorings.
