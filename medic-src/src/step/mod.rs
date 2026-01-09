@@ -12,6 +12,7 @@ use crate::noop_config::NoopConfig;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
+use crate::semaphore::Semaphore;
 use crate::shell::ShellConfig;
 use crate::theme::current_theme;
 use crate::{AppResult, Check};
@@ -19,6 +20,7 @@ use serde::Deserialize;
 use std::fmt;
 use std::process::Command;
 use std::sync::mpsc;
+use std::sync::Arc;
 use std::thread;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
@@ -147,6 +149,8 @@ impl std::fmt::Display for DoctorConfig {
   }
 }
 
+const MAX_PARALLEL: usize = 5;
+
 fn run_parallel_steps(
   steps: &Vec<Step>,
   progress: &mut retrogress::ProgressBar,
@@ -154,14 +158,17 @@ fn run_parallel_steps(
   context: &Context,
 ) -> Recoverable<()> {
   let (tx, rx) = mpsc::channel();
+  let semaphore = Arc::new(Semaphore::new(MAX_PARALLEL));
 
   thread::scope(|s| {
     for step in steps {
       let mut progress = progress.clone();
       let tx = tx.clone();
       let mut flags = flags.clone();
+      let sem = Arc::clone(&semaphore);
 
       s.spawn(move || {
+        let _permit = sem.acquire();
         let result = step.run(&mut progress, &mut flags, context);
         let _ = tx.send(result);
       });

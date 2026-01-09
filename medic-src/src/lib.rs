@@ -15,6 +15,7 @@ pub mod outdated;
 pub mod progress;
 pub mod recoverable;
 pub mod runnable;
+pub mod semaphore;
 pub mod shell;
 pub mod shipit;
 pub mod step;

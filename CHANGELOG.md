@@ -8,7 +8,7 @@
     the next check.
 - Check remedies with `cd` option only apply the `cd` once.
 - Introduce experimental `--parallel` flag which runs nested steps in
-  parallel. Very very experimental!
+  parallel (max 5 concurrency). Very very experimental!
 - Update `retrogress` to v1, including very experimental refactorings.
 
 ## 2.18.1
