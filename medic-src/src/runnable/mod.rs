@@ -67,8 +67,12 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
     }
     Recoverable::Err(err, Some(remedy)) => {
       if flags.auto_apply_remedy {
-        let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
-        if *rerun {
+        let is_rerun = {
+          let rerun = LazyLock::force(&RERUN).lock().unwrap();
+          *rerun
+        };
+
+        if is_rerun {
           eprintln!(
             "{}",
             OptionalStyled::new(
@@ -83,6 +87,8 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
           OptionalStyled::new("Automatically applying remedy", current_theme().warning_style.clone())
         );
         run_remedy(remedy, progress)?;
+
+        let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
         *rerun = true;
         drop(rerun);
         return run(runnable.clone(), progress, flags, context);
