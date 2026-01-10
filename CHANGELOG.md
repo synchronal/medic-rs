@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Remove extraneous trailing newline from `medic run`.
 - Progress bars are truncated to width of terminal.
 - Quitting from nested commands really really quits medic.
   - When running `update` in interactive mode and encountering a problem

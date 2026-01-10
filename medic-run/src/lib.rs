@@ -19,7 +19,6 @@ pub fn run_shell(
 ) -> AppResult<()> {
   let context = Context::new();
   let shell = ShellConfig::new(name, cmd, cd, remedy, verbose);
-  eprintln!();
   let mut flags = Flags::default();
   shell.run(progress, &mut flags, &context).into()
 }
