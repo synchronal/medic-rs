@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.19.0
+
 - Remove extraneous trailing newline from `medic run`.
 - Progress bars are truncated to width of terminal.
 - Quitting from nested commands really really quits medic.
