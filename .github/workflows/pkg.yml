@@ -28,7 +28,7 @@ jobs:
           usesh: true
           prepare: |
             mkdir -p /usr/local/etc/pkg/repos
-            echo 'FreeBSD: { url: http://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+            echo 'FreeBSD: { url: "http://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
             pkg update -f
             pkg upgrade -y
 
