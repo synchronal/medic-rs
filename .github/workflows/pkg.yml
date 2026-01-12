@@ -30,6 +30,7 @@ jobs:
             mkdir -p /usr/local/etc/pkg/repos
             echo 'FreeBSD: { url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
             pkg update -f
+            pkg upgrade -y
 
             pkg install -y \
               bash \
@@ -71,8 +72,9 @@ jobs:
           usesh: true
           prepare: |
             mkdir -p /usr/local/etc/pkg/repos
-            echo 'FreeBSD: { url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+            echo 'FreeBSD: { url: "pkg+http://pkg.FreeBSD.org/${ABI}/latest", mirror_type: "none" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
             pkg update -f
+            pkg upgrade -y
 
             pkg install -y \
               bash \
