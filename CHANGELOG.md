@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Repeat prompt when entering `y` or `a` when no prompt is present.
+
 ## 2.19.0
 
 - Remove extraneous trailing newline from `medic run`.

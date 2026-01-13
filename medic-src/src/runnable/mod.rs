@@ -184,9 +184,13 @@ fn ask<R: Runnable>(
       ask(runnable, remedy, progress, default_exit, flags, context)
     }
     PromptResult::All => {
-      flags.auto_apply_remedy = true;
-      run_remedy(remedy.unwrap(), progress)?;
-      run(runnable.clone(), progress, flags, context)
+      if let Some(rem) = remedy {
+        flags.auto_apply_remedy = true;
+        run_remedy(rem, progress)?;
+        run(runnable.clone(), progress, flags, context)
+      } else {
+        ask(runnable, remedy, progress, default_exit, flags, context)
+      }
     }
     PromptResult::No => default_exit,
     PromptResult::Quit => AppResult::Quit,
@@ -198,11 +202,15 @@ fn ask<R: Runnable>(
     }
     PromptResult::Unknown => ask(runnable, remedy, progress, default_exit, flags, context),
     PromptResult::Yes => {
-      run_remedy(remedy.unwrap(), progress)?;
-      let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
-      *rerun = true;
-      drop(rerun);
-      run(runnable.clone(), progress, flags, context)
+      if let Some(rem) = remedy {
+        run_remedy(rem, progress)?;
+        let mut rerun = LazyLock::force(&RERUN).lock().unwrap();
+        *rerun = true;
+        drop(rerun);
+        run(runnable.clone(), progress, flags, context)
+      } else {
+        ask(runnable, remedy, progress, default_exit, flags, context)
+      }
     }
   }
 }
