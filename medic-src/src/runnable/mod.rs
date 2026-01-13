@@ -58,7 +58,7 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
       AppResult::Ok(ok)
     }
     Recoverable::Err(err, None) => {
-      if flags.interactive && flags.recoverable {
+      if flags.interactive && flags.recoverable && !flags.auto_apply_remedy {
         eprintln!();
         ask(&runnable, None, progress, AppResult::Err(err), flags, context)
       } else {
