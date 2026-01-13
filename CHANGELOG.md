@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.19.1
+
 - Exit when `--apply-remedies` and `--interactive` when no remedy is
   present.
 - Repeat prompt when entering `y` or `a` when no prompt is present.
