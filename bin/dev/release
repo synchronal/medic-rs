@@ -34,7 +34,17 @@ for cmd in ${cmds[@]}; do
 done
 
 medic-run \
-  --name "medic: Create tar file" \
+  --name "Package: Darwin aarch64" \
+  --cmd "(cd target/aarch64-apple-darwin/release && tar -czf ../../../tmp/release/medic-darwin-arm64.tar.gz ${medic[*]})" \
+  --verbose
+
+medic-run \
+  --name "Package: Darwin x86_64" \
+  --cmd "(cd target/x86_64-apple-darwin/release && tar -czf ../../../tmp/release/medic-darwin-x86_64.tar.gz ${medic[*]})" \
+  --verbose
+
+medic-run \
+  --name "Package: Darwin universal" \
   --cmd "(cd target/universal-apple-darwin/release && tar -czf ../../../tmp/release/medic-darwin-universal.tar.gz ${medic[*]})" \
   --verbose
 
@@ -43,7 +53,7 @@ pushd tmp/release >/dev/null
 for file in $(ls *.tar.gz); do
 
 medic-run \
-  --name "shasum: Darwin aarch64" \
+  --name "shasum: ${file}" \
   --cmd "(sha256sum ${file} > ${file}.sha256sum)"
 
 done
