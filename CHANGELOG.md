@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2.19.2
+
+- Release arch-specific tarballs in addition to univeral binaries.
+
 ## 2.19.1
 
 - Exit when `--apply-remedies` and `--interactive` when no remedy is
