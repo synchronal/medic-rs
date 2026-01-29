@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.19.3
+
 - Update retrogress.
 - Implement FromStr, AsRef, Display, Error traits where more appropriate
   than custom methods.
