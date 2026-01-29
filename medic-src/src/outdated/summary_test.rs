@@ -7,7 +7,7 @@ use indoc::{formatdoc, indoc};
 #[test]
 fn deserialize_empty() {
   let string = r#""#;
-  let outdated: OutdatedSummary = OutdatedSummary::from_str(string).unwrap();
+  let outdated: OutdatedSummary = string.parse::<OutdatedSummary>().unwrap();
   assert_eq!(outdated.remedy, None);
   assert_eq!(outdated.deps, vec![]);
 }
@@ -19,7 +19,7 @@ fn deserialize_with_deps() {
     ::outdated::name=other-dep::version=1.2.3::latest=2.3.4::parent=my-dep
     "#};
 
-  let outdated: OutdatedSummary = OutdatedSummary::from_str(string).unwrap();
+  let outdated: OutdatedSummary = string.parse::<OutdatedSummary>().unwrap();
   assert_eq!(outdated.remedy, None);
 
   let deps = outdated.deps;
@@ -170,7 +170,7 @@ fn deserialize_with_remedy() {
     ::remedy::update deps
     "#;
 
-  let outdated: OutdatedSummary = OutdatedSummary::from_str(string).unwrap();
+  let outdated: OutdatedSummary = string.parse::<OutdatedSummary>().unwrap();
   assert_eq!(outdated.remedy, Some("update deps".to_string()));
 }
 
@@ -178,7 +178,7 @@ fn deserialize_with_remedy() {
 fn deserialize_dep() {
   let string = r#"name=my-dep::version=1.2.3::latest=2.3.4"#;
 
-  let dep: OutdatedDep = OutdatedDep::from_str(string).unwrap();
+  let dep: OutdatedDep = string.parse::<OutdatedDep>().unwrap();
   assert_eq!(dep.name, "my-dep".to_string());
   assert_eq!(dep.version, "1.2.3".to_string());
   assert_eq!(dep.latest, "2.3.4".to_string());
@@ -189,7 +189,7 @@ fn deserialize_dep() {
 fn deserialize_dep_remedy() {
   let string = r#"name=my-dep::version=1.2.3::latest=2.3.4::parent=update deps"#;
 
-  let dep: OutdatedDep = OutdatedDep::from_str(string).unwrap();
+  let dep: OutdatedDep = string.parse::<OutdatedDep>().unwrap();
   assert_eq!(dep.name, "my-dep".to_string());
   assert_eq!(dep.version, "1.2.3".to_string());
   assert_eq!(dep.latest, "2.3.4".to_string());

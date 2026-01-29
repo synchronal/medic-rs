@@ -21,6 +21,16 @@ pub enum Theme {
   Light,
 }
 
+impl std::fmt::Display for Theme {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      Theme::Auto => write!(f, "auto"),
+      Theme::Dark => write!(f, "dark"),
+      Theme::Light => write!(f, "light"),
+    }
+  }
+}
+
 impl From<&Theme> for ColorTheme {
   fn from(theme: &Theme) -> Self {
     match theme {

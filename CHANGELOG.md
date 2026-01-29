@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Implement FromStr, AsRef, Display, Error traits where more appropriate
+  than custom methods.
+
 ## 2.19.2
 
 - Release arch-specific tarballs in addition to univeral binaries.

@@ -74,7 +74,7 @@ impl Runnable for OutdatedCheck {
               );
             }
             let stdout = &std_to_string(result.stdout);
-            let summary_result = OutdatedSummary::from_str(stdout);
+            let summary_result = stdout.parse::<OutdatedSummary>();
             if summary_result.is_err() {
               progress.failed(pb);
               return Recoverable::Err(

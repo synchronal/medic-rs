@@ -72,3 +72,26 @@ impl fmt::Display for OutputFormat {
     }
   }
 }
+
+#[derive(Debug)]
+pub struct ParseOutputFormatError(String);
+
+impl fmt::Display for ParseOutputFormatError {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{}", self.0)
+  }
+}
+
+impl std::error::Error for ParseOutputFormatError {}
+
+impl std::str::FromStr for OutputFormat {
+  type Err = ParseOutputFormatError;
+
+  fn from_str(s: &str) -> Result<Self, Self::Err> {
+    match s {
+      "json" => Ok(OutputFormat::Json),
+      "stdio" => Ok(OutputFormat::Stdio),
+      other => Err(ParseOutputFormatError(format!("Unknown output format: {other}"))),
+    }
+  }
+}

@@ -30,8 +30,12 @@ impl std::fmt::Display for ParseError {
   }
 }
 
-impl OutdatedSummary {
-  pub fn from_str(s: &str) -> Result<Self, ParseError> {
+impl std::error::Error for ParseError {}
+
+impl std::str::FromStr for OutdatedSummary {
+  type Err = ParseError;
+
+  fn from_str(s: &str) -> Result<Self, Self::Err> {
     let mut deps: Vec<OutdatedDep> = vec![];
     let mut remedy: Option<String> = None;
     let mut max_name_length = 4;
@@ -47,7 +51,7 @@ impl OutdatedSummary {
         }
         Some("outdated") => {
           let outdated = split.collect::<Vec<&str>>().join("::");
-          let dep = OutdatedDep::from_str(&outdated)?;
+          let dep = outdated.parse::<OutdatedDep>()?;
 
           if dep.name.len() > max_name_length {
             max_name_length = dep.name.len();
@@ -84,7 +88,12 @@ impl OutdatedDep {
       version: version.into(),
     }
   }
-  pub fn from_str(s: &str) -> Result<Self, ParseError> {
+}
+
+impl std::str::FromStr for OutdatedDep {
+  type Err = ParseError;
+
+  fn from_str(s: &str) -> Result<Self, Self::Err> {
     let mut inputs: HashMap<&str, &str> = HashMap::with_capacity(4);
 
     for mut value_pair in s.trim().split("::") {
@@ -125,22 +134,6 @@ impl OutdatedDep {
         "Expected name, version, latest, <parent>, found: {keys:?}"
       )))
     }
-  }
-}
-
-impl std::str::FromStr for OutdatedSummary {
-  type Err = ParseError;
-
-  fn from_str(s: &str) -> Result<Self, Self::Err> {
-    Self::from_str(s)
-  }
-}
-
-impl std::str::FromStr for OutdatedDep {
-  type Err = ParseError;
-
-  fn from_str(s: &str) -> Result<Self, Self::Err> {
-    Self::from_str(s)
   }
 }
 

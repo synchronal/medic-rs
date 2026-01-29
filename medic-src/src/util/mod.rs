@@ -14,6 +14,12 @@ impl IntoIterator for StringOrList {
   }
 }
 
+impl AsRef<[String]> for StringOrList {
+  fn as_ref(&self) -> &[String] {
+    self.0.as_slice()
+  }
+}
+
 impl<'a> IntoIterator for &'a StringOrList {
   type Item = &'a String;
   type IntoIter = std::slice::Iter<'a, String>;
