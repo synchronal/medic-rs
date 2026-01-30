@@ -1,12 +1,12 @@
 // @related [tests](medic-src/src/config/manifest_test.rs)
 
-use crate::extra;
 use crate::AppResult;
 use crate::AuditStep;
 use crate::DoctorStep;
 use crate::OutdatedCheck;
 use crate::ShipitStep;
 use crate::Step;
+use crate::extra;
 
 use serde::Deserialize;
 use std::path::Path;
@@ -26,7 +26,9 @@ impl Manifest {
     let path_expansion = extra::env::subst(path.to_str().unwrap())?;
     let expanded_path = std::path::Path::new(&path_expansion);
 
-    std::env::set_var("MEDIC_CONFIG", path);
+    unsafe {
+      std::env::set_var("MEDIC_CONFIG", path);
+    }
 
     if expanded_path.exists() {
       match std::fs::read_to_string(expanded_path) {

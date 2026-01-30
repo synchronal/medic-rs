@@ -4,7 +4,7 @@ use medic_doctor::cli::CliArgs;
 use medic_doctor::run_checks;
 use medic_src::config::Manifest;
 use medic_src::context::Context;
-use medic_src::{progress, theme, AppResult};
+use medic_src::{AppResult, progress, theme};
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;

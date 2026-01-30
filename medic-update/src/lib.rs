@@ -2,11 +2,11 @@
 
 pub mod cli;
 
+use medic_src::AppResult;
 use medic_src::cli::Flags;
 use medic_src::config::Manifest;
 use medic_src::context::Context;
 use medic_src::runnable::run;
-use medic_src::AppResult;
 
 pub fn run_steps(
   manifest: Manifest,

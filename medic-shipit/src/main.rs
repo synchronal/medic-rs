@@ -2,7 +2,7 @@ use medic_shipit::cli::CliArgs;
 use medic_shipit::run_steps;
 use medic_src::config::Manifest;
 use medic_src::context::Context;
-use medic_src::{progress, theme, AppResult};
+use medic_src::{AppResult, progress, theme};
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;

@@ -2,12 +2,12 @@
 
 use clap::Parser;
 use medic::cli::app::{CliArgs, Command};
+use medic_src::AppResult;
 use medic_src::cli::Flags;
 use medic_src::config::Manifest;
 use medic_src::context::Context;
 use medic_src::progress;
 use medic_src::theme;
-use medic_src::AppResult;
 use std::panic;
 
 fn main() -> AppResult<()> {

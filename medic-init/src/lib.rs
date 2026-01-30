@@ -2,7 +2,7 @@
 
 pub mod cli;
 
-use medic_src::{extra, AppResult};
+use medic_src::{AppResult, extra};
 use std::io::Write;
 
 pub fn create_config_file(path: std::path::PathBuf, force: bool) -> AppResult<()> {
@@ -18,7 +18,7 @@ pub fn create_config_file(path: std::path::PathBuf, force: bool) -> AppResult<()
       (true, false) => {
         return AppResult::Err(Some(
           format!("File {expanded_path:?} already exists!\r\n       Use `--force` to overwrite file.").into(),
-        ))
+        ));
       }
       (true, true) => {
         println!("Overwriting file: {:?}", &expanded_path);

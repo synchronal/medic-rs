@@ -1,3 +1,4 @@
+use crate::Check;
 use crate::cli::Flags;
 use crate::context::Context;
 use crate::error::MedicError;
@@ -5,7 +6,6 @@ use crate::recoverable::Recoverable;
 use crate::runnable::Runnable;
 use crate::shell::ShellConfig;
 use crate::step::StepConfig;
-use crate::Check;
 use serde::Deserialize;
 
 use std::fmt;

@@ -12,15 +12,15 @@ impl std::process::Termination for StepResult {
       StepResult::StepOk => std::process::ExitCode::from(0),
       StepResult::StepError(msg, stdout, stderr) => {
         eprintln!("\x1b[31;1mError:\x1b[0m {msg}\r\n");
-        if let Some(stdout) = stdout {
-          if !stdout.is_empty() {
-            eprintln!("\x1b[31;1mstdout:\x1b[0m\r\n{stdout}");
-          }
+        if let Some(stdout) = stdout
+          && !stdout.is_empty()
+        {
+          eprintln!("\x1b[31;1mstdout:\x1b[0m\r\n{stdout}");
         }
-        if let Some(stderr) = stderr {
-          if !stderr.is_empty() {
-            eprintln!("\x1b[31;1mstderr:\x1b[0m\r\n{stderr}");
-          }
+        if let Some(stderr) = stderr
+          && !stderr.is_empty()
+        {
+          eprintln!("\x1b[31;1mstderr:\x1b[0m\r\n{stderr}");
         }
         io::stderr().flush().unwrap();
 

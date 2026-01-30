@@ -27,15 +27,15 @@ impl CheckResultFormat {
     match self {
       CheckResultFormat::Stdio => {
         eprintln!("\x1b[31;1mError:\x1b[0m {msg}\r\n");
-        if let Some(stdout) = stdout {
-          if !stdout.is_empty() {
-            eprintln!("\x1b[31;1mstdout:\x1b[0m\r\n{stdout}");
-          }
+        if let Some(stdout) = stdout
+          && !stdout.is_empty()
+        {
+          eprintln!("\x1b[31;1mstdout:\x1b[0m\r\n{stdout}");
         }
-        if let Some(stderr) = stderr {
-          if !stderr.is_empty() {
-            eprintln!("\x1b[31;1mstderr:\x1b[0m\r\n{stderr}");
-          }
+        if let Some(stderr) = stderr
+          && !stderr.is_empty()
+        {
+          eprintln!("\x1b[31;1mstderr:\x1b[0m\r\n{stderr}");
         }
         io::stderr().flush().unwrap();
         if let Some(remedy) = remedy {
@@ -46,15 +46,15 @@ impl CheckResultFormat {
         let mut output = format!("\x1b[31;1mError: \x1b[0m {msg}");
         let mut error = None;
 
-        if let Some(stdout) = stdout {
-          if !stdout.is_empty() {
-            output.push_str(&format!("\r\n\r\n\x1b[31;1mstdout:\x1b[0m\r\n{stdout}"));
-          }
+        if let Some(stdout) = stdout
+          && !stdout.is_empty()
+        {
+          output.push_str(&format!("\r\n\r\n\x1b[31;1mstdout:\x1b[0m\r\n{stdout}"));
         }
-        if let Some(stderr) = stderr {
-          if !stderr.is_empty() {
-            error = Some(format!("\x1b[31;1mstdout:\x1b[0m\r\n{stderr}"));
-          }
+        if let Some(stderr) = stderr
+          && !stderr.is_empty()
+        {
+          error = Some(format!("\x1b[31;1mstdout:\x1b[0m\r\n{stderr}"));
         }
 
         let json = CheckJson { output, error, remedy };

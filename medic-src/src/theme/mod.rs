@@ -2,7 +2,7 @@ use crate::error::MedicError;
 use console::Style;
 use once_cell::sync::OnceCell;
 use serde::Deserialize;
-use terminal_colorsaurus::{color_palette, QueryOptions, ThemeMode};
+use terminal_colorsaurus::{QueryOptions, ThemeMode, color_palette};
 
 pub static THEME: OnceCell<ColorTheme> = OnceCell::new();
 pub fn current_theme() -> &'static ColorTheme {

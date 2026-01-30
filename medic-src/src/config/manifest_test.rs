@@ -1,6 +1,10 @@
 // @related [subject](medic-src/src/config/manifest.rs)
 
 use super::manifest::*;
+use crate::Check;
+use crate::OutdatedCheck;
+use crate::ShipitStep;
+use crate::Step;
 use crate::audit::*;
 use crate::check::OutputFormat;
 use crate::doctor::*;
@@ -9,10 +13,6 @@ use crate::shell::ShellConfig;
 use crate::shipit;
 use crate::step;
 use crate::step::StepConfig;
-use crate::Check;
-use crate::OutdatedCheck;
-use crate::ShipitStep;
-use crate::Step;
 use indoc::indoc;
 use std::collections::BTreeMap;
 

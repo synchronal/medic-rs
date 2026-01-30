@@ -73,11 +73,7 @@ impl<T> Try for AppResult<T> {
 
 impl<T> FromResidual for AppResult<T> {
   fn from_residual(r: ResultCodeResidual) -> Self {
-    if r.1 {
-      Self::Quit
-    } else {
-      Self::Err(r.0)
-    }
+    if r.1 { Self::Quit } else { Self::Err(r.0) }
   }
 }
 

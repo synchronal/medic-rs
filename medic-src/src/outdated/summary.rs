@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use console::{pad_str, style, Alignment};
+use console::{Alignment, pad_str, style};
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct OutdatedSummary {

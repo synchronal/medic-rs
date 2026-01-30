@@ -19,8 +19,8 @@ use crate::{AppResult, Check};
 use serde::Deserialize;
 use std::fmt;
 use std::process::Command;
-use std::sync::mpsc;
 use std::sync::Arc;
+use std::sync::mpsc;
 use std::thread;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]

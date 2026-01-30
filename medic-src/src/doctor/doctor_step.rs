@@ -6,8 +6,8 @@ use crate::recoverable::Recoverable;
 pub use crate::shell::ShellConfig;
 pub use crate::step::step_config::StepConfig;
 
-use crate::runnable::Runnable;
 use crate::Check;
+use crate::runnable::Runnable;
 use serde::Deserialize;
 use std::fmt;
 use std::process::Command;

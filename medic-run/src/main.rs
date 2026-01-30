@@ -1,7 +1,7 @@
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;
 use medic_run::cli::CliArgs;
-use medic_src::{theme, AppResult};
+use medic_src::{AppResult, theme};
 use std::io::stdout;
 use std::panic;
 

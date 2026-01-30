@@ -10,7 +10,7 @@ use crate::theme::current_theme;
 use crate::util::StringOrList;
 use crate::{extra, std_to_string};
 
-use console::{style, Style};
+use console::{Style, style};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 use std::fmt;

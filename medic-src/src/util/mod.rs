@@ -1,4 +1,4 @@
-use serde::de::{self, value, SeqAccess, Visitor};
+use serde::de::{self, SeqAccess, Visitor, value};
 use serde::{Deserialize, Deserializer, Serialize};
 use std::fmt;
 

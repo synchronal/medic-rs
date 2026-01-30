@@ -1,4 +1,4 @@
-use console::{style, Style};
+use console::{Style, style};
 
 pub struct OptionalStyled {
   content: String,

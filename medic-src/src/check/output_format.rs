@@ -24,10 +24,10 @@ impl OutputFormat {
             if check_output.stderr.is_none() && !stderr.is_empty() {
               check_output.stderr = Some(stderr.trim().to_owned());
             }
-            if let Some(directory) = cd {
-              if let Some(remedy) = check_output.remedy {
-                check_output.remedy = Some(format!("(cd {directory} && {remedy})"))
-              }
+            if let Some(directory) = cd
+              && let Some(remedy) = check_output.remedy
+            {
+              check_output.remedy = Some(format!("(cd {directory} && {remedy})"))
             }
             check_output
           }

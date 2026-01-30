@@ -1,10 +1,10 @@
+use crate::AppResult;
 use crate::cli::Flags;
 use crate::context::Context;
 use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::theme::current_theme;
-use crate::AppResult;
 use arboard::Clipboard;
 use console::Term;
 use retrogress::ProgressBar;
@@ -45,10 +45,14 @@ pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flag
   }
 
   if flags.auto_apply_remedy {
-    std::env::set_var("MEDIC_APPLY_REMEDIES", "true");
+    unsafe {
+      std::env::set_var("MEDIC_APPLY_REMEDIES", "true");
+    }
   }
   if flags.interactive {
-    std::env::set_var("MEDIC_INTERACTIVE", "true");
+    unsafe {
+      std::env::set_var("MEDIC_INTERACTIVE", "true");
+    }
   }
 
   match runnable.run(progress, flags, context) {

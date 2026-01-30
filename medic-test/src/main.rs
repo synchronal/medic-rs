@@ -1,6 +1,6 @@
 use medic_src::config::Manifest;
 use medic_src::context::Context;
-use medic_src::{progress, theme, AppResult};
+use medic_src::{AppResult, progress, theme};
 use medic_test::cli::CliArgs;
 use medic_test::run_steps;
 
