@@ -1,10 +1,10 @@
 use crate::error::MedicError;
 use console::Style;
-use once_cell::sync::OnceCell;
 use serde::Deserialize;
+use std::sync::OnceLock;
 use terminal_colorsaurus::{QueryOptions, ThemeMode, color_palette};
 
-pub static THEME: OnceCell<ColorTheme> = OnceCell::new();
+pub static THEME: OnceLock<ColorTheme> = OnceLock::new();
 pub fn current_theme() -> &'static ColorTheme {
   THEME.get().expect("ColorTheme not set")
 }

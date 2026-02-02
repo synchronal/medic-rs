@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Replace `once_cell` with `OnceLock` from the standard library.
 - Use edition 2024. Mark env mutation as unsafe.
 
 ## 2.19.3
