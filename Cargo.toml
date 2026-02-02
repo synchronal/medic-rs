@@ -12,7 +12,7 @@ members = [
     "medic-test",
     "medic-update",
 ]
-resolver = "2"
+resolver = "3"
 
 
 [workspace.dependencies]
