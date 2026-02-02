@@ -142,7 +142,9 @@ impl Runnable for AuditConfig {
   }
 
   fn to_command(&self) -> Result<std::process::Command, MedicError> {
-    panic!("AuditConfig not be converted to a Command");
+    Err(MedicError::Message(
+      "AuditConfig cannot be converted to a Command".to_string(),
+    ))
   }
 }
 
@@ -177,7 +179,9 @@ impl Runnable for TestConfig {
   }
 
   fn to_command(&self) -> Result<std::process::Command, MedicError> {
-    panic!("TestConfig not be converted to a Command");
+    Err(MedicError::Message(
+      "TestConfig cannot be converted to a Command".to_string(),
+    ))
   }
 }
 
@@ -212,7 +216,9 @@ impl Runnable for UpdateConfig {
   }
 
   fn to_command(&self) -> Result<std::process::Command, MedicError> {
-    panic!("UpdateConfig not be converted to a Command");
+    Err(MedicError::Message(
+      "UpdateConfig cannot be converted to a Command".to_string(),
+    ))
   }
 }
 

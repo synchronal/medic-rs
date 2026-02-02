@@ -135,7 +135,9 @@ impl Runnable for DoctorConfig {
   }
 
   fn to_command(&self) -> Result<std::process::Command, MedicError> {
-    panic!("DoctorConfig not be converted to a Command");
+    Err(MedicError::Message(
+      "DoctorConfig cannot be converted to a Command".to_string(),
+    ))
   }
 }
 
