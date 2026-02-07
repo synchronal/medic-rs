@@ -2,20 +2,22 @@ use crate::error::MedicError;
 use crate::extra;
 use crate::optional_styled::OptionalStyled;
 use crate::theme::current_theme;
+use std::collections::BTreeMap;
 use std::ops::{ControlFlow, FromResidual, Try};
 use std::process::Command;
 
 pub struct Remedy {
   pub command: String,
   pub cd: Option<String>,
+  pub env: BTreeMap<String, String>,
 }
 
 impl Remedy {
-  pub fn new(command: String, cd: Option<String>) -> Self {
-    Self { command, cd }
+  pub fn new(command: String, cd: Option<String>, env: BTreeMap<String, String>) -> Self {
+    Self { command, cd, env }
   }
   pub fn to_command(&self) -> Command {
-    extra::command::from_string(&self.command, &self.cd)
+    extra::command::from_string(&self.command, &self.cd, &self.env)
   }
 }
 

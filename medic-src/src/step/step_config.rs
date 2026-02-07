@@ -132,7 +132,7 @@ impl Runnable for StepConfig {
     if let Err(_err) = which(&step_cmd) {
       return Err(MedicError::Message(format!("executable {step_cmd} not found in PATH")));
     };
-    let mut command = extra::command::new(&step_cmd, &self.cd);
+    let mut command = extra::command::new(&step_cmd, &self.cd, &self.env);
 
     if let Some(subcmd) = &self.command {
       command.arg(subcmd);

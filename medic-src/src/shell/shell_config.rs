@@ -140,7 +140,7 @@ impl Runnable for ShellConfig {
               let mut remedy: Option<Remedy> = None;
 
               if let Some(remedy_str) = &self.remedy {
-                remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
+                remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone(), self.env.clone()));
               }
 
               match (self.manual, allow_failure) {

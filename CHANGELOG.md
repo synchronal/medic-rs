@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Remedies inherit configured `env` from checks, steps, etc.
 - Replace panics with errors.
 - Replace `once_cell` with `OnceLock` from the standard library.
 - Use edition 2024. Mark env mutation as unsafe.

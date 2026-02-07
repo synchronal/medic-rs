@@ -82,7 +82,7 @@ impl Runnable for Check {
               let mut remedy: Option<Remedy> = None;
 
               if let Some(remedy_str) = output.remedy {
-                remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone()));
+                remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone(), self.env.clone()));
               }
               Recoverable::Err(None, remedy)
             }
@@ -107,7 +107,7 @@ impl Runnable for Check {
       return Err(MedicError::Message(format!("executable {check_cmd} not found in PATH")));
     };
 
-    let mut command = extra::command::new(&check_cmd, &self.cd);
+    let mut command = extra::command::new(&check_cmd, &self.cd, &self.env);
     command.env("MEDIC_OUTPUT_FORMAT", self.output.to_string());
 
     if let Some(subcmd) = &self.command {
@@ -120,10 +120,6 @@ impl Runnable for Check {
           command.arg(flag_arg).arg(value);
         }
       }
-    }
-
-    for (var, value) in &self.env {
-      command.env(var, value);
     }
 
     Ok(command)

@@ -98,7 +98,7 @@ impl Runnable for OutdatedCheck {
             let mut remedy_opt: Option<String> = None;
 
             if let Some(remedy_cmd) = summary.remedy {
-              remedy = Some(Remedy::new(remedy_cmd.clone(), self.cd.clone()));
+              remedy = Some(Remedy::new(remedy_cmd.clone(), self.cd.clone(), BTreeMap::new()));
               remedy_opt = Some(crate::extra::command::to_string(&remedy_cmd, &self.cd));
             }
 
