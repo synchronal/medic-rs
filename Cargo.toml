@@ -52,5 +52,5 @@ homepage = "https://github.com/synchronal"
 license = "MIT"
 readme = "./README.md"
 repository = "https://github.com/synchronal/medic-rs"
-version = "2.19.3"
+version = "2.20.0"
 

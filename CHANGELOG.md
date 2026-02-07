@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.20.0
+
 - Remedies inherit configured `env` from checks, steps, etc.
 - Replace panics with errors.
 - Replace `once_cell` with `OnceLock` from the standard library.
