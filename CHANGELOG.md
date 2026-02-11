@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.21.1
+
 - Handle panics from unexpected signals during prompt inputs. Exit
   instead.
 
