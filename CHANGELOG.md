@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Update retrogress, to handle ^U or Alt+Backspace in prompts.
+
 ## 2.20.0
 
 - Remedies inherit configured `env` from checks, steps, etc.
