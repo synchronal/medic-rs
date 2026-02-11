@@ -1,8 +1,8 @@
 [doctor]
 checks = [
   { name = "always fails", shell = "false", platform = ["None"] },
-  { check = "asdf", command = "plugin-installed", args = { plugin = "rust" } },
-  { check = "asdf", command = "package-installed", args = { plugin = "rust" } },
+  { check = "tool-versions", command = "plugin-installed", args = { plugin = "rust" } },
+  { check = "tool-versions", command = "package-installed", args = { plugin = "rust" } },
   { check = "printenv", command = "stdio", verbose = true, output = "stdio" },
   { check = "printenv", command = "json", verbose = true, output = "json" },
   { check = "json", command = "verbose", verbose = true, output = "json" },
