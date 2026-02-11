@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.21.0
+
 - Update retrogress, to handle ^U or Alt+Backspace in prompts.
 
 ## 2.20.0
