@@ -216,6 +216,10 @@ fn ask<R: Runnable>(
         ask(runnable, remedy, progress, default_exit, flags, context)
       }
     }
+    PromptResult::Err(e) => {
+      eprintln!("Received unexpected prompt result:\n{e}");
+      AppResult::Quit
+    }
   }
 }
 
@@ -318,20 +322,26 @@ enum PromptResult {
   Skip,
   Unknown,
   Yes,
+  Err(retrogress::Error),
 }
 
-impl From<String> for PromptResult {
-  fn from(value: String) -> Self {
-    let str = value.as_str();
-    match str {
-      "a" | "A" => Self::All,
-      "n" | "N" => Self::No,
-      "q" | "Q" => Self::Quit,
-      "r" | "R" => Self::Rerun,
-      "s" => Self::Skip,
-      "y" | "Y" => Self::Yes,
-      "?" => Self::Help,
-      _ => Self::Unknown,
+impl From<Result<String, retrogress::Error>> for PromptResult {
+  fn from(value: Result<String, retrogress::Error>) -> Self {
+    match value {
+      Ok(val) => {
+        let str = val.as_str();
+        match str {
+          "a" | "A" => Self::All,
+          "n" | "N" => Self::No,
+          "q" | "Q" => Self::Quit,
+          "r" | "R" => Self::Rerun,
+          "s" => Self::Skip,
+          "y" | "Y" => Self::Yes,
+          "?" => Self::Help,
+          _ => Self::Unknown,
+        }
+      }
+      Err(e) => Self::Err(e),
     }
   }
 }

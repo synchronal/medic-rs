@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Handle panics from unexpected signals during prompt inputs. Exit
+  instead.
+
 ## 2.21.0
 
 - Update retrogress, to handle ^U or Alt+Backspace in prompts.
