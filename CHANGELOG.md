@@ -2,7 +2,10 @@
 
 ## Unreleased
 
-- Remove unused try_trait_v2 from medic-run
+## 2.21.1
+
+- Remove unused try_trait_v2 from medic-run.
+- Update deps.
 
 ## 2.21.1
 
