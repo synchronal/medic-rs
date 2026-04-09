@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Remove unused try_trait_v2 from medic-run
+
 ## 2.21.1
 
 - Handle panics from unexpected signals during prompt inputs. Exit

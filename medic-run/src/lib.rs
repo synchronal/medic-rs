@@ -1,5 +1,4 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
-#![feature(try_trait_v2)]
 
 pub mod cli;
 
