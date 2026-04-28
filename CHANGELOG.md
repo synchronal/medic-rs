@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.22.0
+
 - impl `std::ops::Residual` for `try_trait_v2` structs. This includes
   the additional declaration of the unstable `try_trait_v2_residual`
   feature.
