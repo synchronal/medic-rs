@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- impl `std::ops::Residual` for `try_trait_v2` structs. This includes
+  the additional declaration of the unstable `try_trait_v2_residual`
+  feature.
+
 ## 2.21.1
 
 - Remove unused try_trait_v2 from medic-run.

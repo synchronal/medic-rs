@@ -108,3 +108,7 @@ impl FromResidual for CheckResult {
     Self::CheckError(r.0, r.1, r.2, r.3)
   }
 }
+
+impl std::ops::Residual<()> for ResultCodeResidual {
+  type TryType = CheckResult;
+}

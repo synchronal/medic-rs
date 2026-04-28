@@ -1,5 +1,5 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
-#![feature(try_trait_v2)]
+#![feature(try_trait_v2, try_trait_v2_residual)]
 
 pub mod app_result;
 pub mod audit;

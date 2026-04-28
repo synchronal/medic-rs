@@ -52,3 +52,7 @@ impl FromResidual for StepResult {
     Self::StepError(r.0, r.1, r.2)
   }
 }
+
+impl std::ops::Residual<()> for ResultCodeResidual {
+  type TryType = StepResult;
+}

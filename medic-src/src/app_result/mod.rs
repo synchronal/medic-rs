@@ -100,3 +100,7 @@ impl<T> FromResidual<Result<std::convert::Infallible, MedicError>> for AppResult
     Self::Err(Some(r.unwrap_err()))
   }
 }
+
+impl<T> std::ops::Residual<T> for ResultCodeResidual {
+  type TryType = AppResult<T>;
+}

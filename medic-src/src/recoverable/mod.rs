@@ -123,3 +123,7 @@ impl<T> FromResidual<Result<std::convert::Infallible, std::ffi::OsString>> for R
     Self::Err(Some(r.unwrap_err().into()), None)
   }
 }
+
+impl<T> std::ops::Residual<T> for ResultCodeResidual {
+  type TryType = Recoverable<T>;
+}
