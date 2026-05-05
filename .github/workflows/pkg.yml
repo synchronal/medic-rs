@@ -18,7 +18,7 @@ jobs:
     env:
       FREEBSD_VERSION: "14.3"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build in FreeBSD
         id: build
         uses: vmactions/freebsd-vm@v1
@@ -62,7 +62,7 @@ jobs:
     env:
       FREEBSD_VERSION: "15.0"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build in FreeBSD
         id: build
         uses: vmactions/freebsd-vm@v1
@@ -96,7 +96,7 @@ jobs:
 
           scp -r freebsd:$GITHUB_WORKSPACE/medic-*.pkg .
       - name: Save pkg artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: medic-freebsd-15.0-amd64
           path: medic-*.pkg
