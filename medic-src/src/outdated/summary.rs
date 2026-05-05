@@ -173,7 +173,7 @@ impl std::fmt::Display for OutdatedSummary {
         pad_str(&dep.version, self.max_version_length, Alignment::Left, None)
       )?;
       write!(f, "  ")?;
-      write!(f, "{}", &dep.latest)?;
+      write!(f, "{}", dep.latest)?;
       if dep.parent.is_some() {
         if dep.latest.len() < self.max_latest_length {
           write!(

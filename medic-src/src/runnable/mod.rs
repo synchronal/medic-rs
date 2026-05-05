@@ -36,9 +36,8 @@ pub trait Runnable: std::fmt::Display + Clone {
 pub fn run(runnable: impl Runnable, progress: &mut ProgressBar, flags: &mut Flags, context: &Context) -> AppResult<()> {
   if !context.matches_platform(runnable.platform()) {
     progress.print_inline(&format!(
-      "{} {} {}",
+      "{} {runnable} {}",
       OptionalStyled::new("…", current_theme().warning_style.clone()),
-      &runnable.to_string(),
       OptionalStyled::new("(skipped)", current_theme().warning_style.clone())
     ));
     return AppResult::Ok(());

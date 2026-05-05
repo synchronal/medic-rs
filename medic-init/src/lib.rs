@@ -14,14 +14,14 @@ pub fn create_config_file(path: std::path::PathBuf, force: bool) -> AppResult<()
 
   if let Ok(metadata) = std::fs::metadata(expanded_path) {
     match (metadata.is_file(), force) {
-      (false, _) => println!("Creating file: {:?}", &expanded_path),
+      (false, _) => println!("Creating file: {:?}", expanded_path),
       (true, false) => {
         return AppResult::Err(Some(
           format!("File {expanded_path:?} already exists!\r\n       Use `--force` to overwrite file.").into(),
         ));
       }
       (true, true) => {
-        println!("Overwriting file: {:?}", &expanded_path);
+        println!("Overwriting file: {:?}", expanded_path);
         std::fs::remove_file(expanded_path)?;
       }
     }
