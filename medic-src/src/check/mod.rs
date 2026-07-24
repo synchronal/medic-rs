@@ -33,6 +33,8 @@ pub struct Check {
   #[serde(default)]
   pub env: BTreeMap<String, String>,
   #[serde(default)]
+  pub manual: bool,
+  #[serde(default)]
   pub output: OutputFormat,
   pub platform: Option<Vec<String>>,
   #[serde(default)]
@@ -84,7 +86,11 @@ impl Runnable for Check {
               if let Some(remedy_str) = output.remedy {
                 remedy = Some(Remedy::new(remedy_str.clone(), self.cd.clone(), self.env.clone()));
               }
-              Recoverable::Err(None, remedy)
+              if self.manual {
+                Recoverable::Manual(None, remedy)
+              } else {
+                Recoverable::Err(None, remedy)
+              }
             }
           }
           Err(err) => {

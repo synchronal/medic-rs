@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Checks may force remedies to be run manually with `manual = true`.
+
 ## 2.22.0
 
 - impl `std::ops::Residual` for `try_trait_v2` structs. This includes

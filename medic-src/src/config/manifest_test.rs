@@ -52,6 +52,7 @@ fn deserialize_audit() {
             check: "rust".to_string(),
             command: Some("format-check".to_string()),
             env: BTreeMap::default(),
+            manual: false,
             output: OutputFormat::Json,
             platform: None,
           }),
@@ -112,6 +113,7 @@ fn deserialize_doctor() {
             check: "rust".to_string(),
             command: Some("format-check".to_string()),
             env: BTreeMap::default(),
+            manual: false,
             output: OutputFormat::Json,
             platform: None,
             verbose: false,
@@ -211,6 +213,7 @@ fn deserialize_shipit() {
             check: "rust".to_string(),
             command: None,
             env: BTreeMap::default(),
+            manual: false,
             output: OutputFormat::Json,
             platform: None,
             verbose: false
@@ -274,6 +277,7 @@ fn deserialize_test() {
             check: "rust".to_string(),
             command: None,
             env: BTreeMap::default(),
+            manual: false,
             output: OutputFormat::Json,
             platform: None,
             verbose: false
@@ -337,6 +341,7 @@ fn deserialize_update() {
             check: "rust".to_string(),
             command: None,
             env: BTreeMap::default(),
+            manual: false,
             output: OutputFormat::Json,
             platform: None,
             verbose: false

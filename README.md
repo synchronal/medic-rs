@@ -334,6 +334,8 @@ and are available in the PATH.
   specified as a list, the flag will be output once per value.
 - `cd` - change directory before running checks.
 - `env` - environment variables to set when running checks.
+- `manual` - when `true`, the remedy will be printed and medic will
+  quit, even when running in interactive or auto-apply mode.
 - `output` - the output format used by the check, either
   [`json`](#json-default) or [`stdio`](#stdio)
 - `platform` - an optional list of platforms on which this check should
@@ -441,7 +443,7 @@ commands may be better suited to be written into shell scripts.
   progress indicators, for example when using `medic run` from shell
   scripts.
 - `manual` - when `true`, the remedy will be printed and medic will
-  quit, even when running in interactive of auto-apply mode.
+  quit, even when running in interactive or auto-apply mode.
 - `platform` - an optional list of platforms on which this check should
   be run, for example `Darwin`, or `FreeBSD`. When missing or empty, the
   check will be run on all platforms.
