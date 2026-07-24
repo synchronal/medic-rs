@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.23.0
+
 - Checks may force remedies to be run manually with `manual = true`.
 
 ## 2.22.0
