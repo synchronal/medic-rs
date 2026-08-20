@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fix issue where `env` on a shell check would remove all other
+  environment variables.
+
 ## 2.23.0
 
 - Checks may force remedies to be run manually with `manual = true`.

@@ -6,8 +6,8 @@ use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::{Recoverable, Remedy};
 use crate::runnable::Runnable;
-use crate::std_to_string;
 use crate::theme::current_theme;
+use crate::{extra, std_to_string};
 
 use serde::Deserialize;
 use std::collections::BTreeMap;
@@ -166,17 +166,8 @@ impl Runnable for ShellConfig {
       let mut command = Command::new("sh");
       command.arg("-c").arg(&self.shell);
 
-      if let Some(directory) = &self.cd {
-        if let Ok(expanded) = std::fs::canonicalize(directory) {
-          command.current_dir(&expanded);
-        } else {
-          return Err(MedicError::Message(format!("directory {directory} does not exist")));
-        }
-      }
-
-      for (var, value) in &self.env {
-        command.env(var, value);
-      }
+      extra::command::with_env(&mut command, &self.env);
+      extra::command::with_dir(&mut command, &self.cd);
 
       Ok(command)
     }

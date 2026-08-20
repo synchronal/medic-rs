@@ -4,6 +4,7 @@ use super::*;
 use crate::extra;
 use crate::runnable::Runnable;
 use std::collections::BTreeMap;
+use std::ffi::OsStr;
 use std::sync::Once;
 
 static INIT: Once = Once::new();
@@ -164,9 +165,10 @@ fn test_to_command() {
   };
 
   let cmd = shell.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
+  let args: Vec<&OsStr> = cmd.get_args().collect();
 
-  assert_eq!(cmd_str, "\"sh\" \"-c\" \"some command\"")
+  assert_eq!(cmd.get_program(), "sh");
+  assert_eq!(args, ["-c", "some command"]);
 }
 
 #[test]
@@ -185,12 +187,11 @@ fn test_to_command_cd() {
   };
 
   let path_expansion = extra::env::subst("${PWD}/fixtures/bin").unwrap();
-  let expected_cmd_str = format!("cd \"{path_expansion}\" && \"sh\" \"-c\" \"some command\"");
 
+  let path: std::path::PathBuf = path_expansion.into();
   let cmd = shell.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
 
-  assert_eq!(cmd_str, expected_cmd_str)
+  assert_eq!(cmd.get_current_dir(), Some(path.as_path()));
 }
 
 #[test]
@@ -210,12 +211,15 @@ fn test_to_command_env() {
     shell: "some command".to_string(),
     verbose: false,
   };
-  let expected_cmd_str = "OTHER=\"other\" VAR=\"value\" \"sh\" \"-c\" \"some command\"".to_string();
-
   let cmd = shell.to_command().unwrap();
-  let cmd_str = format!("{cmd:?}");
 
-  assert_eq!(cmd_str, expected_cmd_str)
+  let envs: Vec<(&OsStr, Option<&OsStr>)> = cmd.get_envs().collect();
+  let expected = [
+    (OsStr::new("OTHER"), Some(OsStr::new("other"))),
+    (OsStr::new("VAR"), Some(OsStr::new("value"))),
+  ];
+
+  assert!(expected.iter().all(|item| envs.contains(item)));
 }
 
 #[test]

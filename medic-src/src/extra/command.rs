@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::process::Command;
 
 pub fn to_string(command: &String, dir: &Option<String>) -> String {
   match dir {
@@ -7,13 +8,28 @@ pub fn to_string(command: &String, dir: &Option<String>) -> String {
   }
 }
 
-pub fn from_string(cmd: &str, dir: &Option<String>, env: &BTreeMap<String, String>) -> std::process::Command {
+pub fn from_string(cmd: &str, dir: &Option<String>, env: &BTreeMap<String, String>) -> Command {
   let mut command = new("sh", dir, env);
   command.arg("-c").arg(cmd);
   command
 }
 
-pub fn new(cmd: &str, dir: &Option<String>, env: &BTreeMap<String, String>) -> std::process::Command {
+pub fn new(cmd: &str, dir: &Option<String>, env: &BTreeMap<String, String>) -> Command {
+  let mut command = std::process::Command::new(cmd);
+  with_env(&mut command, env);
+  with_dir(&mut command, dir);
+
+  command
+}
+
+pub fn with_dir(cmd: &mut Command, dir: &Option<String>) {
+  if let Some(dir) = dir {
+    let expanded = std::fs::canonicalize(dir).unwrap();
+    cmd.current_dir(&expanded);
+  };
+}
+
+pub fn with_env(cmd: &mut Command, env: &BTreeMap<String, String>) {
   let mut filtered_env: BTreeMap<String, String> = std::env::vars()
     .filter(|(_k, v)| !v.contains(['{', '}']))
     .collect();
@@ -22,11 +38,5 @@ pub fn new(cmd: &str, dir: &Option<String>, env: &BTreeMap<String, String>) -> s
     filtered_env.insert(key.clone(), value.clone());
   }
 
-  let mut command = std::process::Command::new(cmd);
-  command.env_clear().envs(&filtered_env);
-  if let Some(dir) = dir {
-    let expanded = std::fs::canonicalize(dir).unwrap();
-    command.current_dir(&expanded);
-  };
-  command
+  cmd.env_clear().envs(&filtered_env);
 }
