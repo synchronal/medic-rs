@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.23.1
+
 - Fix issue where `env` on a shell check would remove all other
   environment variables.
 
