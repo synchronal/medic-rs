@@ -51,18 +51,16 @@ the checks their own way.
 
 ## Installation
 
-``` shell
-brew install synchronal/tap/medic
+    brew install synchronal/tap/medic
 
-# optionally add extensions which include steps, checks, and/or outdated checks:
-brew install synchronal/tap/medic-ext-elixir
-brew install synchronal/tap/medic-ext-git
-brew install synchronal/tap/medic-ext-homebrew
-brew install synchronal/tap/medic-ext-node
-brew install synchronal/tap/medic-ext-rust
-brew install synchronal/tap/medic-ext-tool-versions
-brew install synchronal/tap/medic-ext-postgres
-```
+    # optionally add extensions which include steps, checks, and/or outdated checks:
+    brew install synchronal/tap/medic-ext-elixir
+    brew install synchronal/tap/medic-ext-git
+    brew install synchronal/tap/medic-ext-homebrew
+    brew install synchronal/tap/medic-ext-node
+    brew install synchronal/tap/medic-ext-rust
+    brew install synchronal/tap/medic-ext-tool-versions
+    brew install synchronal/tap/medic-ext-postgres
 
 ## Usage
 
@@ -71,16 +69,14 @@ from a [TOML-formatted file](#configuration) with a default path of
 `.config/medic.toml`. This can be overridden with `-c`, `--config`, or
 by setting the `MEDIC_CONFIG` environment variable.
 
-``` shell
-medic init     # -- add an empty medic config manifest to a project.
-medic doctor   # -- ensure a project is fully set up for development.
-medic test     # -- run all test commands.
-medic audit    # -- run lints, type checks, dependency audits, etc.
-medic outdated # -- check for outdated project dependencies.
-medic update   # -- update the project with upstream changes.
-medic shipit   # -- run all checks and ship your changes.
-medic run      # -- runs a shell command with medic progress output.
-```
+    medic init     # -- add an empty medic config manifest to a project.
+    medic doctor   # -- ensure a project is fully set up for development.
+    medic test     # -- run all test commands.
+    medic audit    # -- run lints, type checks, dependency audits, etc.
+    medic outdated # -- check for outdated project dependencies.
+    medic update   # -- update the project with upstream changes.
+    medic shipit   # -- run all checks and ship your changes.
+    medic run      # -- runs a shell command with medic progress output.
 
 Subcommands (with the exception of `init` and `run`) may be run
 interactively via `-i`, `--interactive`, or by assigning
@@ -495,19 +491,15 @@ Values to be included:
 Output from steps and checks can be colorized using unicode or
 hexadecimal ANSI escape sequences.
 
-``` shell
-echo "\u001b[1;31mHere is some red text\u001b[0m" >&2
-echo "\x1b[1;33mHere is some yellow text\x1b[0m" >&2
-```
+    echo "\u001b[1;31mHere is some red text\u001b[0m" >&2
+    echo "\x1b[1;33mHere is some yellow text\x1b[0m" >&2
 
 ## Development
 
-``` shell
-brew bundle
-bin/dev/doctor
+    brew bundle
+    bin/dev/doctor
 
-cargo run --bin medic-doctor -- -c fixtures/medic.toml
-```
+    cargo run --bin medic-doctor -- -c fixtures/medic.toml
 
 ## Notes
 
