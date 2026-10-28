@@ -415,7 +415,6 @@ dependencies = [
  "clap_complete",
  "console",
  "ctrlc",
- "indoc",
  "medic-audit",
  "medic-doctor",
  "medic-init",
@@ -436,7 +435,6 @@ dependencies = [
  "clap_complete",
  "console",
  "ctrlc",
- "indoc",
  "medic-src",
  "retrogress",
 ]
@@ -449,7 +447,6 @@ dependencies = [
  "clap_complete",
  "console",
  "ctrlc",
- "indoc",
  "medic-src",
  "retrogress",
 ]
@@ -480,7 +477,6 @@ dependencies = [
  "clap_complete",
  "console",
  "ctrlc",
- "indoc",
  "medic-src",
  "retrogress",
 ]
@@ -493,7 +489,6 @@ dependencies = [
  "clap_complete",
  "console",
  "ctrlc",
- "indoc",
  "medic-src",
  "retrogress",
 ]
@@ -506,7 +501,6 @@ dependencies = [
  "clap_complete",
  "console",
  "ctrlc",
- "indoc",
  "medic-src",
  "retrogress",
 ]
@@ -536,7 +530,6 @@ dependencies = [
  "clap_complete",
  "console",
  "ctrlc",
- "indoc",
  "medic-src",
  "retrogress",
 ]
@@ -549,7 +542,6 @@ dependencies = [
  "clap_complete",
  "console",
  "ctrlc",
- "indoc",
  "medic-src",
  "retrogress",
 ]
