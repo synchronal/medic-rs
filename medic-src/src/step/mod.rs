@@ -1,4 +1,6 @@
 #[cfg(test)]
+mod doctor_config_test;
+#[cfg(test)]
 mod step_config_test;
 
 pub mod step_config;
@@ -122,8 +124,14 @@ impl Runnable for DoctorConfig {
       AppResult::Ok(manifest) => {
         if let Some(doctor) = manifest.doctor {
           for check in doctor.checks {
-            if let AppResult::Quit = crate::runnable::run(check, progress, flags, context) {
-              return Recoverable::Quit;
+            // Remedies and prompts have already been handled for the nested check,
+            // so failures are nonrecoverable here to avoid prompting a second time.
+            match crate::runnable::run(check, progress, flags, context) {
+              AppResult::Ok(_) => {}
+              AppResult::Err(err) => {
+                return Recoverable::Nonrecoverable(err.unwrap_or_else(|| "Doctor check failed".into()));
+              }
+              AppResult::Quit => return Recoverable::Quit,
             }
           }
         }

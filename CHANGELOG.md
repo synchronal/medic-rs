@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Fix issue where a failing check in a `{ doctor = {} }` step would not
+  stop the run, so commands like `medic update` continued and exited
+  successfully.
+
 ## 2.23.1
 
 - Fix issue where `env` on a shell check would remove all other
