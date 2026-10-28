@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.23.2
+
 - Fix issue where a failing check in a `{ doctor = {} }` step would not
   stop the run, so commands like `medic update` continued and exited
   successfully.
