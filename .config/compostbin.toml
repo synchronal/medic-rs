@@ -1,0 +1,23 @@
+[container]
+setup = [
+  """curl -fsSL "https://get.nexte.st/0.9.149/$(dpkg --print-architecture | sed 's/amd64/linux/; s/arm64/linux-arm/')" | tar xz -C ~/.cargo/bin""",
+]
+
+[host]
+clipboard = true
+
+# Rust needs a C linker.
+[image]
+packages = ["build-essential"]
+# The image has no shell profile, so put the user-installed tools on PATH.
+# The links resolve once `run` installs them.
+run_as_root = [
+  """for bin in cargo rustc rustdoc rustup; do ln -s "/home/claude/.cargo/bin/$bin" /usr/local/bin/; done""",]
+run = [
+  """curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs -o /tmp/rustup-init.sh && sh /tmp/rustup-init.sh -y --profile minimal --default-toolchain nightly-2026-11-01 --component clippy,rustfmt --no-modify-path && rm /tmp/rustup-init.sh""",
+  # Keep guest builds out of the host's target/.
+  """printf '[build]\\ntarget-dir = "/home/claude/.cache/cargo-target"\\n' > ~/.cargo/config.toml""",]
+
+[project]
+image = "compostbin/base:latest"
+name = "medic-rs"
