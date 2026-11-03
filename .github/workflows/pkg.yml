@@ -62,7 +62,7 @@ jobs:
     name: Build FreeBSD 15 package
     runs-on: ubuntu-latest
     env:
-      FREEBSD_VERSION: "15.0"
+      FREEBSD_VERSION: "15.1"
     steps:
       - uses: actions/checkout@v6
       - name: Build in FreeBSD
@@ -95,13 +95,13 @@ jobs:
             cd $GITHUB_WORKSPACE
 
             ./bin/freebsd/package
-            mv medic-*.pkg medic-freebsd-15.0-amd64.pkg
+            mv medic-*.pkg medic-freebsd-15.1-amd64.pkg
           EOF
 
           scp -r freebsd:$GITHUB_WORKSPACE/medic-*.pkg .
       - name: Save pkg artifact
         uses: actions/upload-artifact@v7
         with:
-          name: medic-freebsd-15.0-amd64
+          name: medic-freebsd-15.1-amd64
           path: medic-*.pkg
 
