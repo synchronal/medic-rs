@@ -167,7 +167,7 @@ impl Runnable for ShellConfig {
       command.arg("-c").arg(&self.shell);
 
       extra::command::with_env(&mut command, &self.env);
-      extra::command::with_dir(&mut command, &self.cd);
+      extra::command::with_dir(&mut command, &self.cd)?;
 
       Ok(command)
     }

@@ -5,9 +5,20 @@ use crate::extra;
 use crate::util::StringOrList;
 use std::collections::BTreeMap;
 use std::ffi::OsStr;
+use std::sync::Once;
+
+static INIT: Once = Once::new();
+pub fn initialize() {
+  INIT.call_once(|| {
+    if crate::theme::THEME.get().is_none() {
+      let theme = crate::theme::dark_theme();
+      crate::theme::set_theme(theme);
+    }
+  });
+}
 
 #[test]
-fn deserialize_cd() {
+fn cd() {
   let toml = r#"
         cd = "./subdirectory"
         step = "step-name"
@@ -29,7 +40,7 @@ fn deserialize_cd() {
   )
 }
 #[test]
-fn deserialize_arg_string() {
+fn arg_string() {
   let toml = r#"
         step = "step-name"
         command = "subcommand"
@@ -55,7 +66,7 @@ fn deserialize_arg_string() {
   )
 }
 #[test]
-fn deserialize_arg_list() {
+fn arg_list() {
   let toml = r#"
         step = "step-name"
         command = "subcommand"
@@ -81,7 +92,7 @@ fn deserialize_arg_list() {
   )
 }
 #[test]
-fn deserialize_env() {
+fn env() {
   let toml = r#"
         env = { MY_VAR = "first", SECOND_VAR = "second" }
         step = "step-name"
@@ -107,7 +118,7 @@ fn deserialize_env() {
 }
 
 #[test]
-fn to_command() {
+fn command() {
   let step = StepConfig {
     args: None,
     cd: None,
@@ -134,7 +145,7 @@ fn to_command() {
 }
 
 #[test]
-fn to_command_cd() {
+fn command_cd() {
   let step = StepConfig {
     args: None,
     cd: Some("../fixtures/bin".to_string()),
@@ -155,7 +166,7 @@ fn to_command_cd() {
 }
 
 #[test]
-fn to_command_subcommand() {
+fn subcommand() {
   let step = StepConfig {
     args: None,
     cd: None,
@@ -177,7 +188,7 @@ fn to_command_subcommand() {
 }
 
 #[test]
-fn to_command_args() {
+fn args() {
   let step = StepConfig {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -202,7 +213,7 @@ fn to_command_args() {
 }
 
 #[test]
-fn to_command_args_list() {
+fn args_list() {
   let step = StepConfig {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -232,7 +243,7 @@ fn to_command_args_list() {
 }
 
 #[test]
-fn to_command_env() {
+fn command_env() {
   let step = StepConfig {
     args: None,
     cd: None,
@@ -259,7 +270,7 @@ fn to_command_env() {
 }
 
 #[test]
-fn to_command_missing_command() {
+fn missing_command() {
   let step = StepConfig {
     args: None,
     cd: None,
@@ -279,7 +290,7 @@ fn to_command_missing_command() {
 }
 
 #[test]
-fn to_string_cd() {
+fn display_cd() {
   let step = StepConfig {
     args: None,
     cd: Some("./subdirectory".to_string()),
@@ -298,7 +309,7 @@ fn to_string_cd() {
 }
 
 #[test]
-fn to_string_single_arg() {
+fn single_arg() {
   let step = StepConfig {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -320,7 +331,7 @@ fn to_string_single_arg() {
 }
 
 #[test]
-fn to_string_subcommand_single_arg() {
+fn subcommand_single_arg() {
   let step = StepConfig {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -342,7 +353,7 @@ fn to_string_subcommand_single_arg() {
 }
 
 #[test]
-fn to_string_subcommand_multiple_args() {
+fn subcommand_args() {
   let step = StepConfig {
     args: Some(BTreeMap::from([
       ("name".to_string(), StringOrList(vec!["first".to_string()])),
@@ -364,7 +375,7 @@ fn to_string_subcommand_multiple_args() {
 }
 
 #[test]
-fn to_string_subcommand_multiple_arg_values() {
+fn subcommand_arg_values() {
   let step = StepConfig {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -386,7 +397,7 @@ fn to_string_subcommand_multiple_arg_values() {
 }
 
 #[test]
-fn to_string_subcommand_multiple_arg_values_and_args() {
+fn subcommand_arg_values_and_args() {
   let step = StepConfig {
     args: Some(BTreeMap::from([
       (
@@ -408,4 +419,40 @@ fn to_string_subcommand_multiple_arg_values_and_args() {
     format!("{step}"),
     "\u{1b}[36mstep-name: subcommand!\u{1b}[0m \u{1b}[33m(name: first, name: second, other: third)\u{1b}[0m"
   )
+}
+
+fn missing_dir(name: &str) -> String {
+  std::env::temp_dir()
+    .join(format!("medic-step-config-{}-{name}-missing", std::process::id()))
+    .display()
+    .to_string()
+}
+
+fn step_in(dir: &str) -> StepConfig {
+  toml::from_str(&format!("step = \"thing\"\ncd = \"{dir}\"")).unwrap()
+}
+
+#[test]
+fn missing_cd_command() {
+  let missing = missing_dir("to-command");
+
+  let err = step_in(&missing).to_command().unwrap_err();
+
+  assert_eq!(err.to_string(), format!("directory {missing} does not exist"));
+}
+
+#[test]
+fn missing_cd() {
+  initialize();
+  let missing = missing_dir("run");
+  let mut flags = crate::cli::Flags::default();
+  let mut progress = crate::progress::new(&flags);
+
+  match step_in(&missing).run(&mut progress, &mut flags, &crate::context::Context::new()) {
+    crate::recoverable::Recoverable::Err(Some(err), None) => assert_eq!(
+      err.to_string(),
+      format!("Failed to parse command: directory {missing} does not exist")
+    ),
+    _ => panic!("expected Recoverable::Err(Some(_), None)"),
+  }
 }

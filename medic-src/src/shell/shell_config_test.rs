@@ -18,7 +18,7 @@ pub fn initialize() {
 }
 
 #[test]
-fn test_deserialize() {
+fn deserialize() {
   let toml = r#"
         shell = "some command"
         name = "Run some command"
@@ -43,7 +43,7 @@ fn test_deserialize() {
 }
 
 #[test]
-fn test_deserialize_cd() {
+fn cd() {
   let toml = r#"
         shell = "some command"
         name = "Run some command"
@@ -69,7 +69,7 @@ fn test_deserialize_cd() {
 }
 
 #[test]
-fn test_deserialize_env() {
+fn env() {
   let toml = r#"
         env = { MY_VAR = "first", SECOND_VAR = "second" }
         shell = "some command"
@@ -98,7 +98,7 @@ fn test_deserialize_env() {
 }
 
 #[test]
-fn test_deserialize_verbose() {
+fn verbose() {
   let toml = r#"
         shell = "some command"
         name = "Run some command"
@@ -124,7 +124,7 @@ fn test_deserialize_verbose() {
 }
 
 #[test]
-fn test_deserialize_allow_failure() {
+fn allow_failure() {
   let toml = r#"
         shell = "some command"
         name = "Run some command"
@@ -150,7 +150,7 @@ fn test_deserialize_allow_failure() {
 }
 
 #[test]
-fn test_to_command() {
+fn command() {
   let shell = ShellConfig {
     allow_failure: false,
     cd: None,
@@ -172,7 +172,7 @@ fn test_to_command() {
 }
 
 #[test]
-fn test_to_command_cd() {
+fn command_cd() {
   let shell = ShellConfig {
     allow_failure: false,
     cd: Some("../fixtures/bin".to_string()),
@@ -195,7 +195,7 @@ fn test_to_command_cd() {
 }
 
 #[test]
-fn test_to_command_env() {
+fn command_env() {
   let shell = ShellConfig {
     allow_failure: false,
     cd: None,
@@ -223,7 +223,7 @@ fn test_to_command_env() {
 }
 
 #[test]
-fn test_deserialize_manual() {
+fn manual() {
   let toml = r#"
         shell = "some command"
         name = "Run some command"
@@ -248,7 +248,7 @@ fn test_deserialize_manual() {
   );
 }
 #[test]
-fn test_deserialize_remedy() {
+fn remedy() {
   let toml = r#"
         shell = "some command"
         name = "Run some command"
@@ -274,7 +274,7 @@ fn test_deserialize_remedy() {
 }
 
 #[test]
-fn test_to_string() {
+fn display() {
   initialize();
   let shell = ShellConfig {
     allow_failure: false,
@@ -296,7 +296,7 @@ fn test_to_string() {
 }
 
 #[test]
-fn test_to_string_cd() {
+fn display_cd() {
   initialize();
   let shell = ShellConfig {
     allow_failure: false,
@@ -315,4 +315,38 @@ fn test_to_string_cd() {
     format!("{shell}"),
     "\u{1b}[36mRun some command\u{1b}[0m \u{1b}[33m(some command)\u{1b}[0m \u{1b}[32m(../fixtures/bin)\u{1b}[0m"
   );
+}
+
+fn missing_dir(name: &str) -> String {
+  std::env::temp_dir()
+    .join(format!("medic-shell-config-{}-{name}-missing", std::process::id()))
+    .display()
+    .to_string()
+}
+
+#[test]
+fn missing_cd_command() {
+  let missing = missing_dir("to-command");
+  let shell = ShellConfig::new("x".into(), "true".into(), Some(missing.clone()), None, false);
+
+  let err = shell.to_command().unwrap_err();
+
+  assert_eq!(err.to_string(), format!("directory {missing} does not exist"));
+}
+
+#[test]
+fn missing_cd() {
+  initialize();
+  let missing = missing_dir("run");
+  let shell = ShellConfig::new("x".into(), "true".into(), Some(missing.clone()), None, false);
+  let mut flags = crate::cli::Flags::default();
+  let mut progress = crate::progress::new(&flags);
+
+  match shell.run(&mut progress, &mut flags, &crate::context::Context::new()) {
+    crate::recoverable::Recoverable::Err(Some(err), None) => assert_eq!(
+      err.to_string(),
+      format!("Failed to parse command: directory {missing} does not exist")
+    ),
+    _ => panic!("expected Recoverable::Err(Some(_), None)"),
+  }
 }

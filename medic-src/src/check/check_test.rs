@@ -16,7 +16,7 @@ pub fn initialize() {
 }
 
 #[test]
-fn deserialize_arg_string() {
+fn arg_string() {
   let toml = r#"
         check = "check-name"
         command = "subcommand"
@@ -43,7 +43,7 @@ fn deserialize_arg_string() {
   )
 }
 #[test]
-fn deserialize_arg_list() {
+fn arg_list() {
   let toml = r#"
         check = "check-name"
         command = "subcommand"
@@ -71,7 +71,7 @@ fn deserialize_arg_list() {
 }
 
 #[test]
-fn deserialize_cd_string() {
+fn cd_string() {
   let toml = r#"
         cd = "./subdirectory"
         check = "check-name"
@@ -95,7 +95,7 @@ fn deserialize_cd_string() {
 }
 
 #[test]
-fn deserialize_env() {
+fn env() {
   let toml = r#"
         check = "check-name"
         env = { MY_VAR = "first", SECOND_VAR = "second" }
@@ -122,7 +122,7 @@ fn deserialize_env() {
 }
 
 #[test]
-fn deserialize_manual_string() {
+fn manual_string() {
   let toml = r#"
         check = "check-name"
         manual = true
@@ -146,7 +146,7 @@ fn deserialize_manual_string() {
 }
 
 #[test]
-fn to_command() {
+fn command() {
   let check = Check {
     args: None,
     cd: None,
@@ -175,7 +175,7 @@ fn to_command() {
 }
 
 #[test]
-fn to_command_cd_relative() {
+fn cd_relative() {
   let check = Check {
     args: None,
     cd: Some("../fixtures/bin".to_string()),
@@ -196,7 +196,7 @@ fn to_command_cd_relative() {
 }
 
 #[test]
-fn to_command_subcommand() {
+fn subcommand() {
   let check = Check {
     args: None,
     cd: None,
@@ -217,7 +217,7 @@ fn to_command_subcommand() {
 }
 
 #[test]
-fn to_command_env() {
+fn command_env() {
   let check = Check {
     args: None,
     cd: None,
@@ -245,7 +245,7 @@ fn to_command_env() {
 }
 
 #[test]
-fn to_command_stdio() {
+fn stdio() {
   let check = Check {
     args: None,
     cd: None,
@@ -267,7 +267,7 @@ fn to_command_stdio() {
 }
 
 #[test]
-fn to_command_args() {
+fn args() {
   let check = Check {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -291,7 +291,7 @@ fn to_command_args() {
 }
 
 #[test]
-fn to_command_args_list() {
+fn args_list() {
   let check = Check {
     args: Some(BTreeMap::from([(
       "name".to_string(),
@@ -320,7 +320,7 @@ fn to_command_args_list() {
 }
 
 #[test]
-fn to_command_missing_command() {
+fn missing_command() {
   let check = Check {
     args: None,
     cd: None,
@@ -341,7 +341,7 @@ fn to_command_missing_command() {
 }
 
 #[test]
-fn to_string_single_arg() {
+fn single_arg() {
   initialize();
   let check = Check {
     args: Some(BTreeMap::from([(
@@ -365,7 +365,7 @@ fn to_string_single_arg() {
 }
 
 #[test]
-fn to_string_subcommand_single_arg() {
+fn subcommand_single_arg() {
   initialize();
   let check = Check {
     args: Some(BTreeMap::from([(
@@ -389,7 +389,7 @@ fn to_string_subcommand_single_arg() {
 }
 
 #[test]
-fn to_string_subcommand_multiple_args() {
+fn subcommand_args() {
   initialize();
   let check = Check {
     args: Some(BTreeMap::from([
@@ -413,7 +413,7 @@ fn to_string_subcommand_multiple_args() {
 }
 
 #[test]
-fn to_string_subcommand_multiple_arg_values() {
+fn subcommand_arg_values() {
   initialize();
   let check = Check {
     args: Some(BTreeMap::from([(
@@ -437,7 +437,7 @@ fn to_string_subcommand_multiple_arg_values() {
 }
 
 #[test]
-fn to_string_subcommand_multiple_arg_values_and_args() {
+fn subcommand_arg_values_and_args() {
   initialize();
   let check = Check {
     args: Some(BTreeMap::from([
@@ -464,7 +464,7 @@ fn to_string_subcommand_multiple_arg_values_and_args() {
 }
 
 #[test]
-fn to_string_cd() {
+fn display_cd() {
   initialize();
   let check = Check {
     args: None,
@@ -482,4 +482,40 @@ fn to_string_cd() {
     format!("{check}"),
     "\u{1b}[36mcheck-name\u{1b}[0m \u{1b}[32m(../subdirectory)\u{1b}[0m"
   )
+}
+
+fn missing_dir(name: &str) -> String {
+  std::env::temp_dir()
+    .join(format!("medic-check-{}-{name}-missing", std::process::id()))
+    .display()
+    .to_string()
+}
+
+fn check_in(dir: &str) -> Check {
+  toml::from_str(&format!("check = \"json\"\ncd = \"{dir}\"")).unwrap()
+}
+
+#[test]
+fn missing_cd_command() {
+  let missing = missing_dir("to-command");
+
+  let err = check_in(&missing).to_command().unwrap_err();
+
+  assert_eq!(err.to_string(), format!("directory {missing} does not exist"));
+}
+
+#[test]
+fn missing_cd() {
+  initialize();
+  let missing = missing_dir("run");
+  let mut flags = Flags::default();
+  let mut progress = crate::progress::new(&flags);
+
+  match check_in(&missing).run(&mut progress, &mut flags, &Context::new()) {
+    Recoverable::Err(Some(err), None) => assert_eq!(
+      err.to_string(),
+      format!("Failed to parse command: directory {missing} does not exist")
+    ),
+    _ => panic!("expected Recoverable::Err(Some(_), None)"),
+  }
 }

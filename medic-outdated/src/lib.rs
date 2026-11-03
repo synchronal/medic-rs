@@ -1,6 +1,11 @@
+// @related [test](medic-outdated/src/lib_test.rs)
+
 #![cfg_attr(feature = "strict", deny(warnings))]
 
 pub mod cli;
+
+#[cfg(test)]
+mod lib_test;
 
 use medic_src::AppResult;
 use medic_src::cli::Flags;

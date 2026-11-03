@@ -1,3 +1,9 @@
+// @related [test](medic/src/cli/app_test.rs)
+
+#[cfg(test)]
+#[path = "app_test.rs"]
+mod app_test;
+
 use clap::Args;
 use clap::Parser;
 use clap::Subcommand;

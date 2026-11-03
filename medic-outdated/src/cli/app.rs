@@ -1,3 +1,5 @@
+// @related [test](medic-outdated/src/cli/app_test.rs)
+
 use clap::Parser;
 use clap_complete::Shell;
 use medic_src::cli::Flags;
@@ -5,7 +7,7 @@ use medic_src::theme::Theme;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
-#[clap(bin_name = "medic shipit")]
+#[clap(bin_name = "medic outdated")]
 pub struct CliArgs {
   /// Path to a file where medic config can be found
   #[arg(short, long, env = "MEDIC_CONFIG", default_value = "${PWD}/.config/medic.toml", value_hint = clap::ValueHint::FilePath)]

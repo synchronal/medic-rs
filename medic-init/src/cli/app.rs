@@ -1,3 +1,5 @@
+// @related [test](medic-init/src/cli/app_test.rs)
+
 use clap::Parser;
 use clap_complete::Shell;
 

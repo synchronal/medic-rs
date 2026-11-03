@@ -1,7 +1,11 @@
 // @related [test](medic-src/src/check/check_test.rs)
 
 #[cfg(test)]
+mod check_output_test;
+#[cfg(test)]
 mod check_test;
+#[cfg(test)]
+mod output_format_test;
 
 mod check_output;
 mod output_format;
@@ -113,7 +117,7 @@ impl Runnable for Check {
       return Err(MedicError::Message(format!("executable {check_cmd} not found in PATH")));
     };
 
-    let mut command = extra::command::new(&check_cmd, &self.cd, &self.env);
+    let mut command = extra::command::new(&check_cmd, &self.cd, &self.env)?;
     command.env("MEDIC_OUTPUT_FORMAT", self.output.to_string());
 
     if let Some(subcmd) = &self.command {

@@ -1,3 +1,8 @@
+// @related [test](medic-src/src/app_result/app_result_test.rs)
+
+#[cfg(test)]
+mod app_result_test;
+
 use crate::error::MedicError;
 use crate::optional_styled::OptionalStyled;
 use crate::recoverable::Recoverable;

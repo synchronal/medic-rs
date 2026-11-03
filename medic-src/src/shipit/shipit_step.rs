@@ -1,3 +1,5 @@
+// @related [test](medic-src/src/shipit/shipit_step_test.rs)
+
 use crate::cli::Flags;
 use crate::config;
 use crate::context::Context;

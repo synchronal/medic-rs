@@ -5,7 +5,7 @@ use console::style;
 use indoc::{formatdoc, indoc};
 
 #[test]
-fn deserialize_empty() {
+fn empty() {
   let string = r#""#;
   let outdated: OutdatedSummary = string.parse::<OutdatedSummary>().unwrap();
   assert_eq!(outdated.remedy, None);
@@ -13,7 +13,7 @@ fn deserialize_empty() {
 }
 
 #[test]
-fn deserialize_with_deps() {
+fn deps() {
   let string = indoc! {r#"
     ::outdated::name=my-dep::version=1.2.3::latest=2.3.4
     ::outdated::name=other-dep::version=1.2.3::latest=2.3.4::parent=my-dep
@@ -36,7 +36,7 @@ fn deserialize_with_deps() {
 }
 
 #[test]
-fn outdated_to_string_long_name() {
+fn long_name() {
   let summary = OutdatedSummary {
     deps: vec![
       OutdatedDep::new("my-dep", "0.1.2", "1.2.3", None),
@@ -68,7 +68,7 @@ fn outdated_to_string_long_name() {
 }
 
 #[test]
-fn outdated_to_string_long_version() {
+fn long_version() {
   let summary = OutdatedSummary {
     deps: vec![
       OutdatedDep::new("dep", "0.1.2", "1.2.3", None),
@@ -100,7 +100,7 @@ fn outdated_to_string_long_version() {
 }
 
 #[test]
-fn outdated_to_string_long_latest() {
+fn long_latest() {
   let summary = OutdatedSummary {
     deps: vec![
       OutdatedDep::new("dep", "0.1.2", "1.2.3", Some("other")),
@@ -132,7 +132,7 @@ fn outdated_to_string_long_latest() {
 }
 
 #[test]
-fn outdated_to_string_parent() {
+fn parent() {
   let summary = OutdatedSummary {
     deps: vec![
       OutdatedDep::new("my-dep", "0.1.2", "1.2.3", None),
@@ -164,7 +164,7 @@ fn outdated_to_string_parent() {
 }
 
 #[test]
-fn deserialize_with_remedy() {
+fn remedy() {
   let string = r#"
     ::outdated::name=my-dep::version=1.2.3::latest=2.3.4
     ::remedy::update deps
@@ -175,7 +175,7 @@ fn deserialize_with_remedy() {
 }
 
 #[test]
-fn deserialize_dep() {
+fn dep() {
   let string = r#"name=my-dep::version=1.2.3::latest=2.3.4"#;
 
   let dep: OutdatedDep = string.parse::<OutdatedDep>().unwrap();
@@ -186,7 +186,7 @@ fn deserialize_dep() {
 }
 
 #[test]
-fn deserialize_dep_remedy() {
+fn dep_remedy() {
   let string = r#"name=my-dep::version=1.2.3::latest=2.3.4::parent=update deps"#;
 
   let dep: OutdatedDep = string.parse::<OutdatedDep>().unwrap();

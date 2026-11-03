@@ -1,5 +1,9 @@
 #![cfg_attr(feature = "strict", deny(warnings))]
 #![feature(try_trait_v2, try_trait_v2_residual)]
+// @related [test](medic-lib/src/lib_test.rs)
+
+#[cfg(test)]
+mod lib_test;
 
 pub mod check_result;
 pub mod step_result;

@@ -63,7 +63,7 @@ mod tests {
   use std::time::Duration;
 
   #[test]
-  fn test_semaphore_limits_concurrency() {
+  fn limits_concurrency() {
     let semaphore = Arc::new(Semaphore::new(2));
     let active = Arc::new(AtomicUsize::new(0));
     let max_active = Arc::new(AtomicUsize::new(0));
@@ -96,7 +96,7 @@ mod tests {
   }
 
   #[test]
-  fn test_permit_released_on_drop() {
+  fn releases_on_drop() {
     let semaphore = Arc::new(Semaphore::new(1));
 
     {

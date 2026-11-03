@@ -17,7 +17,7 @@ use indoc::indoc;
 use std::collections::BTreeMap;
 
 #[test]
-fn deserialize_audit() {
+fn audit() {
   let toml = indoc! {r#"
     [audit]
     checks = [
@@ -78,7 +78,7 @@ fn deserialize_audit() {
 }
 
 #[test]
-fn deserialize_doctor() {
+fn doctor() {
   let toml = indoc! {r#"
     [doctor]
     checks = [
@@ -139,7 +139,7 @@ fn deserialize_doctor() {
 }
 
 #[test]
-fn deserialize_outdated() {
+fn outdated() {
   let toml = indoc! {r#"
     [outdated]
     checks = [
@@ -182,7 +182,7 @@ fn deserialize_outdated() {
 }
 
 #[test]
-fn deserialize_shipit() {
+fn shipit() {
   let toml = indoc! {r#"
     [shipit]
     steps = [
@@ -249,7 +249,7 @@ fn deserialize_shipit() {
 }
 
 #[test]
-fn deserialize_test() {
+fn test() {
   let toml = indoc! {r#"
     [test]
     checks = [
@@ -312,7 +312,7 @@ fn deserialize_test() {
 }
 
 #[test]
-fn deserialize_update() {
+fn update() {
   let toml = indoc! {r#"
     [update]
     steps = [
@@ -375,7 +375,7 @@ fn deserialize_update() {
 }
 
 #[test]
-fn deserialize_nested_steps() {
+fn nested_steps() {
   let toml = indoc! {r#"
     [test]
     checks = [

@@ -1,3 +1,5 @@
+// @related [test](medic-src/src/check/output_format_test.rs)
+
 use super::check_output::CheckOutput;
 use crate::std_to_string;
 use serde::{Deserialize, Serialize};

@@ -65,7 +65,7 @@ mod tests {
   use super::*;
 
   #[test]
-  fn iterator_yields_string_references_not_clones() {
+  fn iter_borrows() {
     let string_or_list = StringOrList(vec!["first".to_string(), "second".to_string()]);
     let mut iter = (&string_or_list).into_iter();
 

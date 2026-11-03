@@ -20,7 +20,7 @@ pub fn initialize() {
 }
 
 #[test]
-fn deserialize_string() {
+fn string() {
   let toml = r#"
         check = "outdated-name"
         "#;
@@ -40,7 +40,7 @@ fn deserialize_string() {
 }
 
 #[test]
-fn deserialize_args_string() {
+fn args_string() {
   let toml = r#"
         args = { argument = "value" }
         check = "outdated-name"
@@ -64,7 +64,7 @@ fn deserialize_args_string() {
 }
 
 #[test]
-fn deserialize_args_value_list_string() {
+fn args_value_list() {
   let toml = r#"
         args = { argument = ["value 1", "value 2"] }
         check = "outdated-name"
@@ -88,7 +88,7 @@ fn deserialize_args_value_list_string() {
 }
 
 #[test]
-fn deserialize_cd_string() {
+fn cd_string() {
   let toml = r#"
         cd = "./subdirectory"
         check = "outdated-name"
@@ -109,7 +109,7 @@ fn deserialize_cd_string() {
 }
 
 #[test]
-fn deserialize_name_string() {
+fn name_string() {
   let toml = r#"
         check = "outdated-name"
         name = "Check for outdated things"
@@ -130,7 +130,7 @@ fn deserialize_name_string() {
 }
 
 #[test]
-fn to_command() {
+fn command() {
   let check = OutdatedCheck {
     args: None,
     cd: None,
@@ -188,7 +188,7 @@ fn to_command_cd_absolute() -> Result<(), MedicError> {
 }
 
 #[test]
-fn to_command_cd_bad_directory() {
+fn bad_cd() {
   let check = OutdatedCheck {
     args: None,
     cd: Some("does-not-exist".to_string()),
@@ -203,7 +203,7 @@ fn to_command_cd_bad_directory() {
 }
 
 #[test]
-fn to_command_missing_command() {
+fn missing_command() {
   let check = OutdatedCheck {
     args: None,
     cd: None,
@@ -221,7 +221,7 @@ fn to_command_missing_command() {
 }
 
 #[test]
-fn to_string() {
+fn display() {
   initialize();
   let check = OutdatedCheck {
     args: None,
@@ -239,7 +239,7 @@ fn to_string() {
 }
 
 #[test]
-fn to_string_name() {
+fn display_name() {
   initialize();
   let check = OutdatedCheck {
     args: None,
@@ -254,7 +254,7 @@ fn to_string_name() {
 }
 
 #[test]
-fn to_string_cd() {
+fn display_cd() {
   initialize();
   let check = OutdatedCheck {
     args: None,

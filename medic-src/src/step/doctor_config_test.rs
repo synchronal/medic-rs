@@ -35,7 +35,7 @@ fn run_doctor(flags: &mut Flags) -> Recoverable<()> {
 }
 
 #[test]
-fn run_succeeds_when_all_checks_pass() {
+fn succeeds() {
   let dir = tmp_dir("success");
   let manifest = write_manifest(&dir, r#"{ name = "passes", shell = "true" },"#);
 
@@ -48,7 +48,7 @@ fn run_succeeds_when_all_checks_pass() {
 }
 
 #[test]
-fn run_stops_on_failed_check_when_not_interactive() {
+fn stops_when_not_interactive() {
   let dir = tmp_dir("failure");
   let second = dir.join("second");
   let manifest = write_manifest(
@@ -70,7 +70,7 @@ fn run_stops_on_failed_check_when_not_interactive() {
 }
 
 #[test]
-fn run_stops_when_check_fails_after_auto_applied_remedy() {
+fn stops_after_remedy() {
   let dir = tmp_dir("remedy");
   let remedied = dir.join("remedied");
   let second = dir.join("second");

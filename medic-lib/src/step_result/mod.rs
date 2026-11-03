@@ -1,3 +1,8 @@
+// @related [test](medic-lib/src/step_result/step_result_test.rs)
+
+#[cfg(test)]
+mod step_result_test;
+
 use std::io::{self, Write};
 use std::ops::{ControlFlow, FromResidual, Try};
 

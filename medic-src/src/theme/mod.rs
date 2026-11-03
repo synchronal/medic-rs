@@ -1,3 +1,8 @@
+// @related [test](medic-src/src/theme/theme_test.rs)
+
+#[cfg(test)]
+mod theme_test;
+
 use crate::error::MedicError;
 use console::Style;
 use serde::Deserialize;

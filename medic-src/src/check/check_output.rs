@@ -1,3 +1,5 @@
+// @related [test](medic-src/src/check/check_output_test.rs)
+
 use crate::optional_styled::OptionalStyled;
 use crate::theme::current_theme;
 use serde::{Deserialize, Serialize};

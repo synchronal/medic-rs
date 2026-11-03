@@ -1,3 +1,8 @@
+// @related [test](medic-src/src/error/error_test.rs)
+
+#[cfg(test)]
+mod error_test;
+
 use std::fmt;
 
 #[derive(Debug)]

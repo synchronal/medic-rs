@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod shipit_step_test;
+
 mod shipit_step;
 
 pub use shipit_step::AuditConfig;

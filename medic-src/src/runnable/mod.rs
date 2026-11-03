@@ -1,3 +1,8 @@
+// @related [test](medic-src/src/runnable/runnable_test.rs)
+
+#[cfg(test)]
+mod runnable_test;
+
 use crate::AppResult;
 use crate::cli::Flags;
 use crate::context::Context;
@@ -264,7 +269,7 @@ fn run_remedy(remedy: Remedy, progress: &mut ProgressBar) -> AppResult<()> {
   console::set_colors_enabled_stderr(true);
   Term::stderr().clear_line().unwrap();
 
-  let mut command = remedy.to_command();
+  let mut command = remedy.to_command()?;
 
   command
     .env("MEDIC_APPLY_REMEDIES", "true")

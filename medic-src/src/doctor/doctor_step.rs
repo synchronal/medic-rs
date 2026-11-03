@@ -1,3 +1,5 @@
+// @related [test](medic-src/src/doctor/doctor_step_test.rs)
+
 use crate::cli::Flags;
 use crate::context::Context;
 use crate::error::MedicError;

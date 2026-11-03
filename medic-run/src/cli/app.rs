@@ -1,3 +1,5 @@
+// @related [test](medic-run/src/cli/app_test.rs)
+
 use clap::Parser;
 use clap_complete::Shell;
 use medic_src::theme::Theme;

@@ -1,3 +1,8 @@
+// @related [test](medic-src/src/recoverable/recoverable_test.rs)
+
+#[cfg(test)]
+mod recoverable_test;
+
 use crate::error::MedicError;
 use crate::extra;
 use crate::optional_styled::OptionalStyled;
@@ -16,7 +21,7 @@ impl Remedy {
   pub fn new(command: String, cd: Option<String>, env: BTreeMap<String, String>) -> Self {
     Self { command, cd, env }
   }
-  pub fn to_command(&self) -> Command {
+  pub fn to_command(&self) -> Result<Command, MedicError> {
     extra::command::from_string(&self.command, &self.cd, &self.env)
   }
 }

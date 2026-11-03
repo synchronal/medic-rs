@@ -1,3 +1,8 @@
+// @related [test](medic-lib/src/check_result/check_result_test.rs)
+
+#[cfg(test)]
+mod check_result_test;
+
 use serde::Serialize;
 use std::io::{self, Write};
 use std::ops::{ControlFlow, FromResidual, Try};
@@ -7,6 +12,22 @@ struct CheckJson {
   output: String,
   error: Option<String>,
   remedy: Option<String>,
+}
+
+impl CheckJson {
+  fn new(msg: String, stdout: Option<String>, stderr: Option<String>, remedy: Option<String>) -> Self {
+    let mut output = format!("\x1b[31;1mError: \x1b[0m {msg}");
+    if let Some(stdout) = stdout
+      && !stdout.is_empty()
+    {
+      output.push_str(&format!("\r\n\r\n\x1b[31;1mstdout:\x1b[0m\r\n{stdout}"));
+    }
+    let error = stderr
+      .filter(|stderr| !stderr.is_empty())
+      .map(|stderr| format!("\x1b[31;1mstderr:\x1b[0m\r\n{stderr}"));
+
+    Self { output, error, remedy }
+  }
 }
 
 enum CheckResultFormat {
@@ -43,22 +64,7 @@ impl CheckResultFormat {
         }
       }
       CheckResultFormat::Json => {
-        let mut output = format!("\x1b[31;1mError: \x1b[0m {msg}");
-        let mut error = None;
-
-        if let Some(stdout) = stdout
-          && !stdout.is_empty()
-        {
-          output.push_str(&format!("\r\n\r\n\x1b[31;1mstdout:\x1b[0m\r\n{stdout}"));
-        }
-        if let Some(stderr) = stderr
-          && !stderr.is_empty()
-        {
-          error = Some(format!("\x1b[31;1mstdout:\x1b[0m\r\n{stderr}"));
-        }
-
-        let json = CheckJson { output, error, remedy };
-
+        let json = CheckJson::new(msg, stdout, stderr, remedy);
         println!("{}", serde_json::to_string(&json).unwrap());
       }
     }

@@ -1,3 +1,8 @@
+// @related [test](medic-src/src/optional_styled/optional_styled_test.rs)
+
+#[cfg(test)]
+mod optional_styled_test;
+
 use console::{Style, style};
 
 pub struct OptionalStyled {

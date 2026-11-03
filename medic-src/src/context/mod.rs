@@ -46,7 +46,7 @@ mod tests {
   use super::*;
 
   #[test]
-  fn test_current_platform() {
+  fn platform_name() {
     let result = current_platform();
     assert!(!result.is_empty());
     // Should be something like "Darwin", "Linux", etc.
@@ -54,7 +54,7 @@ mod tests {
   }
 
   #[test]
-  fn test_platform_matches_none() {
+  fn matches_none() {
     let context = Context {
       platform: "Something".into(),
     };
@@ -62,7 +62,7 @@ mod tests {
   }
 
   #[test]
-  fn test_platform_matches_empty() {
+  fn matches_empty() {
     let context = Context {
       platform: "Something".into(),
     };
@@ -70,7 +70,7 @@ mod tests {
   }
 
   #[test]
-  fn test_platform_matches_current() {
+  fn matches_current() {
     let context = Context {
       platform: "Something".into(),
     };
@@ -78,7 +78,7 @@ mod tests {
   }
 
   #[test]
-  fn test_platform_matches_not_current() {
+  fn no_match() {
     let context = Context {
       platform: "Something".into(),
     };
