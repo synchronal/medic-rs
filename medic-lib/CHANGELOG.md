@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.3.1
+
 - Fix: JSON check output labels stderr as `stderr:` instead of
   `stdout:`.
 
