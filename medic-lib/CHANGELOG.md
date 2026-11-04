@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Fix: JSON check output labels stderr as `stderr:` instead of
+  `stdout:`.
+
 ## 0.3.0
 
 - impl `std::ops::Residual` for `try_trait_v2` structs. This includes
