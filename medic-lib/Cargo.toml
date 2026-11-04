@@ -13,6 +13,10 @@ serde = { workspace = true }
 serde_json = { workspace = true}
 
 
+[dev-dependencies]
+temp-env = { workspace = true }
+
+
 [features]
 default = ["strict"] # Treat warnings as a build error.
 strict = []

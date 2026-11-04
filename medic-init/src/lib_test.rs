@@ -27,7 +27,8 @@ fn valid_manifest() {
 
   assert!(matches!(create_config_file(path.clone(), false), AppResult::Ok(())));
 
-  let manifest = match Manifest::new(&path) {
+  // Manifest::new sets MEDIC_CONFIG; scope it so CLI tests in this binary don't see it.
+  let manifest = match temp_env::with_var_unset("MEDIC_CONFIG", || Manifest::new(&path)) {
     AppResult::Ok(manifest) => manifest,
     _ => panic!("generated config should parse"),
   };
@@ -75,10 +76,8 @@ fn dir_path() {
 #[test]
 fn envsubst() {
   let dir = tmp_dir("envsubst");
-  // Nextest runs each test in its own process, so mutating env is safe here.
-  unsafe { std::env::set_var("MEDIC_INIT_TEST_DIR", &dir) };
-
   let path = PathBuf::from("${MEDIC_INIT_TEST_DIR}/medic.toml");
-  assert!(matches!(create_config_file(path, false), AppResult::Ok(())));
+  let result = temp_env::with_var("MEDIC_INIT_TEST_DIR", Some(&dir), || create_config_file(path, false));
+  assert!(matches!(result, AppResult::Ok(())));
   assert!(dir.join("medic.toml").is_file());
 }

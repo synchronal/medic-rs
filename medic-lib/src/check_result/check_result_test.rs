@@ -45,14 +45,10 @@ fn propagate(first: CheckResult, reached: &mut bool) -> CheckResult {
   CheckResult::CheckOk
 }
 
-// Nextest runs each test in its own process, so mutating env is safe here.
-fn set_format(value: Option<&str>) {
-  unsafe {
-    match value {
-      Some(v) => std::env::set_var("MEDIC_OUTPUT_FORMAT", v),
-      None => std::env::remove_var("MEDIC_OUTPUT_FORMAT"),
-    }
-  }
+/// Runs `f` with MEDIC_OUTPUT_FORMAT set to `value`. Goes through `temp_env` so
+/// it can't race other env-touching tests under `cargo test`.
+fn with_format<R>(value: Option<&str>, f: impl FnOnce() -> R) -> R {
+  temp_env::with_var("MEDIC_OUTPUT_FORMAT", value, f)
 }
 
 #[test]
@@ -103,36 +99,42 @@ fn report_ok() {
 
 #[test]
 fn report_err_json() {
-  set_format(None);
-  assert_eq!(error("boom").report(), ExitCode::from(1));
+  assert_eq!(with_format(None, || error("boom").report()), ExitCode::from(1));
 }
 
 #[test]
 fn report_err_stdio() {
-  set_format(Some("stdio"));
-  assert_eq!(error("boom").report(), ExitCode::from(1));
+  assert_eq!(with_format(Some("stdio"), || error("boom").report()), ExitCode::from(1));
 }
 
 #[test]
 fn format_unset() {
-  set_format(None);
-  assert!(matches!(CheckResultFormat::from_env(), CheckResultFormat::Json));
+  assert!(matches!(
+    with_format(None, CheckResultFormat::from_env),
+    CheckResultFormat::Json
+  ));
 }
 
 #[test]
 fn format_stdio() {
-  set_format(Some("stdio"));
-  assert!(matches!(CheckResultFormat::from_env(), CheckResultFormat::Stdio));
+  assert!(matches!(
+    with_format(Some("stdio"), CheckResultFormat::from_env),
+    CheckResultFormat::Stdio
+  ));
 }
 
 #[test]
 fn format_json() {
-  set_format(Some("json"));
-  assert!(matches!(CheckResultFormat::from_env(), CheckResultFormat::Json));
+  assert!(matches!(
+    with_format(Some("json"), CheckResultFormat::from_env),
+    CheckResultFormat::Json
+  ));
 }
 
 #[test]
 fn format_unknown() {
-  set_format(Some("STDIO"));
-  assert!(matches!(CheckResultFormat::from_env(), CheckResultFormat::Json));
+  assert!(matches!(
+    with_format(Some("STDIO"), CheckResultFormat::from_env),
+    CheckResultFormat::Json
+  ));
 }

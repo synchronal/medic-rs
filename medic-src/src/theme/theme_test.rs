@@ -83,9 +83,7 @@ fn forced_styling() {
 
 #[test]
 fn current() {
-  if THEME.get().is_none() {
-    set_theme(light_theme());
-  }
+  THEME.get_or_init(light_theme);
 
   assert!(std::ptr::eq(current_theme(), THEME.get().unwrap()));
 }

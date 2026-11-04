@@ -4,9 +4,7 @@ use super::*;
 use std::path::{Path, PathBuf};
 
 fn initialize_theme() {
-  if medic_src::theme::THEME.get().is_none() {
-    medic_src::theme::set_theme(medic_src::theme::dark_theme());
-  }
+  medic_src::theme::THEME.get_or_init(medic_src::theme::dark_theme);
 }
 
 fn tmp_dir(name: &str) -> PathBuf {
@@ -19,7 +17,8 @@ fn tmp_dir(name: &str) -> PathBuf {
 fn manifest(dir: &Path, contents: &str) -> Manifest {
   let path = dir.join("medic.toml");
   std::fs::write(&path, contents).unwrap();
-  match Manifest::new(&path) {
+  // Manifest::new sets MEDIC_CONFIG; scope it so CLI tests in this binary don't see it.
+  match temp_env::with_var_unset("MEDIC_CONFIG", || Manifest::new(&path)) {
     AppResult::Ok(manifest) => manifest,
     _ => panic!("unable to parse manifest"),
   }

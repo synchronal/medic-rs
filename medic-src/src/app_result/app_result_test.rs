@@ -4,16 +4,9 @@ use super::*;
 use crate::recoverable::Remedy;
 use std::collections::BTreeMap;
 use std::process::{Command, ExitCode, Termination};
-use std::sync::Once;
 
-static INIT: Once = Once::new();
 pub fn initialize() {
-  INIT.call_once(|| {
-    if crate::theme::THEME.get().is_none() {
-      let theme = crate::theme::dark_theme();
-      crate::theme::set_theme(theme);
-    }
-  });
+  crate::theme::THEME.get_or_init(crate::theme::dark_theme);
 }
 
 fn propagate<T, U>(inner: AppResult<T>, after: U) -> AppResult<U> {

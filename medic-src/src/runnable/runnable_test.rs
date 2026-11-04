@@ -4,18 +4,11 @@ use super::*;
 use std::collections::{BTreeMap, VecDeque};
 use std::fmt;
 use std::path::PathBuf;
-use std::sync::Once;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 
-static INIT: Once = Once::new();
 pub fn initialize() {
-  INIT.call_once(|| {
-    if crate::theme::THEME.get().is_none() {
-      let theme = crate::theme::dark_theme();
-      crate::theme::set_theme(theme);
-    }
-  });
+  crate::theme::THEME.get_or_init(crate::theme::dark_theme);
 }
 
 fn tmp_dir(name: &str) -> PathBuf {

@@ -5,10 +5,13 @@ use clap::{CommandFactory, Parser};
 use clap_complete::Shell;
 use std::path::PathBuf;
 
-/// Nextest runs each test in its own process, so mutating env is safe here.
+/// Clap falls back to MEDIC_CONFIG. Tests run as threads sharing one process
+/// env under `cargo test`, so every read or write goes through `temp_env`,
+/// which serializes access and restores values afterwards.
 fn parse(args: &[&str]) -> CliArgs {
-  unsafe { std::env::remove_var("MEDIC_CONFIG") };
-  CliArgs::try_parse_from(std::iter::once("medic-init").chain(args.iter().copied())).unwrap()
+  temp_env::with_var_unset("MEDIC_CONFIG", || {
+    CliArgs::try_parse_from(std::iter::once("medic-init").chain(args.iter().copied())).unwrap()
+  })
 }
 
 #[test]
@@ -49,8 +52,9 @@ fn short_flags() {
 
 #[test]
 fn env() {
-  unsafe { std::env::set_var("MEDIC_CONFIG", "/env/medic.toml") };
-  let args = CliArgs::try_parse_from(["medic-init"]).unwrap();
+  let args = temp_env::with_var("MEDIC_CONFIG", Some("/env/medic.toml"), || {
+    CliArgs::try_parse_from(["medic-init"]).unwrap()
+  });
 
   assert_eq!(args.config, PathBuf::from("/env/medic.toml"));
 }

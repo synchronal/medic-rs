@@ -2,16 +2,9 @@
 
 use super::*;
 use std::path::{Path, PathBuf};
-use std::sync::Once;
 
-static INIT: Once = Once::new();
 pub fn initialize() {
-  INIT.call_once(|| {
-    if crate::theme::THEME.get().is_none() {
-      let theme = crate::theme::dark_theme();
-      crate::theme::set_theme(theme);
-    }
-  });
+  crate::theme::THEME.get_or_init(crate::theme::dark_theme);
 }
 
 fn tmp_dir(name: &str) -> PathBuf {
