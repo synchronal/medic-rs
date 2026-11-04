@@ -426,6 +426,7 @@ dependencies = [
  "medic-test",
  "medic-update",
  "retrogress",
+ "temp-env",
 ]
 
 [[package]]
@@ -438,6 +439,7 @@ dependencies = [
  "ctrlc",
  "medic-src",
  "retrogress",
+ "temp-env",
 ]
 
 [[package]]
@@ -480,6 +482,7 @@ dependencies = [
  "ctrlc",
  "medic-src",
  "retrogress",
+ "temp-env",
 ]
 
 [[package]]
@@ -492,6 +495,7 @@ dependencies = [
  "ctrlc",
  "medic-src",
  "retrogress",
+ "temp-env",
 ]
 
 [[package]]
@@ -899,6 +903,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "temp-env"
+version = "0.3.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "96374855068f47402c3121c6eed88d29cb1de8f3ab27090e273e420bdabcf050"
+dependencies = [
+ "parking_lot",
 ]
 
 [[package]]

@@ -4,9 +4,7 @@ use super::*;
 use std::path::{Path, PathBuf};
 
 fn initialize_theme() {
-  if medic_src::theme::THEME.get().is_none() {
-    medic_src::theme::set_theme(medic_src::theme::dark_theme());
-  }
+  medic_src::theme::THEME.get_or_init(medic_src::theme::dark_theme);
 }
 
 fn tmp_dir(name: &str) -> PathBuf {
@@ -19,7 +17,8 @@ fn tmp_dir(name: &str) -> PathBuf {
 fn manifest(dir: &Path, contents: &str) -> Manifest {
   let path = dir.join("medic.toml");
   std::fs::write(&path, contents).unwrap();
-  match Manifest::new(&path) {
+  // Manifest::new sets MEDIC_CONFIG; scope it so CLI tests in this binary don't see it.
+  match temp_env::with_var_unset("MEDIC_CONFIG", || Manifest::new(&path)) {
     AppResult::Ok(manifest) => manifest,
     _ => panic!("unable to parse manifest"),
   }
@@ -33,17 +32,18 @@ fn fake_outdated_check(dir: &Path, name: &str, stdout: &str) {
   std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755)).unwrap();
 }
 
-/// Nextest runs each test in its own process, so mutating PATH is safe here.
-fn prepend_path(dir: &Path) {
-  let path = std::env::var("PATH").unwrap_or_default();
-  unsafe { std::env::set_var("PATH", format!("{}:{path}", dir.display())) };
-}
-
 fn run_with(manifest: Manifest) -> AppResult<()> {
   initialize_theme();
   let flags = Flags::default();
   let mut progress = medic_src::progress::new(&flags);
   run_checks(manifest, &mut progress, flags, &Context::new())
+}
+
+/// Runs with `dir` prepended to PATH, restoring PATH afterwards. Goes through
+/// `temp_env` so it can't race other env-touching tests under `cargo test`.
+fn run_with_path(dir: &Path, manifest: Manifest) -> AppResult<()> {
+  let path = format!("{}:{}", dir.display(), std::env::var("PATH").unwrap_or_default());
+  temp_env::with_var("PATH", Some(path), || run_with(manifest))
 }
 
 #[test]
@@ -69,10 +69,9 @@ fn empty() {
 fn up_to_date() {
   let dir = tmp_dir("current");
   fake_outdated_check(&dir, "current", "");
-  prepend_path(&dir);
   let manifest = manifest(&dir, "[outdated]\nchecks = [\n  { check = \"current\" },\n]\n");
 
-  assert!(matches!(run_with(manifest), AppResult::Ok(())));
+  assert!(matches!(run_with_path(&dir, manifest), AppResult::Ok(())));
 }
 
 #[test]
@@ -83,10 +82,9 @@ fn outdated_ok() {
     "stale",
     "::outdated::name=thingy::version=1.2.3::latest=1.2.4::\\n",
   );
-  prepend_path(&dir);
   let manifest = manifest(&dir, "[outdated]\nchecks = [\n  { check = \"stale\" },\n]\n");
 
-  assert!(matches!(run_with(manifest), AppResult::Ok(())));
+  assert!(matches!(run_with_path(&dir, manifest), AppResult::Ok(())));
 }
 
 #[test]
@@ -110,12 +108,11 @@ fn stops_on_failure() {
     use std::os::unix::fs::PermissionsExt;
     std::fs::set_permissions(&after, std::fs::Permissions::from_mode(0o755)).unwrap();
   }
-  prepend_path(&dir);
   let manifest = manifest(
     &dir,
     "[outdated]\nchecks = [\n  { check = \"does-not-exist-anywhere\" },\n  { check = \"after\" },\n]\n",
   );
 
-  assert!(matches!(run_with(manifest), AppResult::Err(_)));
+  assert!(matches!(run_with_path(&dir, manifest), AppResult::Err(_)));
   assert!(!marker.exists(), "checks after a failure should not run");
 }

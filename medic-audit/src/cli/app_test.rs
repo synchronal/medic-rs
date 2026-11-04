@@ -7,22 +7,25 @@ use medic_src::cli::Flags;
 use medic_src::theme::Theme;
 use std::path::PathBuf;
 
-fn parse(args: &[&str]) -> CliArgs {
-  clear_env();
-  CliArgs::try_parse_from(std::iter::once("medic-audit").chain(args.iter().copied())).unwrap()
+/// Clap falls back to these env vars. Tests run as threads sharing one
+/// process env under `cargo test`, so every read or write goes through
+/// `temp_env`, which serializes access and restores values afterwards.
+const ENV_VARS: [&str; 5] = [
+  "MEDIC_CONFIG",
+  "MEDIC_APPLY_REMEDIES",
+  "MEDIC_INTERACTIVE",
+  "MEDIC_PARALLEL",
+  "MEDIC_THEME",
+];
+
+fn try_parse(args: &[&str]) -> Result<CliArgs, clap::Error> {
+  temp_env::with_vars_unset(ENV_VARS, || {
+    CliArgs::try_parse_from(std::iter::once("medic-audit").chain(args.iter().copied()))
+  })
 }
 
-/// Nextest runs each test in its own process, so mutating env is safe here.
-fn clear_env() {
-  for var in [
-    "MEDIC_CONFIG",
-    "MEDIC_APPLY_REMEDIES",
-    "MEDIC_INTERACTIVE",
-    "MEDIC_PARALLEL",
-    "MEDIC_THEME",
-  ] {
-    unsafe { std::env::remove_var(var) };
-  }
+fn parse(args: &[&str]) -> CliArgs {
+  try_parse(args).unwrap()
 }
 
 #[test]
@@ -79,15 +82,16 @@ fn short_flags() {
 
 #[test]
 fn env() {
-  clear_env();
-  unsafe {
-    std::env::set_var("MEDIC_CONFIG", "/env/medic.toml");
-    std::env::set_var("MEDIC_APPLY_REMEDIES", "true");
-    std::env::set_var("MEDIC_INTERACTIVE", "true");
-    std::env::set_var("MEDIC_PARALLEL", "true");
-    std::env::set_var("MEDIC_THEME", "light");
-  }
-  let args = CliArgs::try_parse_from(["medic-audit"]).unwrap();
+  let args = temp_env::with_vars(
+    [
+      ("MEDIC_CONFIG", Some("/env/medic.toml")),
+      ("MEDIC_APPLY_REMEDIES", Some("true")),
+      ("MEDIC_INTERACTIVE", Some("true")),
+      ("MEDIC_PARALLEL", Some("true")),
+      ("MEDIC_THEME", Some("light")),
+    ],
+    || CliArgs::try_parse_from(["medic-audit"]).unwrap(),
+  );
 
   assert_eq!(args.config, PathBuf::from("/env/medic.toml"));
   assert!(args.apply_remedies);
@@ -105,8 +109,7 @@ fn completion() {
 
 #[test]
 fn bad_theme() {
-  clear_env();
-  assert!(CliArgs::try_parse_from(["medic-audit", "--theme", "neon"]).is_err());
+  assert!(try_parse(&["--theme", "neon"]).is_err());
 }
 
 #[test]

@@ -60,10 +60,14 @@ jobs:
           target/
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ steps.setup-rust.outputs.cachekey }}
         restore-keys: ${{ runner.os }}-cargo-
+    - name: Install cargo-nextest
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-nextest
     - name: Run tests
       run: |
         export PATH="${PATH}:${GITHUB_WORKSPACE}/fixtures/bin"
-        cargo test --verbose --color=always
+        cargo nextest run --color=always
 
   audit:
     runs-on: ubuntu-latest

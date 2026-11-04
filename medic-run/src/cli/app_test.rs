@@ -4,10 +4,13 @@ use super::CliArgs;
 use clap::{CommandFactory, Parser};
 use medic_src::theme::Theme;
 
-/// Nextest runs each test in its own process, so mutating env is safe here.
+/// Clap falls back to MEDIC_THEME. Tests run as threads sharing one process
+/// env under `cargo test`, so every read or write goes through `temp_env`,
+/// which serializes access and restores values afterwards.
 fn try_parse(args: &[&str]) -> Result<CliArgs, clap::Error> {
-  unsafe { std::env::remove_var("MEDIC_THEME") };
-  CliArgs::try_parse_from(std::iter::once("medic-run").chain(args.iter().copied()))
+  temp_env::with_var_unset("MEDIC_THEME", || {
+    CliArgs::try_parse_from(std::iter::once("medic-run").chain(args.iter().copied()))
+  })
 }
 
 #[test]
@@ -80,8 +83,9 @@ fn short_flags() {
 
 #[test]
 fn env() {
-  unsafe { std::env::set_var("MEDIC_THEME", "light") };
-  let args = CliArgs::try_parse_from(["medic-run", "-n", "thing", "-c", "true"]).unwrap();
+  let args = temp_env::with_var("MEDIC_THEME", Some("light"), || {
+    CliArgs::try_parse_from(["medic-run", "-n", "thing", "-c", "true"]).unwrap()
+  });
 
   assert!(matches!(args.theme, Theme::Light));
 }

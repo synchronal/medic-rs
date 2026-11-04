@@ -5,21 +5,21 @@ use clap::CommandFactory;
 use clap::error::ErrorKind;
 use medic_src::theme::Theme;
 
-// Clap falls back to these env vars; clear them for deterministic parsing.
-// Nextest runs each test in its own process, so mutating env is safe here.
+/// Clap falls back to these env vars. Tests run as threads sharing one
+/// process env under `cargo test`, so every read or write goes through
+/// `temp_env`, which serializes access and restores values afterwards.
+const ENV_VARS: [&str; 5] = [
+  "MEDIC_CONFIG",
+  "MEDIC_APPLY_REMEDIES",
+  "MEDIC_INTERACTIVE",
+  "MEDIC_PARALLEL",
+  "MEDIC_THEME",
+];
+
 fn parse(args: &[&str]) -> Result<CliArgs, clap::Error> {
-  unsafe {
-    for var in [
-      "MEDIC_CONFIG",
-      "MEDIC_APPLY_REMEDIES",
-      "MEDIC_INTERACTIVE",
-      "MEDIC_PARALLEL",
-      "MEDIC_THEME",
-    ] {
-      std::env::remove_var(var);
-    }
-  }
-  CliArgs::try_parse_from(std::iter::once("medic").chain(args.iter().copied()))
+  temp_env::with_vars_unset(ENV_VARS, || {
+    CliArgs::try_parse_from(std::iter::once("medic").chain(args.iter().copied()))
+  })
 }
 
 fn manifest_args(args: &[&str]) -> ManifestArgs {
@@ -198,12 +198,16 @@ fn bad_theme() {
 
 #[test]
 fn env() {
-  unsafe {
-    std::env::set_var("MEDIC_CONFIG", "env.toml");
-    std::env::set_var("MEDIC_INTERACTIVE", "true");
-    std::env::set_var("MEDIC_THEME", "light");
-  }
-  let args = CliArgs::try_parse_from(["medic", "update"]).unwrap();
+  let args = temp_env::with_vars(
+    [
+      ("MEDIC_CONFIG", Some("env.toml")),
+      ("MEDIC_APPLY_REMEDIES", None),
+      ("MEDIC_INTERACTIVE", Some("true")),
+      ("MEDIC_PARALLEL", None),
+      ("MEDIC_THEME", Some("light")),
+    ],
+    || CliArgs::try_parse_from(["medic", "update"]).unwrap(),
+  );
   match args.command {
     Command::Update(a) => {
       assert_eq!(a.config, PathBuf::from("env.toml"));

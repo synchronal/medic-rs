@@ -4,9 +4,7 @@ use super::*;
 use std::path::PathBuf;
 
 fn initialize_theme() {
-  if medic_src::theme::THEME.get().is_none() {
-    medic_src::theme::set_theme(medic_src::theme::dark_theme());
-  }
+  medic_src::theme::THEME.get_or_init(medic_src::theme::dark_theme);
 }
 
 fn tmp_dir(name: &str) -> PathBuf {
