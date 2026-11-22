@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- When running in parallel, failed steps print their full output instead
+  of only the last 5 lines.
+
 ## 2.23.2
 
 - Fix issue where a failing check in a `{ doctor = {} }` step would not
