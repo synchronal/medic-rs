@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2.23.3
+
 - When running in parallel, failed steps print their full output instead
   of only the last 5 lines.
 
